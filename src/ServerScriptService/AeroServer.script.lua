@@ -97,9 +97,11 @@ function LoadService(module)
 	local service = require(module)
 	AeroServer.Services[module.Name] = service
 	
+	if (not service.Client) then service.Client = {} end
+	service.Client.Server = service
+	
 	setmetatable(service, {__index = AeroServer})
 	
-	service.Client = {}
 	service._events = {}
 	service._clientEvents = {}
 	service._remoteFolder = remoteFolder
