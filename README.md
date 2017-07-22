@@ -50,15 +50,15 @@ Here is a basic service:
 local TestService = {}
 
 function TestService:Add(a, b)
-	return a + b
+  return a + b
 end
 
 function TestService:Start()
-	-- Ran after all services have been initialized
+  -- Ran after all services have been initialized
 end
 
 function TestService:Init()
-	-- Do anything to set up the service.
+  -- Do anything to set up the service.
   -- It is NOT safe to run code from other services, but they CAN be referenced.
 end
 
@@ -91,28 +91,68 @@ return AnotherService
 Here is an example of a service registering, firing, and connecting to an event:
 
 ```lua
-  local MyService = {}
-  
-  function MyService:Start()
-  
-    -- Connect to the event:
-    self:ConnectEvent("Hello", function(msg)
-      print(msg)
-    end)
-  
-  end
-  
-  function MyService:Init()
-  
-    -- Register the event:
-    self:RegisterEvent("Hello")
-    
-    -- Fire the event after 5 seconds:
-    delay(5, function()
-      self:FireEvent("Hello", "How are you?")
-    end)
-    
-  end
-  
-  return MyService
+local MyService = {}
+
+function MyService:Start()
+
+  -- Connect to the event:
+  self:ConnectEvent("Hello", function(msg)
+    print(msg)
+  end)
+
+end
+
+function MyService:Init()
+
+  -- Register the event:
+  self:RegisterEvent("Hello")
+
+  -- Fire the event after 5 seconds:
+  delay(5, function()
+    self:FireEvent("Hello", "How are you?")
+  end)
+
+end
+
+return MyService
+```
+
+## Service exposing method and event to client
+Here's an example where a service exposes a method and event to the client:
+```lua
+local MyService = {Client={}} -- Notice the 'Client={}'
+
+-- Client-exposed method:
+function MyService.Client:Hello(player, ...)
+  print(player.Name .. " says hello")
+  return "Hello to you too!"
+end
+
+function MyService:Start()
+
+  -- Fire client event after 5 seconds:
+  delay(5, function()
+    self:FireAllClientsEvent("HelloClient", "Hello!")
+  end)
+
+  -- Fire client event to individual player:
+  delay(5, function()
+    self:FireClientEvent("HelloClient", game.Players.SomePlayer, "Hi!")
+  end)
+
+end
+
+function MyService:Init()
+
+  -- Expose client event:
+  self:RegisterClientEvent("HelloClient")
+
+  -- Connecting to client event:
+  self:ConnectClientEvent("HelloClient", function(player, ...)
+    -- Foo
+  end)
+
+end
+
+return MyService
 ```
