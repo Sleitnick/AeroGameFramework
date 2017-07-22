@@ -3,7 +3,20 @@ A game framework for the ROBLOX game platform.
 
 AeroGameFramework makes ROBLOX game development easy and fun. The framework is designed to alleviate the strain of communication between your code and to simplify communication between the server/client model.
 
+# Install & Update
+Run the following code snippet in the Command Line within ROBLOX Studio to install or update the framework:
+```lua
+require(932606289)()
+```
+
+# Structure
 AeroGameFramework is structured into three categories: Server, Client, and Shared.
+
+- `[Server] ServerStorage.Services`
+- `[Server] ServerStorage.Objects`
+- `[Client] StarterPlayerScripts.Modules`
+- `[Client] StarterPlayerScripts.Objects`
+- `[Shared] ReplicatedStorage.Shared`
 
 ## Server
 `ServerStorage.Services` & `ServerStorage.Objects`
@@ -23,8 +36,5 @@ Client modules work similarly to server-side services, whereas all the modules a
 #### Objects
 Client-side objects have the exact functionality as server-side objects, except that they are ran on the client.
 
-# Install & Update
-Run the following code snippet in the Command Line within ROBLOX Studio to install or update the framework:
-```lua
-require(932606289)()
-```
+## Shared
+Shared modules are modules that can be used by both the client and the server. Just like objects, shared modules are lazy-loaded.
