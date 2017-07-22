@@ -27,7 +27,7 @@ for subdir,dirs,files in os.walk(rootdir):
 
 # Sort and concatenate array:
 data["paths"].sort(key=len)
-filelistStr = json.dumps(data)
+filelistStr = json.dumps(data, indent=4)
 
 # Write file:
 filelist = open(filelistName, "w")
