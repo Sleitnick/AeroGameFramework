@@ -37,4 +37,6 @@ Client modules work similarly to server-side services, whereas all the modules a
 Client-side objects have the exact functionality as server-side objects, except that they are ran on the client.
 
 ## Shared
+`ReplicatedStorage.Shared`
+
 Shared modules are modules that can be used by both the client and the server. Just like objects, shared modules are lazy-loaded.
