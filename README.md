@@ -41,6 +41,64 @@ Client-side objects have the exact functionality as server-side objects, except 
 
 Shared modules are modules that can be used by both the client and the server. Just like objects, shared modules are lazy-loaded.
 
+# API
+Documentation of how to use server services and client modules.
+
+## API - Server Service
+```lua
+local MyService = {Client = {}}
+
+function MyService:Start()
+  -- Called when all services have been initialized
+end
+
+function MyService:Init()
+  -- Called when the module is first loaded.
+  -- Safe to reference 'self.Services/Objects/Shared'
+  -- NOT safe to USE/INVOKE other services yet (use them in/after Start method)
+end
+
+return MyService
+```
+#### Injected Properties:
+- `service.Services` Table of all other services, referenced by the name of the ModuleScript
+- `service.Objects` Table of all objects, referenced by the name of the ModuleScript
+- `service.Shared` Table of all shared modules, referenced by the name of the ModuleScript
+#### Injected Methods:
+- `Void        service:RegisterEvent(String eventName)`
+- `Void        service:RegisterClientEvent(String eventName)`
+- `Void        service:FireEvent(String eventName, ...)`
+- `Void        service:FireClientEvent(String eventName, Instance player, ...)`
+- `Void        service:FireAllClientsEvent(String eventName, ...)`
+- `Connection  service:ConnectEvent(String eventName, Function function)`
+- `Connection  service:ConnectClientEvent(String eventName, Funciton function)`
+
+## API - Client Module
+```lua
+local MyModule = {}
+
+function MyModule:Start()
+  -- Called when all modules have been initialized
+end
+
+function MyModule:Init()
+  -- Called when the module is first loaded.
+  -- Safe to reference 'self.Modules/Services/Objects/Shared'
+  -- NOT safe to USE/INVOKE other modules yet (use them in/after Start method)
+end
+
+return MyModule
+```
+#### Injected Properties:
+- `module.Modules` Table of all other modules, referenced by the name of the ModuleScript
+- `module.Services` Table of all service-side services, referenced by the name of the ModuleScript
+- `module.Objects` Table of all objects, referenced by the name of the ModuleScript
+- `module.Shared` Table of all shared modules, referenced by the name of the ModuleScript
+#### Injected Methods:
+- `Void        service:RegisterEvent(String eventName)`
+- `Void        service:FireEvent(String eventName, ...)`
+- `Connection  service:ConnectEvent(String eventName, Function function)`
+
 # Basic Examples - Server
 
 ## Server Service
