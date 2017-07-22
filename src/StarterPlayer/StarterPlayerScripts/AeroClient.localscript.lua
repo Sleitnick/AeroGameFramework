@@ -17,6 +17,23 @@ local objectsFolder = script.Parent:WaitForChild("Objects")
 local sharedFolder = game:GetService("ReplicatedStorage"):WaitForChild("Shared")
 
 
+function Aero:RegisterEvent(eventName)
+	local event = self.Shared.Event.new()
+	self._events[eventName] = event
+	return event
+end
+
+
+function Aero:FireEvent(eventName, ...)
+	self._events[eventName]:Fire(...)
+end
+
+
+function Aero:ConnectEvent(eventName, func)
+	return self._events[eventName]:Connect(func)
+end
+
+
 function LoadService(serviceFolder)
 	local service = {}
 	Aero.Services[serviceFolder.Name] = service
@@ -71,6 +88,7 @@ end
 function LoadModule(module)
 	local mod = require(module)
 	Aero.Modules[module.Name] = mod
+	mod._events = {}
 	setmetatable(mod, {__index = Aero})
 	if (type(mod.Init) == "function") then
 		mod:Init()
