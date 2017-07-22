@@ -41,7 +41,7 @@ Client-side objects have the exact functionality as server-side objects, except 
 
 Shared modules are modules that can be used by both the client and the server. Just like objects, shared modules are lazy-loaded.
 
-# Basic Examples
+# Basic Examples - Server
 
 ## Server Service
 Here is a basic service:
@@ -157,7 +157,9 @@ end
 return MyService
 ```
 
-# Client Module
+# Basic Examples - Client
+
+## Client Module
 Here is a basic client module that also connects to a server-side service:
 
 ```lua
@@ -191,7 +193,7 @@ end
 return SomeModule
 ```
 
-# Client module invoking another module
+## Client module invoking another module
 Here is an example of a client module invoking another client module:
 
 ```lua
