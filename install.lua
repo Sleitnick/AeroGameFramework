@@ -72,4 +72,4 @@ end
 
 http.HttpEnabled = httpEnabled
 
-print("AeroGameFramework loaded")
+print("AeroGameFramework installed")
