@@ -19,6 +19,8 @@ data["paths"] = []
 
 # Get all files:
 for subdir,dirs,files in os.walk(rootdir):
+	if (len(files) == 0 and subdir != rootdir and len(dirs) == 0):
+		data["paths"].append(subdir[len(rootdir) + 1:].replace("\\", "/") + "/EMPTY")
 	for file in files:
 		path = os.path.join(subdir, file)[len(rootdir) + 1:].replace("\\", "/")
 		data["paths"].append(path)
