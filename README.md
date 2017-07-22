@@ -156,3 +156,57 @@ end
 
 return MyService
 ```
+
+# Client Module
+Here is a basic client module that also connects to a server-side service:
+
+```lua
+local SomeModule = {}
+
+function SomeModule:Test(x)
+  print("Test!")
+  return x * 2
+end
+
+function SomeModule:Start()
+
+  -- Connect to server event:
+  self.Services.MyService.HelloClient:Connect(function(msg)
+    print(msg)
+    -- Fire event back to server:
+    self.Services.MyService.HelloClient:Fire("Hello to you too!")
+  end)
+  
+  -- Fire server method:
+  local msg = self.Services.MyService:Hello("Hi there")
+  print(msg)
+  
+end
+
+function SomeModule:Init()
+  -- Run code here to set up the module.
+  -- Similar to services, it is NOT safe to invoke other modules in this method, but you CAN reference them.
+end
+
+return SomeModule
+```
+
+# Client module invoking another module
+Here is an example of a client module invoking another client module:
+
+```lua
+local MyModule = {}
+
+local someModule
+
+function MyModule:Start()
+  local result = someModule:Test(32)
+  print(result)
+end
+
+function MyModule:Init()
+  someModule = self.Modules.SomeModule
+end
+
+return MyModule
+```
