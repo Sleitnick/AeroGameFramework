@@ -48,14 +48,15 @@ function BuildParent(path)
 	return parent
 end
 
-for _,path in pairs(filelist.paths) do
+local numPaths = #filelist.paths
+for i,path in pairs(filelist.paths) do
 	local sourceUrl = (filelist.url .. path)
 	local isEmpty = (path:match("/EMPTY$") ~= nil)
 	local parent = BuildParent(path)
+	local scriptObj
 	if (not isEmpty) then
 		local source = http:GetAsync(sourceUrl, true)
 		local scriptName, scriptType = path:match(".+[/%.](.+)%.(.+)%.lua$")
-		local scriptObj
 		if (scriptType == "script") then
 			scriptObj = Instance.new("Script", parent)
 		elseif (scriptType == "localscript") then
@@ -66,7 +67,7 @@ for _,path in pairs(filelist.paths) do
 		scriptObj.Name = scriptName
 		scriptObj.Source = source
 	end
-	print(sourceUrl)
+	print(("[%i/%i]"):format(i, numPaths), (scriptObj or parent):GetFullName())
 end
 
 http.HttpEnabled = httpEnabled
