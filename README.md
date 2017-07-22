@@ -40,3 +40,79 @@ Client-side objects have the exact functionality as server-side objects, except 
 `ReplicatedStorage.Shared`
 
 Shared modules are modules that can be used by both the client and the server. Just like objects, shared modules are lazy-loaded.
+
+# Basic Examples
+
+## Server Service
+Here is a basic service:
+
+```lua
+local TestService = {}
+
+function TestService:Add(a, b)
+	return a + b
+end
+
+function TestService:Start()
+	-- Ran after all services have been initialized
+end
+
+function TestService:Init()
+	-- Do anything to set up the service.
+  -- It is NOT safe to run code from other services, but they CAN be referenced.
+end
+
+return TestService
+```
+
+## Service-to-service Communication
+Here is an example of a service invoking the method of another service. Note that `self.Services` exposes all the services:
+
+```lua
+local AnotherService = {}
+
+local testService
+
+function AnotherService:Start()
+  -- Invoke the TestService:
+  local sum = testService:Add(5, 3)
+  print("5 + 3 = ", sum)
+end
+
+function AnotherService:Init()
+  -- Reference the TestService:
+  testService = self.Services.TestService
+end
+
+return AnotherService
+```
+
+## Service Events
+Here is an example of a service registering, firing, and connecting to an event:
+
+```lua
+  local MyService = {}
+  
+  function MyService:Start()
+  
+    -- Connect to the event:
+    self:ConnectEvent("Hello", function(msg)
+      print(msg)
+    end)
+  
+  end
+  
+  function MyService:Init()
+  
+    -- Register the event:
+    self:RegisterEvent("Hello")
+    
+    -- Fire the event after 5 seconds:
+    delay(5, function()
+      self:FireEvent("Hello", "How are you?")
+    end)
+    
+  end
+  
+  return MyService
+```
