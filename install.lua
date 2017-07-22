@@ -18,6 +18,7 @@ local filelist = http:JSONDecode(http:GetAsync(FILELIST_URL, true))
 
 function BuildParent(path)
 	local parent = game
+	local parentCreated = false
 	for parentName in path:gmatch("[^/]+") do
 		if (parentName == "EMPTY") then
 			break
@@ -36,38 +37,56 @@ function BuildParent(path)
 		end
 		if (parent == game) then
 			parent = game:GetService(parentName)
+			parentCreated = false
 		else
 			local newParent = parent:FindFirstChild(parentName)
-			if (not newParent) then
+			if (newParent) then
+				parentCreated = false
+			else
+				parentCreated = true
 				newParent = Instance.new("Folder", parent)
 				newParent.Name = parentName
 			end
 			parent = newParent
 		end
 	end
-	return parent
+	return parent, parentCreated
 end
 
 local numPaths = #filelist.paths
 for i,path in pairs(filelist.paths) do
 	local sourceUrl = (filelist.url .. path)
 	local isEmpty = (path:match("/EMPTY$") ~= nil)
-	local parent = BuildParent(path)
+	local parent, parentCreated = BuildParent(path)
 	local scriptObj
+	local wasUpdated = false
+	local wasAlreadyExistent = false
+	local printPrefix = "[NEW]"
 	if (not isEmpty) then
 		local source = http:GetAsync(sourceUrl, true)
 		local scriptName, scriptType = path:match(".+[/%.](.+)%.(.+)%.lua$")
-		if (scriptType == "script") then
-			scriptObj = Instance.new("Script", parent)
-		elseif (scriptType == "localscript") then
-			scriptObj = Instance.new("LocalScript", parent)
-		elseif (scriptType == "modulescript") then
-			scriptObj = Instance.new("ModuleScript", parent)
+		local className = (scriptType == "localscript" and "LocalScript" or scriptType == "modulescript" and "ModuleScript" or "Script")
+		local obj = parent:FindFirstChild(scriptName)
+		if ((not obj) or (obj.ClassName ~= className)) then
+			scriptObj = Instance.new(className, parent)
+			scriptObj.Name = scriptName
+			scriptObj.Source = source
+		elseif (obj and obj.ClassName == className) then
+			scriptObj = obj
+			if (scriptObj.Source ~= source) then
+				scriptObj.Source = source
+				wasUpdated = true
+			else
+				wasAlreadyExistent = true
+			end
 		end
-		scriptObj.Name = scriptName
-		scriptObj.Source = source
+		printPrefix = (wasUpdated and "[UPDATED]" or wasAlreadyExistent and "[EXISTED]" or "[NEW]")
+	else
+		if (not parentCreated) then
+			printPrefix = "[EXISTED]"
+		end
 	end
-	print(("[%i/%i]"):format(i, numPaths), (scriptObj or parent):GetFullName())
+	print(("[%i/%i]"):format(i, numPaths), printPrefix, (scriptObj or parent):GetFullName())
 end
 
 http.HttpEnabled = httpEnabled
