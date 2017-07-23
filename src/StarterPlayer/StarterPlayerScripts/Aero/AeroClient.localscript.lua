@@ -14,7 +14,7 @@ local Aero = {
 
 local controllersFolder = script.Parent:WaitForChild("Controllers")
 local modulesFolder = script.Parent:WaitForChild("Modules")
-local sharedFolder = game:GetService("ReplicatedStorage"):WaitForChild("Shared")
+local sharedFolder = game:GetService("ReplicatedStorage"):WaitForChild("Aero"):WaitForChild("Shared")
 
 
 function Aero:RegisterEvent(eventName)
