@@ -107,6 +107,11 @@ function LoadService(module)
 	service._clientEvents = {}
 	service._remoteFolder = remoteFolder
 	
+end
+
+
+function InitService(service)
+	
 	-- Initialize:
 	if (type(service.Init) == "function") then
 		service:Init()
@@ -129,10 +134,16 @@ function Init()
 	LazyLoadSetup(AeroServer.Shared, sharedFolder, false)
 	
 	-- Load services:
+	local modules = {}
 	for _,module in pairs(servicesFolder:GetChildren()) do
 		if (module:IsA("ModuleScript")) then
 			LoadService(module)
 		end
+	end
+	
+	-- Initialize services:
+	for _,service in pairs(AeroServer.Services) do
+		InitService(service)
 	end
 	
 	-- Start services:

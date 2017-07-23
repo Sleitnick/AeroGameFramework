@@ -90,6 +90,10 @@ function LoadController(module)
 	Aero.Controllers[module.Name] = controller
 	controller._events = {}
 	setmetatable(controller, {__index = Aero})
+end
+
+
+function InitController(controller)
 	if (type(controller.Init) == "function") then
 		controller:Init()
 	end
@@ -110,6 +114,11 @@ function Init()
 		if (module:IsA("ModuleScript")) then
 			LoadController(module)
 		end
+	end
+	
+	-- Initialize controllers:
+	for _,controller in pairs(Aero.Controllers) do
+		InitController(controller)
 	end
 	
 	-- Start controllers:
