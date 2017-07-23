@@ -113,9 +113,9 @@ function Init()
 	end
 	
 	-- Start controllers:
-	for _,mod in pairs(Aero.Modules) do
-		if (type(mod.Start) == "function") then
-			coroutine.resume(coroutine.create(mod.Start), mod)
+	for _,controller in pairs(Aero.Controllers) do
+		if (type(controller.Start) == "function") then
+			coroutine.resume(coroutine.create(controller.Start), controller)
 		end
 	end
 	
