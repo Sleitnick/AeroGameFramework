@@ -27,10 +27,8 @@ def fix_path(path):
 def get_all_files():
 	for subdir,dirs,files in os.walk(rootdir):
 		if (len(files) == 0 and subdir != rootdir and len(dirs) == 0):
-			#data["paths"].append(subdir[len(rootdir) + 1:].replace("\\", "/") + "/" + emptyDirSuffix)
 			data["paths"].append(fix_path(rootdir) + "/" + emptyDirSuffix)
 		for file in files:
-			#path = os.path.join(subdir, file)[len(rootdir) + 1:].replace("\\", "/")
 			path = fix_path(os.path.join(subdir, file))
 			data["paths"].append(path)
 
