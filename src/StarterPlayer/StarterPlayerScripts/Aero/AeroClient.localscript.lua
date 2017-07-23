@@ -11,6 +11,7 @@ local Aero = {
 	Services    = {};
 }
 
+local mt = {__index = Aero}
 
 local controllersFolder = script.Parent:WaitForChild("Controllers")
 local modulesFolder = script.Parent:WaitForChild("Modules")
@@ -73,7 +74,7 @@ function LazyLoadSetup(tbl, folder)
 		__index = function(t, i)
 			local obj = require(folder[i])
 			if (type(obj) == "table") then
-				setmetatable(obj, {__index = Aero})
+				setmetatable(obj, mt)
 				if (type(obj.Init) == "function") then
 					obj:Init(Aero)
 				end
@@ -89,7 +90,7 @@ function LoadController(module)
 	local controller = require(module)
 	Aero.Controllers[module.Name] = controller
 	controller._events = {}
-	setmetatable(controller, {__index = Aero})
+	setmetatable(controller, mt)
 end
 
 
@@ -124,7 +125,7 @@ function Init()
 	-- Start controllers:
 	for _,controller in pairs(Aero.Controllers) do
 		if (type(controller.Start) == "function") then
-			coroutine.resume(coroutine.create(controller.Start), controller)
+			coroutine.wrap(controller.Start)(controller)
 		end
 	end
 	

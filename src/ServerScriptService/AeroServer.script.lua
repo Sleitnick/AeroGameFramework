@@ -149,7 +149,7 @@ function Init()
 	-- Start services:
 	for _,service in pairs(AeroServer.Services) do
 		if (type(service.Start) == "function") then
-			coroutine.resume(coroutine.create(service.Start), service)
+			coroutine.wrap(service.Start)(service)
 		end
 	end
 	
