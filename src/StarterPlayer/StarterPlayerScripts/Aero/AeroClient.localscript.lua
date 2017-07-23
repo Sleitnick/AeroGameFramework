@@ -73,7 +73,7 @@ function LazyLoadSetup(tbl, folder)
 		__index = function(t, i)
 			local obj = require(folder[i])
 			if (type(obj) == "table") then
-				obj.Aero = Aero
+				setmetatable(obj, {__index = Aero})
 				if (type(obj.Init) == "function") then
 					obj:Init(Aero)
 				end

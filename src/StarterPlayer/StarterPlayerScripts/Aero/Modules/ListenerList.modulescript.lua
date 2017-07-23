@@ -60,7 +60,7 @@ function ListenerList:BindActionAtPriority(name, ...)
 end
 
 
-function Listener:DisconnectEvents()
+function ListenerList:DisconnectEvents()
 	for _,l in pairs(self._listeners) do
 		if (l.Connected) then
 			l:Disconnect()
@@ -70,7 +70,7 @@ function Listener:DisconnectEvents()
 end
 
 
-function Listener:DisconnectRenderSteps()
+function ListenerList:DisconnectRenderSteps()
 	local runService = game:GetService("RunService")
 	for _,n in pairs(self._renderStepNames) do
 		runService:UnbindFromRenderStep(n)
@@ -79,7 +79,7 @@ function Listener:DisconnectRenderSteps()
 end
 
 
-function Listener:DisconnectActions()
+function ListenerList:DisconnectActions()
 	local ctxService = game:GetService("ContextActionService")
 	for _,n in pairs(self._actionNames) do
 		ctxService:UnbindAction(n)
