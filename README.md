@@ -272,3 +272,11 @@ end
 
 return MyController
 ```
+
+# Internal
+AeroGameFramework is run by two scripts, `AeroServer` and `AeroClient`. The `AeroServer` script is located under `ServerScriptService`, and the `AeroClient` script is located under `StarterPlayerScripts`. These two scripts take care of executing the modules within the game framework. For the sake of stability, it is recommended that these scripts are not edited.
+
+When looking at in-game statistics, such as memory usage, it is important to note that all modules created within the framework will be listed under either of these two scripts.
+
+## Init & Start Methods
+For both server-side services and client-side controllers, the `Init` methods are executed one-by-one on the _same_ thread. Each `Init` method must finish before the next one is called. Once every single `Init` is finished, the framework will then call each `Start` method on _different_ threads. Therefore, it is not wise to yield within any `Init` method, but doing so in the `Start` methods will be fine.
