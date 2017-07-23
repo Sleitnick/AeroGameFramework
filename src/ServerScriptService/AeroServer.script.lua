@@ -6,18 +6,17 @@
 
 local AeroServer = {
 	Services = {};
-	Objects  = {};
+	Modules  = {};
 	Shared   = {};
 }
 
 
 local servicesFolder = game:GetService("ServerStorage"):WaitForChild("Services")
-local objectsFolder = game:GetService("ServerStorage"):WaitForChild("Objects")
+local modulesFolder = game:GetService("ServerStorage"):WaitForChild("Modules")
 local sharedFolder = game:GetService("ReplicatedStorage"):WaitForChild("Shared")
 
 local remoteServices = Instance.new("Folder")
 remoteServices.Name = "AeroRemoteServices"
-
 
 
 function AeroServer:RegisterEvent(eventName)
@@ -123,8 +122,8 @@ end
 
 function Init()
 	
-	-- Lazy-load objects and shared modules:
-	LazyLoadSetup(AeroServer.Objects, objectsFolder, true)
+	-- Lazy-load server and shared modules:
+	LazyLoadSetup(AeroServer.Objects, modulesFolder, true)
 	LazyLoadSetup(AeroServer.Shared, sharedFolder, false)
 	
 	-- Load services:

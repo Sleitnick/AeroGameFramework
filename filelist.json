@@ -3,12 +3,17 @@
     "paths": [
         "ServerScriptService/AeroServer.script.lua", 
         "ReplicatedStorage/Shared/Event.modulescript.lua", 
-        "StarterPlayer/StarterPlayerScripts/Modules/EMPTY", 
-        "StarterPlayer/StarterPlayerScripts/Objects/EMPTY", 
         "ServerStorage/Services/DataService.modulescript.lua", 
-        "ServerStorage/Objects/DataStoreCache.modulescript.lua", 
+        "ServerStorage/Modules/DataStoreCache.modulescript.lua", 
         "StarterPlayer/StarterPlayerScripts/AeroClient.localscript.lua", 
-        "ServerStorage/Objects/DataStoreCache.SafeDataStore.modulescript.lua", 
-        "ServerStorage/Objects/DataStoreCache.SafeDataStore.MockDataStoreService.modulescript.lua"
+        "StarterPlayer/StarterPlayerScripts/Modules/Main.Tween.module.lua", 
+        "StarterPlayer/StarterPlayerScripts/Modules/Main.Damping.module.lua", 
+        "ServerStorage/Modules/DataStoreCache.SafeDataStore.modulescript.lua", 
+        "StarterPlayer/StarterPlayerScripts/Controllers/Main.Fade.module.lua", 
+        "StarterPlayer/StarterPlayerScripts/Modules/Main.SmoothDamp.module.lua", 
+        "StarterPlayer/StarterPlayerScripts/Modules/Main.ListenerList.module.lua", 
+        "StarterPlayer/StarterPlayerScripts/Modules/Main.Tween.Easing.module.lua", 
+        "StarterPlayer/StarterPlayerScripts/Controllers/Main.TaskScheduler.module.lua", 
+        "ServerStorage/Modules/DataStoreCache.SafeDataStore.MockDataStoreService.modulescript.lua"
     ]
 }

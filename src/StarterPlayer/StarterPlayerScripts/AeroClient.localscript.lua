@@ -5,15 +5,15 @@
 
 
 local Aero = {
-	Modules  = {};
-	Objects  = {};
-	Shared   = {};
-	Services = {};
+	Controllers = {};
+	Modules     = {};
+	Shared      = {};
+	Services    = {};
 }
 
 
+local controllersFolder = script.Parent:WaitForChild("Controllers")
 local modulesFolder = script.Parent:WaitForChild("Modules")
-local objectsFolder = script.Parent:WaitForChild("Objects")
 local sharedFolder = game:GetService("ReplicatedStorage"):WaitForChild("Shared")
 
 
@@ -85,34 +85,34 @@ function LazyLoadSetup(tbl, folder)
 end
 
 
-function LoadModule(module)
-	local mod = require(module)
-	Aero.Modules[module.Name] = mod
-	mod._events = {}
-	setmetatable(mod, {__index = Aero})
-	if (type(mod.Init) == "function") then
-		mod:Init()
+function LoadController(module)
+	local controller = require(module)
+	Aero.Controllers[module.Name] = controller
+	controller._events = {}
+	setmetatable(controller, {__index = Aero})
+	if (type(controller.Init) == "function") then
+		controller:Init()
 	end
 end
 
 
 function Init()
 	
-	-- Lazy load objects:
-	LazyLoadSetup(Aero.Objects, objectsFolder)
+	-- Lazy load modules:
+	LazyLoadSetup(Aero.Modules, objectsFolder)
 	LazyLoadSetup(Aero.Shared, sharedFolder)
 	
 	-- Load server-side services:
 	LoadServices()
 	
-	-- Load modules:
-	for _,module in pairs(modulesFolder:GetChildren()) do
+	-- Load controllers:
+	for _,module in pairs(controllersFolder:GetChildren()) do
 		if (module:IsA("ModuleScript")) then
-			LoadModule(module)
+			LoadController(module)
 		end
 	end
 	
-	-- Start modules:
+	-- Start controllers:
 	for _,mod in pairs(Aero.Modules) do
 		if (type(mod.Start) == "function") then
 			coroutine.resume(coroutine.create(mod.Start), mod)
