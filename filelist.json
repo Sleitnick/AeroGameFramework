@@ -5,15 +5,15 @@
         "ReplicatedStorage/Shared/Event.modulescript.lua", 
         "ServerStorage/Services/DataService.modulescript.lua", 
         "ServerStorage/Modules/DataStoreCache.modulescript.lua", 
+        "StarterPlayer/StarterPlayerScripts/Modules/Tween.module.lua", 
         "StarterPlayer/StarterPlayerScripts/AeroClient.localscript.lua", 
-        "StarterPlayer/StarterPlayerScripts/Modules/Main.Tween.module.lua", 
-        "StarterPlayer/StarterPlayerScripts/Modules/Main.Damping.module.lua", 
+        "StarterPlayer/StarterPlayerScripts/Modules/Damping.module.lua", 
+        "StarterPlayer/StarterPlayerScripts/Controllers/Fade.module.lua", 
+        "StarterPlayer/StarterPlayerScripts/Modules/SmoothDamp.module.lua", 
+        "StarterPlayer/StarterPlayerScripts/Modules/ListenerList.module.lua", 
+        "StarterPlayer/StarterPlayerScripts/Modules/Tween.Easing.module.lua", 
         "ServerStorage/Modules/DataStoreCache.SafeDataStore.modulescript.lua", 
-        "StarterPlayer/StarterPlayerScripts/Controllers/Main.Fade.module.lua", 
-        "StarterPlayer/StarterPlayerScripts/Modules/Main.SmoothDamp.module.lua", 
-        "StarterPlayer/StarterPlayerScripts/Modules/Main.ListenerList.module.lua", 
-        "StarterPlayer/StarterPlayerScripts/Modules/Main.Tween.Easing.module.lua", 
-        "StarterPlayer/StarterPlayerScripts/Controllers/Main.TaskScheduler.module.lua", 
+        "StarterPlayer/StarterPlayerScripts/Controllers/TaskScheduler.module.lua", 
         "ServerStorage/Modules/DataStoreCache.SafeDataStore.MockDataStoreService.modulescript.lua"
     ]
 }
