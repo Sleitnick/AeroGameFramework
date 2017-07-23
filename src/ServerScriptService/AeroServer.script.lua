@@ -11,9 +11,9 @@ local AeroServer = {
 }
 
 
-local servicesFolder = game:GetService("ServerStorage"):WaitForChild("Services")
-local modulesFolder = game:GetService("ServerStorage"):WaitForChild("Modules")
-local sharedFolder = game:GetService("ReplicatedStorage"):WaitForChild("Shared")
+local servicesFolder = game:GetService("ServerStorage"):WaitForChild("Aero"):WaitForChild("Services")
+local modulesFolder = game:GetService("ServerStorage"):WaitForChild("Aero"):WaitForChild("Modules")
+local sharedFolder = game:GetService("ReplicatedStorage"):WaitForChild("Aero"):WaitForChild("Shared")
 
 local remoteServices = Instance.new("Folder")
 remoteServices.Name = "AeroRemoteServices"
@@ -140,7 +140,7 @@ function Init()
 		end
 	end
 	
-	remoteServices.Parent = game:GetService("ReplicatedStorage")
+	remoteServices.Parent = game:GetService("ReplicatedStorage").Aero
 	
 end
 
