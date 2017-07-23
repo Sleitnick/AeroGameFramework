@@ -63,7 +63,7 @@ function AeroServer:RegisterClientFunction(funcName, func)
 	local remoteFunc = Instance.new("RemoteFunction", self._remoteFolder)
 	remoteFunc.Name = funcName
 	remoteFunc.OnServerInvoke = function(...)
-		func(self.Client, ...)
+		return func(self.Client, ...)
 	end
 	return remoteFunc
 end
