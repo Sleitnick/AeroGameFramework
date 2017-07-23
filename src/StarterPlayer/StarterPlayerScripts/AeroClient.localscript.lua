@@ -99,7 +99,7 @@ end
 function Init()
 	
 	-- Lazy load modules:
-	LazyLoadSetup(Aero.Modules, objectsFolder)
+	LazyLoadSetup(Aero.Modules, modulesFolder)
 	LazyLoadSetup(Aero.Shared, sharedFolder)
 	
 	-- Load server-side services:

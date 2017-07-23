@@ -226,7 +226,7 @@ end
 
 
 function DataService:Init()
-	Cache = self.Objects.DataStoreCache
+	Cache = self.Modules.DataStoreCache
 	globalCache = Cache.new("global", "global")
 end
 
