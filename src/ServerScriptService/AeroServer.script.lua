@@ -123,7 +123,7 @@ end
 function Init()
 	
 	-- Lazy-load server and shared modules:
-	LazyLoadSetup(AeroServer.Objects, modulesFolder, true)
+	LazyLoadSetup(AeroServer.Modules, modulesFolder, true)
 	LazyLoadSetup(AeroServer.Shared, sharedFolder, false)
 	
 	-- Load services:
