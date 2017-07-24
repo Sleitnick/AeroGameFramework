@@ -12,14 +12,14 @@ require(932606289)()
 # Structure
 AeroGameFramework is structured into three categories: Server, Client, and Shared.
 
-- `[Server] ServerStorage.Services`
-- `[Server] ServerStorage.Modules`
-- `[Client] StarterPlayerScripts.Controllers`
-- `[Client] StarterPlayerScripts.Modules`
-- `[Shared] ReplicatedStorage.Shared`
+- `[Server] ServerStorage.Aero.Services`
+- `[Server] ServerStorage.Aero.Modules`
+- `[Client] StarterPlayerScripts.Aero.Controllers`
+- `[Client] StarterPlayerScripts.Aero.Modules`
+- `[Shared] ReplicatedStorage.Aero.Shared`
 
 ## Server
-`ServerStorage.Services` & `ServerStorage.Modules`
+`ServerStorage.Aero.Services` & `ServerStorage.Aero.Modules`
 
 #### Services
 Services are modules that are initialized and ran at runtime. All services are exposed to each other. Services can also expose functions and events to the client.
@@ -28,7 +28,7 @@ Services are modules that are initialized and ran at runtime. All services are e
 Modules are lazy-loaded modules that services can access as needed.
 
 ## Client
-`StarterPlayerScripts.Controllers` & `StarterPlayerScripts.Modules`
+`StarterPlayerScripts.Aero.Controllers` & `StarterPlayerScripts.Aero.Modules`
 
 #### Controllers
 Client controllers work similarly to server-side services, whereas all the modules are initialized and started at runtime and all modules are exposed to each other. Services that expose client-side methods and events can be accessed with these controller modules.
@@ -37,7 +37,7 @@ Client controllers work similarly to server-side services, whereas all the modul
 Client-side modules have the exact functionality as server-side modules, except that they are ran on the client.
 
 ## Shared
-`ReplicatedStorage.Shared`
+`ReplicatedStorage.Aero.Shared`
 
 Shared modules are modules that can be used by both the client and the server.
 
@@ -274,7 +274,7 @@ return MyController
 ```
 
 # Internal
-AeroGameFramework is run by two scripts, `AeroServer` and `AeroClient`. The `AeroServer` script is located under `ServerScriptService`, and the `AeroClient` script is located under `StarterPlayerScripts`. These two scripts take care of executing the modules within the game framework. For the sake of stability, it is recommended that these scripts are not edited.
+AeroGameFramework is run by two scripts, `AeroServer` and `AeroClient`. The `AeroServer` script is located under `ServerScriptService.Aero`, and the `AeroClient` script is located under `StarterPlayerScripts.Aero`. These two scripts take care of executing the modules within the game framework. For the sake of stability, it is recommended that these scripts are not edited.
 
 When looking at in-game statistics, such as memory usage, it is important to note that all modules created within the framework will be listed under either of these two scripts.
 
