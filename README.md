@@ -64,6 +64,7 @@ return MyService
 - `service.Services` Table of all other services, referenced by the name of the ModuleScript
 - `service.Objects` Table of all objects, referenced by the name of the ModuleScript
 - `service.Shared` Table of all shared modules, referenced by the name of the ModuleScript
+- `service.Client.Server` References back to the service, so client-facing methods can invoke server-facing methods
 #### Injected Methods:
 - `Void        service:RegisterEvent(String eventName)`
 - `Void        service:RegisterClientEvent(String eventName)`
