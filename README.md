@@ -215,6 +215,28 @@ end
 return MyService
 ```
 
+## Service client method invoking server method
+Sometimes your client-facing methods need to invoke your server-facing methods. Reference the `self.Server` field to do this:
+```lua
+local MyService = {Client = {}}
+
+function MyService:DoSomethingServerSide()
+  return math.random()
+end
+
+-- Client-facing method:
+function MyService.Client:GetRandom()
+  -- Invoke server-facing method:
+  local number = self.Server:DoSomethingServerSide()
+  return number
+end
+
+function MyService:Start() end
+function MyService:Init() end
+
+return MyService
+```
+
 # Basic Examples - Client
 
 ## Client Controller
