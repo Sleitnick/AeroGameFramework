@@ -62,7 +62,9 @@ end
 function AeroServer:RegisterClientFunction(funcName, func)
 	local remoteFunc = Instance.new("RemoteFunction", self._remoteFolder)
 	remoteFunc.Name = funcName
-	remoteFunc.OnServerInvoke = func
+	remoteFunc.OnServerInvoke = function(...)
+		return func(self.Client, ...)
+	end
 	return remoteFunc
 end
 
@@ -105,6 +107,11 @@ function LoadService(module)
 	service._clientEvents = {}
 	service._remoteFolder = remoteFolder
 	
+end
+
+
+function InitService(service)
+	
 	-- Initialize:
 	if (type(service.Init) == "function") then
 		service:Init()
@@ -127,16 +134,22 @@ function Init()
 	LazyLoadSetup(AeroServer.Shared, sharedFolder, false)
 	
 	-- Load services:
+	local modules = {}
 	for _,module in pairs(servicesFolder:GetChildren()) do
 		if (module:IsA("ModuleScript")) then
 			LoadService(module)
 		end
 	end
 	
+	-- Initialize services:
+	for _,service in pairs(AeroServer.Services) do
+		InitService(service)
+	end
+	
 	-- Start services:
 	for _,service in pairs(AeroServer.Services) do
 		if (type(service.Start) == "function") then
-			coroutine.resume(coroutine.create(service.Start), service)
+			coroutine.wrap(service.Start)(service)
 		end
 	end
 	
