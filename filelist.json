@@ -2,6 +2,7 @@
     "url": "https://raw.githubusercontent.com/Sleitnick/AeroGameFramework/master/src/", 
     "paths": [
         "ServerScriptService/Aero/AeroServer.script.lua", 
+        "ReplicatedStorage/Aero/Shared/Date.modulescript.lua", 
         "ReplicatedStorage/Aero/Shared/Event.modulescript.lua", 
         "ServerStorage/Aero/Services/DataService.modulescript.lua", 
         "ServerStorage/Aero/Services/StoreService.modulescript.lua", 
