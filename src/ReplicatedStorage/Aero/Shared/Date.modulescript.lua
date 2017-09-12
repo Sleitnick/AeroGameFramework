@@ -219,7 +219,7 @@ function Date:ToLocal()
 end
 
 
--- See Python date commands:
+-- See GNU date commands:
 -- https://www.cyberciti.biz/faq/linux-unix-formatting-dates-for-display/
 function Date:Format(str)
 	local d = self._d
