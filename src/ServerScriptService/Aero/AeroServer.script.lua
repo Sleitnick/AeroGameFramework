@@ -27,8 +27,9 @@ end
 
 
 function AeroServer:RegisterClientEvent(eventName)
-	local event = Instance.new("RemoteEvent", self._remoteFolder)
+	local event = Instance.new("RemoteEvent")
 	event.Name = eventName
+	event.Parent = self._remoteFolder
 	self._clientEvents[eventName] = event
 	return event
 end
@@ -59,12 +60,23 @@ function AeroServer:ConnectClientEvent(eventName, func)
 end
 
 
+function AeroServer:WaitForEvent(eventName)
+	return self._events[eventName]:Wait()
+end
+
+
+function AeroServer:WaitForClientEvent(eventName)
+	return self._clientEvents[eventName]:Wait()
+end
+
+
 function AeroServer:RegisterClientFunction(funcName, func)
-	local remoteFunc = Instance.new("RemoteFunction", self._remoteFolder)
+	local remoteFunc = Instance.new("RemoteFunction")
 	remoteFunc.Name = funcName
 	remoteFunc.OnServerInvoke = function(...)
 		return func(self.Client, ...)
 	end
+	remoteFunc.Parent = self._remoteFolder
 	return remoteFunc
 end
 
@@ -92,8 +104,9 @@ end
 -- Load service from module:
 function LoadService(module)
 	
-	local remoteFolder = Instance.new("Folder", remoteServices)
+	local remoteFolder = Instance.new("Folder")
 	remoteFolder.Name = module.Name
+	remoteFolder.Parent = remoteServices
 	
 	local service = require(module)
 	AeroServer.Services[module.Name] = service

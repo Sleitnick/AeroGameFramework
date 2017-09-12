@@ -35,6 +35,11 @@ function Aero:ConnectEvent(eventName, func)
 end
 
 
+function Aero:WaitForEvent(eventName)
+	return self._events[eventName]:Wait()
+end
+
+
 function LoadService(serviceFolder)
 	local service = {}
 	Aero.Services[serviceFolder.Name] = service
@@ -74,6 +79,7 @@ function LazyLoadSetup(tbl, folder)
 		__index = function(t, i)
 			local obj = require(folder[i])
 			if (type(obj) == "table") then
+				obj._events = {}
 				setmetatable(obj, mt)
 				if (type(obj.Init) == "function") then
 					obj:Init(Aero)
