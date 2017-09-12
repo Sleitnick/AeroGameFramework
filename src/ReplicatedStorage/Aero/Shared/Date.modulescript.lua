@@ -27,12 +27,14 @@
 
 		date:ToJSON()
 		date:ToSeconds()
-		Date:GetTimezoneHourOffset()
-		Date:ToUTC()
-		Date:ToLocal()
-		Date:ToDateString()
-		Date:ToTimeString()
-		Date:ToString()
+		date:GetTimezoneHourOffset()
+		date:Format(strFormat)
+		date:ToUTC()
+		date:ToLocal()
+		date:ToISOString()
+		date:ToDateString()
+		date:ToTimeString()
+		date:ToString()
 
 
 	PROPERTIES:
