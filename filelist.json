@@ -4,6 +4,7 @@
         "ServerScriptService/Aero/AeroServer.script.lua", 
         "ReplicatedStorage/Aero/Shared/Date.modulescript.lua", 
         "ReplicatedStorage/Aero/Shared/Event.modulescript.lua", 
+        "ReplicatedStorage/Aero/Shared/TableUtil.modulescript.lua", 
         "ServerStorage/Aero/Services/DataService.modulescript.lua", 
         "ServerStorage/Aero/Services/StoreService.modulescript.lua", 
         "ServerStorage/Aero/Modules/DataStoreCache.modulescript.lua", 
