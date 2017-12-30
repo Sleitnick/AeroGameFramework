@@ -22,6 +22,7 @@
 
 
 local CO_WRAP = coroutine.wrap
+local BLANK_FUNC = function() end
 
 
 local Event = {}
@@ -36,6 +37,7 @@ function Event.new()
 	local self = setmetatable({
 		_connections = {};
 		_destroyed = false;
+		_firing = false;
 	}, Event)
 	
 	return self
@@ -44,11 +46,13 @@ end
 
 
 function Event:Fire(...)
+	self._firing = true
 	local connections = self._connections
 	for i = 1,#connections do
 		local f = connections[i]._func
 		CO_WRAP(f)(...)
 	end
+	self._firing = false
 end
 
 
@@ -73,19 +77,39 @@ end
 
 
 function Event:DisconnectAll()
-	for _,c in pairs(self._connections) do
-		c.IsConnected = false
+	local function DisconnectAll()
+		for _,c in pairs(self._connections) do
+			c.IsConnected = false
+		end
+		self._connections = {}
 	end
-	self._connections = {}
+	if (self._firing) then
+		for _,c in pairs(self._connections) do
+			c._func = BLANK_FUNC
+		end
+		spawn(function()
+			DisconnectAll()
+		end)
+	else
+		DisconnectAll()
+	end
 end
 
 
 function Event:Disconnect(connection)
-	for i,c in pairs(self._connections) do
-		if (c == connection) then
-			table.remove(self._connections, i)
-			break
+	local function Disconnect()
+		for i,c in pairs(self._connections) do
+			if (c == connection) then
+				table.remove(self._connections, i)
+				break
+			end
 		end
+	end
+	if (self._firing) then		
+		connection._func = BLANK_FUNC
+		spawn(Disconnect)
+	else
+		Disconnect()
 	end
 end
 
