@@ -58,11 +58,14 @@ end
 
 function Event:Wait()
 	local c, returnArgs = nil, nil
+	local be = Instance.new("BindableEvent")
 	c = self:Connect(function(...)
 		c:Disconnect()
 		returnArgs = {...}
+		be:Fire()
 	end)
-	while (not returnArgs) do wait() end
+	be.Event:Wait()
+	be:Destroy()
 	return unpack(returnArgs)
 end
 
