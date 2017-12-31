@@ -9,6 +9,8 @@
 	Void      Mouse:Lock()
 	Void      Mouse:LockCenter()
 	Void      Mouse:Unlock()
+	Void      Mouse:SetMouseIconEnabled(isEnabled)
+	Boolean   Mouse:IsMouseIconEnabled()
 	Many      Mouse:Cast(ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
 	Many      Mouse:CastWithIgnoreList(ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
 	Many      Mouse:CastWithWhitelist(whitelistDescendantsTable, ignoreWater)
@@ -57,6 +59,16 @@ end
 
 function Mouse:Unlock()
 	userInput.MouseBehavior = Enum.MouseBehavior.Default
+end
+
+
+function Mouse:SetMouseIconEnabled(enabled)
+	userInput.MouseIconEnabled = enabled
+end
+
+
+function Mouse:IsMouseIconEnabled()
+	return userInput.MouseIconEnabled
 end
 
 
