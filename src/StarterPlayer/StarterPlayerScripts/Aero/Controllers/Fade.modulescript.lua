@@ -77,18 +77,20 @@ local DEFAULT_ASYNC    = false
 local fadeGui = Instance.new("ScreenGui")
 	fadeGui.Name = "FadeGui"
 	fadeGui.DisplayOrder = 9
+	fadeGui.ResetOnSpawn = false
 
 -- Main overlay frame:
-local fade = Instance.new("Frame", fadeGui)
+local fade = Instance.new("Frame")
 	fade.Name = "Fade"
 	fade.Size = UDim2.new(1, 500, 1, 500)
 	fade.Position = UDim2.new(0, -250, 0, -250)
 	fade.BorderSizePixel = 0
 	fade.BackgroundColor3 = Color3.new(0, 0, 0)
 	fade.BackgroundTransparency = 1
+	fade.Parent = fadeGui
 
 -- Text label:
-local label = Instance.new("TextLabel", fade)
+local label = Instance.new("TextLabel")
 	label.Name = "Label"
 	label.BackgroundTransparency = 1
 	label.Font = Enum.Font.SourceSans
@@ -98,6 +100,7 @@ local label = Instance.new("TextLabel", fade)
 	label.Position = UDim2.new(0, 250, 0, 250)
 	label.TextColor3 = Color3.new(1, 1, 1)
 	label.Text = ""
+	label.Parent = fade
 
 
 local easingStyle = Enum.EasingStyle.Quad
