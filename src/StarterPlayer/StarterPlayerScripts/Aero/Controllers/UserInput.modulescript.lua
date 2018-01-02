@@ -29,11 +29,6 @@ local UserInput = {}
 local modules = {}
 
 
-function UserInput:Start()
-	
-end
-
-
 function UserInput:Init()
 	
 	local fallbackIndex = getmetatable(self).__index
