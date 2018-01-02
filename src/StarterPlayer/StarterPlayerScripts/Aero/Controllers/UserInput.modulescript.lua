@@ -44,9 +44,4 @@ function UserInput:Get(moduleName)
 end
 
 
-function UserInput:Init()
-	
-end
-
-
 return UserInput
