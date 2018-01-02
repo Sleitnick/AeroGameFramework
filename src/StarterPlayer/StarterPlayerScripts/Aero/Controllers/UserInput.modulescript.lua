@@ -7,17 +7,12 @@
 	UserInput simply encapsulates all user input modules.
 	
 	
-	UserInput.(ModuleName)
-	
-	UserInput.Keyboard
-	UserInput.Mouse
-	UserInput.Gamepad
-	UserInput.Mobile
+	UserInput:Get(inputModuleName)
 	
 	
 	Example:
 	
-	local keyboard = userInput.Keyboard
+	local keyboard = userInput:Get("Keyboard")
 	keyboard.KeyDown:Connect(function(key) end)
 	
 --]]
@@ -29,34 +24,27 @@ local UserInput = {}
 local modules = {}
 
 
-function UserInput:Init()
-	
-	local fallbackIndex = getmetatable(self).__index
-	
-	setmetatable(self, {
-		__index = function(t, index)
-			local value = modules[index] or fallbackIndex[index]
-			if (value == nil and type(index) == "string") then
-				local moduleScript = script:FindFirstChild(index)
-				if (moduleScript and moduleScript:IsA("ModuleScript")) then
-					-- Load, initiate, start, and return module:
-					local module = require(moduleScript)
-					setmetatable(module, {
-						__index = fallbackIndex;
-					})
-					if (type(module.Init) == "function") then
-						module:Init()
-					end
-					if (type(module.Start) == "function") then
-						coroutine.wrap(module.Start)(module)
-					end
-					modules[index] = module
-					value = module
-				end
+function UserInput:Get(moduleName)
+	local module = modules[moduleName]
+	if (not module) then
+		local moduleScript = script:FindFirstChild(moduleName)
+		if (moduleScript and moduleScript:IsA("ModuleScript")) then
+			module = require(moduleScript)
+			setmetatable(module, getmetatable(self))
+			if (type(module.Init) == "function") then
+				module:Init()
 			end
-			return value
-		end;
-	})
+			if (type(module.Start) == "function") then
+				coroutine.wrap(module.Start)(module)
+			end
+			modules[moduleName] = module
+		end
+	end
+	return module
+end
+
+
+function UserInput:Init()
 	
 end
 
