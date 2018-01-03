@@ -6,7 +6,29 @@
 
 local FILELIST_URL = "https://raw.githubusercontent.com/Sleitnick/AeroGameFramework/master/filelist.json"
 
+if (_G._INSTALLING_AERO_GAME_FRAMEWORK) then
+	warn("Framework is already in the process of being installed")
+	return
+end
+
+_G._INSTALLING_AERO_GAME_FRAMEWORK = true
+
 print("Installing AeroGameFramework...")
+
+local guiModel = game:GetService("InsertService"):LoadAsset(1298004775)
+guiModel.Parent = game:GetService("ServerStorage")
+local gui = guiModel:WaitForChild("AeroGameFrameworkGui")
+
+local guiProgressFrame = gui:WaitForChild("InstallerFrame"):WaitForChild("Content"):WaitForChild("Progress")
+local guiProgressBar = guiProgressFrame:WaitForChild("Bar")
+local guiProgressLabel = guiProgressFrame:WaitForChild("Label")
+local guiProgressPercent = guiProgressFrame:WaitForChild("Percent")
+guiProgressBar.Size = UDim2.new(0, 0, 1, 0)
+guiProgressLabel.Text = "Initializing..."
+guiProgressPercent.Text = ""
+gui.Parent = game:GetService("CoreGui")
+gui.Archivable = false
+guiModel:Destroy()
 
 local http = game:GetService("HttpService")
 local httpEnabled = http.HttpEnabled
@@ -86,9 +108,23 @@ for i,path in pairs(filelist.paths) do
 			printPrefix = "[EXISTED]"
 		end
 	end
-	print(("[%i/%i]"):format(i, numPaths), printPrefix, (scriptObj or parent):GetFullName())
+	guiProgressBar.Size = UDim2.new(i / numPaths, 0, 1, 0)
+	guiProgressPercent.Text = ("%i%%"):format((i / numPaths) * 100)
+	guiProgressLabel.Text = (printPrefix .. " " .. (scriptObj or parent).Name)
 end
 
 http.HttpEnabled = httpEnabled
 
 print("AeroGameFramework installed")
+
+guiProgressBar.Size = UDim2.new(1, 0, 1, 0)
+guiProgressPercent.Text = "100%"
+guiProgressLabel.Text = "Framework installed"
+
+wait(3)
+
+gui.InstallerFrame:TweenPosition(UDim2.new(0.5, 0, 0, -gui.InstallerFrame.AbsoluteSize.Y), "In", "Quart", 0.5)
+wait(0.6)
+gui:Destroy()
+
+_G._INSTALLING_AERO_GAME_FRAMEWORK = false
