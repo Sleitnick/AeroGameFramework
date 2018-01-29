@@ -25,11 +25,14 @@ local modules = {}
 
 
 function UserInput:Get(moduleName)
-	local module = modules[moduleName]
-	if (not module) then
-		local moduleScript = script:FindFirstChild(moduleName)
-		if (moduleScript and moduleScript:IsA("ModuleScript")) then
-			module = require(moduleScript)
+	return modules[moduleName]
+end
+
+
+function UserInput:Init()
+	for _,obj in pairs(script:GetChildren()) do
+		if (obj:IsA("ModuleScript")) then
+			local module = require(obj)
 			setmetatable(module, getmetatable(self))
 			if (type(module.Init) == "function") then
 				module:Init()
@@ -37,10 +40,9 @@ function UserInput:Get(moduleName)
 			if (type(module.Start) == "function") then
 				coroutine.wrap(module.Start)(module)
 			end
-			modules[moduleName] = module
+			modules[obj.Name] = module
 		end
 	end
-	return module
 end
 
 
