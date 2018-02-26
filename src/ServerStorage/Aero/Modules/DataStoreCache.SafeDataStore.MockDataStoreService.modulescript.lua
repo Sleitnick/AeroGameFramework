@@ -83,6 +83,14 @@ function API:GetDataStore(name, scope)
 	function d:GetAsync(k)
 		return data[k]
 	end
+	function d:RemoveAsync(k)
+		data[k] = nil
+		if (updateListeners[k]) then
+			for _,f in pairs(updateListeners[k]) do
+				spawn(function() f(nil) end)
+			end
+		end
+	end
 	function d:IncrementAsync(k, delta)
 		if (delta == nil) then delta = 1 end
 		assert(type(delta) == "number", "Can only increment numbers")
@@ -137,6 +145,10 @@ function API:GetOrderedDataStore(name, scope)
 	function d:IncrementAsync(k, delta)
 		dataStore:IncrementAsync(k, delta)
 		allData[k] = ((allData[k] or 0) + delta)
+	end
+	function d:RemoveAsync(k)
+		dataStore:RemoveAsync(k)
+		allData[k] = nil
 	end
 	function d:GetSortedAsync(isAscending, pageSize, minValue, maxValue)
 		assert(type(pageSize) == "number" and math.floor(pageSize) > 0, "PageSize must be an integer and greater than 0")

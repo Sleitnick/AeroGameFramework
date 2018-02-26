@@ -72,6 +72,11 @@ function SafeDataStore:SetAsync(key, value)
 end
 
 
+function SafeDataStore:RemoveAsync(key)
+	return self:Try("RemoveAsync", key)
+end
+
+
 function SafeDataStore:UpdateAsync(key, transformFunction)
 	return self:Try("UpdateAsync", key, transformFunction)
 end

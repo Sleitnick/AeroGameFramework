@@ -8,6 +8,7 @@
 	
 		DataService:Set(player, key, value)
 		DataService:Get(player, key)
+		DataService:Remove(player, key)
 		DataService:Flush(player)
 		DataService:FlushKey(player, key)
 		DataService:FlushAll()
@@ -15,9 +16,11 @@
 		
 		DataService:SetGlobal(key, value)
 		DataService:GetGlobal(key)
+		DataService:RemoveGlobal(key)
 		
 		DataService:SetCustom(dataStoreName, dataStoreScope, key, value)
 		DataService:GetCustom(dataStoreName, dataStoreScope, key)
+		DataService:RemoveCustom(dataStoreName, dataStoreScope, key)
 		DataService:FlushCustom(dataStoreName, dataStoreScope, key)
 		DataService:FlushAllCustom(dataStoreName, dataStoreScope, key)
 		
@@ -86,6 +89,11 @@ function DataService:Get(player, key)
 end
 
 
+function DataService:Remove(player, key)
+	GetPlayerCache(player):Remove(key)
+end
+
+
 function DataService:SetGlobal(key, value)
 	globalCache:Set(key, value)
 end
@@ -96,6 +104,11 @@ function DataService:GetGlobal(key)
 end
 
 
+function DataService:RemoveGlobal(key)
+	globalCache:Remove(key)
+end
+
+
 function DataService:SetCustom(name, scope, key, value)
 	GetCustomCache(name, scope):Set(key, value)
 end
@@ -103,6 +116,11 @@ end
 
 function DataService:GetCustom(name, scope, key)
 	return GetCustomCache(name, scope):Get(key)
+end
+
+
+function DataService:RemoveCustom(name, scope, key)
+	GetCustomCache(name, scope):Remove(key)
 end
 
 

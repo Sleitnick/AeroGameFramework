@@ -11,6 +11,7 @@
 	
 	cache:Get(key)
 	cache:Set(key, value)
+	cache:Remove(key)
 	cache:Load(key)
 	cache:Flush(key)
 	cache:FlushAll()
@@ -109,6 +110,15 @@ function Cache:Set(key, value)
 	else
 		v[1] = value
 		v[2] = false
+	end
+end
+
+
+function Cache:Remove(key)
+	local v = self.Data[key]
+	if (v ~= nil) then
+		self.DataStore:RemoveAsync(key)
+		self.Data[key] = nil
 	end
 end
 
