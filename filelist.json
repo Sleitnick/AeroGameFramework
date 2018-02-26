@@ -16,6 +16,7 @@
         "StarterPlayer/StarterPlayerScripts/Aero/Modules/Damping.modulescript.lua", 
         "StarterPlayer/StarterPlayerScripts/Aero/Controllers/Fade.modulescript.lua", 
         "StarterPlayer/StarterPlayerScripts/Aero/Modules/SmoothDamp.modulescript.lua", 
+        "StarterPlayer/StarterPlayerScripts/Aero/Modules/CameraShaker.modulescript.lua", 
         "StarterPlayer/StarterPlayerScripts/Aero/Modules/Tween.Easing.modulescript.lua", 
         "StarterPlayer/StarterPlayerScripts/Aero/Controllers/UserInput.modulescript.lua", 
         "StarterPlayer/StarterPlayerScripts/Aero/Controllers/TaskScheduler.modulescript.lua", 
@@ -23,6 +24,8 @@
         "StarterPlayer/StarterPlayerScripts/Aero/Controllers/UserInput.Mobile.modulescript.lua", 
         "StarterPlayer/StarterPlayerScripts/Aero/Controllers/UserInput.Gamepad.modulescript.lua", 
         "StarterPlayer/StarterPlayerScripts/Aero/Controllers/UserInput.Keyboard.modulescript.lua", 
-        "ServerStorage/Aero/Modules/DataStoreCache.SafeDataStore.MockDataStoreService.modulescript.lua"
+        "ServerStorage/Aero/Modules/DataStoreCache.SafeDataStore.MockDataStoreService.modulescript.lua", 
+        "StarterPlayer/StarterPlayerScripts/Aero/Modules/CameraShaker.CameraShakePresets.modulescript.lua", 
+        "StarterPlayer/StarterPlayerScripts/Aero/Modules/CameraShaker.CameraShakeInstance.modulescript.lua"
     ]
 }
