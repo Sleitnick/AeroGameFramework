@@ -73,6 +73,9 @@ CameraShaker.Presets = require(script.CameraShakePresets)
 
 function CameraShaker.new(renderPriority, callback)
 	
+	assert(type(renderPriority) == "number", "RenderPriority must be a number (e.g.: Enum.RenderPriority.Camera.Value)")
+	assert(type(callback) == "function", "Callback must be a function")
+	
 	local self = setmetatable({
 		_running = false;
 		_renderName = "CameraShaker";
@@ -146,12 +149,14 @@ end
 
 
 function CameraShaker:Shake(shakeInstance)
+	assert(type(shakeInstance) == "table" and shakeInstance._camShakeInstance, "ShakeInstance must be of type CameraShakeInstance")
 	self._camShakeInstances[#self._camShakeInstances + 1] = shakeInstance
 	return shakeInstance
 end
 
 
 function CameraShaker:ShakeSustain(shakeInstance)
+	assert(type(shakeInstance) == "table" and shakeInstance._camShakeInstance, "ShakeInstance must be of type CameraShakeInstance")
 	self._camShakeInstances[#self._camShakeInstances + 1] = shakeInstance
 	shakeInstance:StartFadeIn(shakeInstance.fadeInDuration)
 	return shakeInstance

@@ -30,11 +30,16 @@ function CameraShakeInstance.new(magnitude, roughness, fadeInTime, fadeOutTime)
 	if (fadeInTime == nil) then fadeInTime = 0 end
 	if (fadeOutTime == nil) then fadeOutTime = 0 end
 	
+	assert(type(magnitude) == "number", "Magnitude must be a number")
+	assert(type(roughness) == "number", "Roughness must be a number")
+	assert(type(fadeInTime) == "number", "FadeInTime must be a number")
+	assert(type(fadeOutTime) == "number", "FadeOutTime must be a number")
+	
 	local self = setmetatable({
 		Magnitude = magnitude;
 		Roughness = roughness;
-		PositionInfluence = Vector3.new();
-		RotationInfluence = Vector3.new();
+		PositionInfluence = V3();
+		RotationInfluence = V3();
 		DeleteOnInactive = true;
 		roughMod = 1;
 		magnMod = 1;
@@ -43,6 +48,7 @@ function CameraShakeInstance.new(magnitude, roughness, fadeInTime, fadeOutTime)
 		sustain = (fadeInTime > 0);
 		currentFadeTime = (fadeInTime > 0 and 0 or 1);
 		tick = Random.new():NextNumber(-100, 100);
+		_camShakeInstance = true;
 	}, CameraShakeInstance)
 	
 	return self
@@ -52,29 +58,36 @@ end
 
 function CameraShakeInstance:UpdateShake(dt)
 	
-	local x = (0 + NOISE(self.tick, 0)) * 0.5
-	local y = (0 + NOISE(0, self.tick)) * 0.5
-	local z = (0 + NOISE(self.tick, self.tick)) * 0.5
+	local _tick = self.tick
+	local currentFadeTime = self.currentFadeTime
+	
+	local offset = V3(
+		NOISE(_tick, 0) * 0.5,
+		NOISE(0, _tick) * 0.5,
+		NOISE(_tick, _tick) * 0.5
+	)
 	
 	if (self.fadeInDuration > 0 and self.sustain) then
-		if (self.currentFadeTime < 1) then
-			self.currentFadeTime = self.currentFadeTime + (dt / self.fadeInDuration)
+		if (currentFadeTime < 1) then
+			currentFadeTime = currentFadeTime + (dt / self.fadeInDuration)
 		elseif (self.fadeOutDuration > 0) then
 			self.sustain = false
 		end
 	end
 	
 	if (not self.sustain) then
-		self.currentFadeTime = self.currentFadeTime - (dt / self.fadeOutDuration)
+		currentFadeTime = currentFadeTime - (dt / self.fadeOutDuration)
 	end
 	
 	if (self.sustain) then
-		self.tick = self.tick + (dt * self.Roughness * self.roughMod)
+		self.tick = _tick + (dt * self.Roughness * self.roughMod)
 	else
-		self.tick = self.tick + (dt * self.Roughness * self.roughMod * self.currentFadeTime)
+		self.tick = _tick + (dt * self.Roughness * self.roughMod * currentFadeTime)
 	end
 	
-	return V3(x, y, z) * self.Magnitude * self.magnMod * self.currentFadeTime
+	self.currentFadeTime = currentFadeTime
+	
+	return offset * self.Magnitude * self.magnMod * currentFadeTime
 	
 end
 
