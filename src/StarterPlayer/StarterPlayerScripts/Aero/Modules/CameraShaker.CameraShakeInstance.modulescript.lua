@@ -52,9 +52,9 @@ end
 
 function CameraShakeInstance:UpdateShake(dt)
 	
-	local x = NOISE(self.tick, 0) - 0.5
-	local y = NOISE(0, self.tick) - 0.5
-	local z = NOISE(self.tick, self.tick) - 0.5
+	local x = (0 + NOISE(self.tick, 0)) * 0.5
+	local y = (0 + NOISE(0, self.tick)) * 0.5
+	local z = (0 + NOISE(self.tick, self.tick)) * 0.5
 	
 	if (self.fadeInDuration > 0 and self.sustain) then
 		if (self.currentFadeTime < 1) then

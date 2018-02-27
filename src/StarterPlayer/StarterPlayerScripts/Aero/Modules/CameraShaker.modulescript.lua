@@ -124,10 +124,9 @@ function CameraShaker:Update(dt)
 		
 		if (state == CameraShakeState.Inactive and c.DeleteOnInactive) then
 			self._removeInstances[#self._removeInstances + 1] = i
-			print("Remove shake")
 		elseif (state ~= CameraShakeState.Inactive) then
 			posAddShake = posAddShake + (c:UpdateShake(dt) * c.PositionInfluence)
-			rotAddShake = rotAddShake + (c:UpdateShake(dt) * c.PositionInfluence)
+			rotAddShake = rotAddShake + (c:UpdateShake(dt) * c.RotationInfluence)
 		end
 		
 	end
