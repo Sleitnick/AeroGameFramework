@@ -1,0 +1,613 @@
+<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
+	<External>null</External>
+	<External>nil</External>
+	<Item class="Folder" referent="RBX5650F842018341E5B42939AE3197CE4C">
+		<Properties>
+			<string name="Name">AeroGameFrameworkPlugin</string>
+			<BinaryString name="Tags"></BinaryString>
+		</Properties>
+		<Item class="Script" referent="RBX4663ED92408A4DC1B4257ABFFAFC322F">
+			<Properties>
+				<bool name="Disabled">false</bool>
+				<Content name="LinkedSource"><null></null></Content>
+				<string name="Name">AeroGameFrameworkPlugin</string>
+				<string name="ScriptGuid">{43893C5E-3460-4D3F-95B3-8BB59BAF3355}</string>
+				<ProtectedString name="Source"><![CDATA[-- Aero Game Framework Plugin
+-- Crazyman32
+-- March 16, 2018
+
+
+
+local pluginButton = plugin:CreateToolbar("Aero Game Framework"):CreateButton("Aero Game Framework", "Aero Game Framework", "")
+local dockWidgetPluginGuiInfo = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Left, false, false)
+local pluginGui = plugin:CreateDockWidgetPluginGui("AeroGameFrameworkPlugin_CM32", dockWidgetPluginGuiInfo)
+pluginGui.Name = "AeroGameFrameworkPlugin"
+pluginGui.Title = "Aero Game Framework"
+pluginGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+local dockWidgetPluginGuiInfoPopup = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, true, 500, 200)
+local pluginGuiPopup = plugin:CreateDockWidgetPluginGui("AeroGameFrameworkPluginPopup_CM32", dockWidgetPluginGuiInfoPopup)
+pluginGuiPopup.Name = "AeroGameFrameworkPluginPopup"
+pluginGuiPopup.Title = "Aero Game Framework - Create"
+pluginGuiPopup.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+local gui = game.StarterGui.Gui.DevContainer.Pages
+gui.Parent = pluginGui
+
+local guiCreate = game.StarterGui.Gui.DevContainerPopup.Container
+guiCreate.Parent = pluginGuiPopup
+
+local hierarchy = gui.Hierarchy.ScrollingFrame
+
+local on = false
+
+local Item
+local rootItems = {}
+
+local listeners = {}
+
+
+local username
+function GetUsername()
+	if (not username) then
+		local id = plugin:GetStudioUserId()
+		local success = pcall(function()
+			username = game:GetService("Players"):GetNameFromUserIdAsync(id)
+		end)
+		if (not success) then
+			return "Unknown User"
+		end
+	end
+	return username
+end
+
+
+-- Check to see if the Aero Game Framework is installed:
+function IsFrameworkInstalled()
+	return game:GetService("ReplicatedStorage"):FindFirstChild("Aero") and
+	       game:GetService("ReplicatedStorage").Aero:FindFirstChild("Shared") and
+	       game:GetService("ServerScriptService"):FindFirstChild("Aero") and
+	       game:GetService("ServerStorage"):FindFirstChild("Aero") and
+	       game:GetService("ServerStorage").Aero:FindFirstChild("Services") and
+	       game:GetService("ServerStorage").Aero:FindFirstChild("Modules") and
+	       game:GetService("StarterPlayer"):FindFirstChild("StarterPlayerScripts") and
+	       game:GetService("StarterPlayer").StarterPlayerScripts:FindFirstChild("Aero") and
+	       game:GetService("StarterPlayer").StarterPlayerScripts.Aero:FindFirstChild("Controllers") and
+	       game:GetService("StarterPlayer").StarterPlayerScripts.Aero:FindFirstChild("Modules") and
+	       true or false
+end
+
+
+function GetDate()
+	local date = os.date("*t")
+	local months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}
+	local month = months[date.month]
+	return ("%s %i, %i"):format(month, date.day, date.year)
+end
+
+
+function CreateModuleSource(name, moduleName, methods)
+	
+	local source = script.SourceModuleTemplate.Source
+	
+	local methodsSource = {}
+	local methodsDoc = {}
+	for _,method in pairs(methods) do
+		if (method:sub(1, 3):lower() == "get") then
+			table.insert(methodsSource, "\nfunction " .. moduleName .. ":" .. method .. "\n\treturn nil\nend\n\n")
+		else
+			table.insert(methodsSource, "\nfunction " .. moduleName .. ":" .. method .. "\n\t\nend\n\n")
+		end
+		table.insert(methodsDoc, "\t" .. moduleName .. ":" .. method .. "\n")
+	end
+	
+	local date = GetDate()
+	
+	source = source
+		:gsub("_NAME", name)
+		:gsub("_USERNAME", GetUsername())
+		:gsub("_DATE", date)
+		:gsub("_MODULENAME", moduleName)
+		:gsub("_DOC", table.concat(methodsDoc, ""))
+		:gsub("-- _METHODS", table.concat(methodsSource, ""))
+	
+	return source
+	
+end
+
+
+function ParseMethods(methodsStr)
+	local methods = {}
+	for methodSig in methodsStr:gmatch("[^\r\n]+") do
+		if (methodSig:sub(1, 1):match("%d")) then
+			methodSig = ("_" .. methodSig)
+		end
+		if (methodSig:sub(#methodSig) ~= ")") then
+			methodSig = (methodSig .. "()")
+		end
+		methods[#methods + 1] = methodSig:gsub("%s+", " ")
+	end
+	return methods
+end
+
+
+function SetupPopup()
+	
+	local inputName = guiCreate.ItemName.Input.TextBox
+	local inputMethodsSF = guiCreate.ItemMethods.Input.ScrollingFrame
+	local inputMethods = inputMethodsSF.TextBox
+	
+	inputName:GetPropertyChangedSignal("Text"):Connect(function()
+		inputName.Text = inputName.Text:gsub("[^%a%d_]", "")
+	end)
+	
+	inputMethods:GetPropertyChangedSignal("TextBounds"):Connect(function()
+		inputMethodsSF.CanvasSize = UDim2.new(0, inputMethods.TextBounds.X, 0, inputMethods.TextBounds.Y)
+	end)
+	
+	guiCreate.CreateButton.MouseButton1Click:Connect(function()
+		if (not Item._selectedObj) then return end
+		if (inputName.Text == "") then return end
+		pluginGuiPopup.Enabled = false
+		local methods = ParseMethods(inputMethods.Text)
+		local ms = Instance.new("ModuleScript")
+		ms.Name = inputName.Text
+		--ms.Source = "local " .. ms.Name .. " = {}\n\nreturn " .. ms.Name
+		ms.Source = CreateModuleSource(ms.Name, ms.Name, methods)
+		ms.Parent = Item._selectedObj
+		Item._selected:Expand()
+		plugin:OpenScript(ms)
+	end)
+	
+end
+
+
+function On()
+	
+	if (not Item) then
+		Item = require(script.Item)
+		Item._plugin = plugin
+		Item._pluginGuiPopup = pluginGuiPopup
+	end
+	
+	local isInstalled = nil
+	
+	table.insert(listeners, hierarchy.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+		local size = hierarchy.UIListLayout.AbsoluteContentSize
+		hierarchy.CanvasSize = UDim2.new(0, size.X, 0, size.Y)
+	end))
+	
+	local function CreateRootItems()
+		local topLevelProxyItem = {
+			Frame = {
+				Children = hierarchy;
+			};
+			TopLevel = true;
+		}
+		local serverItem = Item.new(game:GetService("ServerStorage").Aero, 0, topLevelProxyItem, "Server")
+		local clientItem = Item.new(game:GetService("StarterPlayer").StarterPlayerScripts.Aero, 0, topLevelProxyItem, "Client")
+		local sharedItem = Item.new(game:GetService("ReplicatedStorage").Aero.Shared, 0, topLevelProxyItem, "Shared", true)
+		table.insert(rootItems, serverItem)
+		table.insert(rootItems, clientItem)
+		table.insert(rootItems, sharedItem)
+	end
+	
+	local function CheckIfInstalled()
+		local installed = IsFrameworkInstalled()
+		if (installed) then
+			gui.Error.Visible = false
+			gui.Hierarchy.Visible = true
+		else
+			gui.Error.Visible = true
+			gui.Hierarchy.Visible = false
+		end
+		if (installed ~= isInstalled) then
+			isInstalled = installed
+			if (installed) then
+				CreateRootItems()
+			else
+				for _,item in pairs(rootItems) do
+					item:Destroy()
+				end
+				rootItems = {}
+			end
+		end
+	end
+	
+	CheckIfInstalled()
+	
+	local check = {
+		game:GetService("ReplicatedStorage");
+		game:GetService("ServerScriptService");
+		game:GetService("ServerStorage");
+		game:GetService("StarterPlayer"):FindFirstChild("StarterPlayerScripts");
+	}
+	
+	for _,obj in pairs(check) do
+		table.insert(listeners, obj.ChildAdded:Connect(CheckIfInstalled))
+		table.insert(listeners, obj.ChildRemoved:Connect(CheckIfInstalled))
+	end
+	
+end
+
+
+function Off()
+	for _,l in pairs(listeners) do
+		l:Disconnect()
+	end
+	for _,item in pairs(rootItems) do
+		item:Destroy()
+	end
+	listeners = {}
+	rootItems = {}
+	Item._selected = nil
+	Item._selectedObj = nil
+	pluginGuiPopup.Enabled = false
+end
+
+
+function PluginButtonClicked()
+	on = (not on)
+	pluginButton:SetActive(on)
+	pluginGui.Enabled = on
+	if (on) then
+		On()
+	else
+		Off()
+	end
+end
+
+
+pluginButton.Click:Connect(PluginButtonClicked)
+
+pluginGui:GetPropertyChangedSignal("Enabled"):Connect(function()
+	if (on ~= pluginGui.Enabled) then
+		PluginButtonClicked()
+	end
+end)
+
+if (pluginGui.Enabled and not on) then
+	PluginButtonClicked()
+end
+
+SetupPopup()]]></ProtectedString>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+			<Item class="ModuleScript" referent="RBX93AC8AF740E748AC9D3C1A7527F1AEFA">
+				<Properties>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">Item</string>
+					<string name="ScriptGuid">{47DC785A-096E-4200-9A23-D70FD613EB90}</string>
+					<ProtectedString name="Source"><![CDATA[-- Item
+-- Crazyman32
+-- March 17, 2018
+
+--[[
+	
+	item = Item.new(object, level, parentItem, nameOverride, allowAddOverride)
+	
+	item.Object
+	item.Parent
+	item.Children
+	item.Frame
+	
+	item:Expand()
+	item:Collapse()
+	item:IsExpanded()
+	item:SetSizeToFitChildren()
+	item:Destroy()
+	
+--]]
+
+
+
+local Item = {}
+Item.__index = Item
+
+local ITEM_HEIGHT = 20
+local INDENT_WIDTH = 16
+
+local DEFAULT_COLOR = Color3.fromRGB(85, 85, 127)
+local SCRIPT_COLOR = Color3.fromRGB(85, 170, 255)
+
+local SELECTED_COLOR = Color3.fromRGB(230, 230, 230)
+
+local CHILDREN_CLASS_BLACKLIST = {
+	UIListLayout = true;
+	Script = true;
+	LocalScript = true;
+}
+
+local selectionService = game:GetService("Selection")
+
+local framePrefab = Instance.new("Frame")
+framePrefab.Name = "Item"
+framePrefab.BackgroundTransparency = 0
+framePrefab.BackgroundColor3 = Color3.new(1, 1, 1)
+framePrefab.BorderSizePixel = 0
+framePrefab.Size = UDim2.new(1, 0, 0, ITEM_HEIGHT)
+do
+	local expand = Instance.new("TextButton")
+	expand.Name = "ExpandButton"
+	expand.BackgroundTransparency = 1
+	expand.Size = UDim2.new(0, ITEM_HEIGHT, 0, ITEM_HEIGHT)
+	expand.Text = ""
+	expand.TextTransparency = 1
+	expand.Parent = framePrefab
+	local expandImg = Instance.new("ImageLabel")
+	expandImg.Name = "Icon"
+	expandImg.Image = "rbxassetid://1516053458"
+	expandImg.BackgroundTransparency = 1
+	expandImg.AnchorPoint = Vector2.new(0.5, 0.5)
+	expandImg.Position = UDim2.new(0.5, 0, 0.5, 0)
+	expandImg.Size = UDim2.new(0, 10, 0, 10)
+	expandImg.ImageColor3 = DEFAULT_COLOR
+	expandImg.Parent = expand
+	local label = Instance.new("TextButton")
+	label.Name = "Label"
+	label.BackgroundTransparency = 1
+	label.Position = UDim2.new(0, ITEM_HEIGHT, 0, 0)
+	label.Size = UDim2.new(1, -ITEM_HEIGHT, 0, ITEM_HEIGHT)
+	label.Font = Enum.Font.SourceSans
+	label.TextColor3 = DEFAULT_COLOR
+	label.TextSize = 14
+	label.TextXAlignment = Enum.TextXAlignment.Left
+	label.Parent = framePrefab
+	local add = Instance.new("TextButton")
+	add.Name = "Add"
+	add.BackgroundColor3 = Color3.new(1, 1, 1)
+	add.BorderSizePixel = 0
+	add.Size = UDim2.new(0, ITEM_HEIGHT, 0, ITEM_HEIGHT)
+	add.Font = Enum.Font.SourceSansBold
+	add.TextColor3 = DEFAULT_COLOR
+	add.TextSize = ITEM_HEIGHT
+	add.Text = "+"
+	add.Visible = false
+	add.Parent = framePrefab
+	local children = Instance.new("Frame")
+	children.Name = "Children"
+	children.BackgroundTransparency = 1
+	children.Position = UDim2.new(0, 0, 0, ITEM_HEIGHT)
+	children.Size = UDim2.new(1, 0, 1, 0)
+	children.Visible = false
+	children.Parent = framePrefab
+	local listLayout = Instance.new("UIListLayout")
+	listLayout.SortOrder = Enum.SortOrder.Name
+	listLayout.FillDirection = Enum.FillDirection.Vertical
+	listLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+	listLayout.VerticalAlignment = Enum.VerticalAlignment.Top
+	listLayout.Parent = children
+end
+
+
+function Item.new(object, level, parentItem, nameOverride, allowAddOverride)
+	
+	local frame = framePrefab:Clone()
+	
+	local self = setmetatable({
+		Object = object;
+		Parent = parentItem;
+		Children = {};
+		Frame = frame;
+		DefaultSize = UDim2.new(1, 0, 0, ITEM_HEIGHT);
+		_destroyed = false;
+	}, Item)
+	
+	self._selection = selectionService.SelectionChanged:Connect(function()
+		local isSelected = false
+		for _,obj in pairs(selectionService:Get()) do
+			if (obj == object) then
+				isSelected = true
+				break
+			end
+		end
+		self._selected = isSelected
+		self.Frame.BackgroundColor3 = (isSelected and SELECTED_COLOR or framePrefab.BackgroundColor3)
+	end);
+	
+	local function AddChild(childObj)
+		if (CHILDREN_CLASS_BLACKLIST[childObj.ClassName]) then return end
+		local child = Item.new(childObj, level + 1, self)
+		table.insert(self.Children, child)
+	end
+	
+	local function RemoveChild(childObj)
+		for i,child in pairs(self.Children) do
+			if (child.Object == childObj) then
+				child:Destroy()
+				table.remove(self.Children, i)
+				break
+			end
+		end
+	end
+	
+	if (object:IsA("LuaSourceContainer")) then
+		frame.Label.TextColor3 = SCRIPT_COLOR
+		frame.Label.Font = Enum.Font.SourceSansSemibold
+	end
+	
+	if ((parentItem.TopLevel and allowAddOverride ~= true) or (allowAddOverride == false)) then
+		frame.Add:Destroy()
+	else
+		spawn(function()
+			frame.Add.Position = UDim2.new(0, frame.Label.TextBounds.X + (ITEM_HEIGHT * 1.5) + (INDENT_WIDTH * level), 0, 0)
+		end)
+		frame.Label.MouseEnter:Connect(function()
+			frame.Add.Visible = true
+		end)
+		frame.Label.MouseLeave:Connect(function()
+			frame.Add.Visible = false
+		end)
+		frame.Add.MouseButton1Click:Connect(function()
+			Item._selected = self
+			Item._selectedObj = self.Object
+			Item._pluginGuiPopup.Enabled = true
+		end)
+	end
+	
+	frame.ExpandButton.Position = UDim2.new(0, INDENT_WIDTH * level, 0, 0)
+	frame.ExpandButton.Visible = #frame.Children:GetChildren() > 1
+	frame.Label.Position = UDim2.new(0, ITEM_HEIGHT + (INDENT_WIDTH * level), 0, 0)
+	frame.Label.Size = UDim2.new(1, -(INDENT_WIDTH * level), 0, ITEM_HEIGHT)
+	frame.Label.Text = nameOverride or object.Name
+	frame.Parent = parentItem.Frame.Children
+	
+	object.ChildAdded:Connect(AddChild)
+	object.ChildRemoved:Connect(RemoveChild)
+	
+	frame.Children.ChildAdded:Connect(function(obj)
+		frame.ExpandButton.Visible = #frame.Children:GetChildren() > 1
+	end)
+	
+	frame.Children.ChildRemoved:Connect(function(obj)
+		if (not frame.Parent) then return end
+		frame.ExpandButton.Visible = #frame.Children:GetChildren() > 1
+	end)
+	
+	frame.Children.UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+		if (self:IsExpanded()) then
+			self:SetSizeToFitChildren()
+		end
+	end)
+	
+	frame.ExpandButton.MouseButton1Down:Connect(function()
+		self:ToggleExpand()
+	end)
+	
+	local lastLabelClick = 0
+	local doubleClickThreshold = 0.25
+	frame.Label.MouseButton1Down:Connect(function()
+		self:Select(game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.LeftControl))
+		local now = tick()
+		local dt = (now - lastLabelClick)
+		if (dt <= doubleClickThreshold) then
+			if (object:IsA("LuaSourceContainer")) then
+				Item._plugin:OpenScript(object)
+			elseif (#frame.Children:GetChildren() > 1) then
+				self:ToggleExpand()
+			end
+			lastLabelClick = 0
+		else
+			lastLabelClick = now
+		end
+	end)
+	
+	for _,childObj in pairs(object:GetChildren()) do
+		AddChild(childObj)
+	end
+	
+	return self
+	
+end
+
+
+function Item:Select(appendToSelectionList)
+	if (self._selected) then return end
+	if (appendToSelectionList) then
+		local list = selectionService:Get()
+		table.insert(list, self.Object)
+		selectionService:Set(list)
+	else
+		selectionService:Set({self.Object})
+	end
+end
+
+
+function Item:SetSizeToFitChildren()
+	self.Frame.Size = UDim2.new(
+		self.DefaultSize.X.Scale,
+		self.DefaultSize.X.Offset,
+		self.DefaultSize.Y.Scale,
+		self.Frame.Children.UIListLayout.AbsoluteContentSize.Y + ITEM_HEIGHT
+	)
+end
+
+
+function Item:Expand()
+	if (self:IsExpanded()) then return end
+	self.Frame.Children.Visible = true
+	self:SetSizeToFitChildren()
+	
+	if (self._tween) then
+		self._tween:Cancel()
+	end
+	local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	local tween = game:GetService("TweenService"):Create(self.Frame.ExpandButton, tweenInfo, {Rotation = 90})
+	tween:Play()
+	self._tween = tween
+end
+
+
+function Item:Collapse()
+	if (not self:IsExpanded()) then return end
+	self.Frame.Children.Visible = false
+	self.Frame.Size = self.DefaultSize
+	
+	if (self._tween) then
+		self._tween:Cancel()
+	end
+	local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	local tween = game:GetService("TweenService"):Create(self.Frame.ExpandButton, tweenInfo, {Rotation = 0})
+	tween:Play()
+	self._tween = tween
+end
+
+
+function Item:ToggleExpand()
+	if (self:IsExpanded()) then
+		self:Collapse()
+	else
+		self:Expand()
+	end
+end
+
+
+function Item:IsExpanded()
+	return self.Frame.Children.Visible
+end
+
+
+function Item:Destroy()
+	if (self._destroyed) then return end
+	self._destroyed = true
+	for _,child in pairs(self.Children) do
+		child:Destroy()
+	end
+	self._selection:Disconnect()
+	self.Children = {}
+	self.Frame:Destroy()
+	self.Parent = nil
+end
+
+
+return Item]]></ProtectedString>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+			</Item>
+			<Item class="Script" referent="RBX2F61E6848F784352B58FE6D5C4A117CF">
+				<Properties>
+					<bool name="Disabled">true</bool>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">SourceModuleTemplate</string>
+					<string name="ScriptGuid">{A959FC1E-6EA1-40AA-909B-F65786604911}</string>
+					<ProtectedString name="Source"><![CDATA[-- _NAME
+-- _USERNAME
+-- _DATE
+
+--[[
+	
+_DOC
+--]]
+
+
+
+local _MODULENAME = {}
+
+-- _METHODS
+return _MODULENAME]]></ProtectedString>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+			</Item>
+		</Item>
+	</Item>
+</roblox>
