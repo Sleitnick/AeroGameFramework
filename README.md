@@ -1,10 +1,10 @@
 # AeroGameFramework
-A game framework for the ROBLOX game platform.
+A game framework for the Roblox game platform.
 
-AeroGameFramework makes ROBLOX game development easy and fun. The framework is designed to alleviate the strain of communication between your code and to simplify communication between the server/client model.
+AeroGameFramework makes Roblox game development easy and fun. The framework is designed to alleviate the strain of communication between your code and to simplify communication between the server/client model.
 
 # Install & Update
-Run the following code snippet in the Command Line within ROBLOX Studio to install or update the framework:
+Run the following code snippet in the Command Line within Roblox Studio to install or update the framework:
 ```lua
 require(932606289)()
 ```
