@@ -6,6 +6,7 @@
 	
 	TableUtil.Copy(tbl)
 	TableUtil.Sync(tbl, templateTbl)
+	TableUtil.FastRemove(tbl, index)
 	
 --]]
 
@@ -73,8 +74,16 @@ function Sync(tbl, templateTbl)
 end
 
 
+function FastRemove(t, i)
+	local n = #t
+	t[i] = t[n]
+	t[n] = nil
+end
+
+
 TableUtil.Copy = CopyTable
 TableUtil.Sync = Sync
+TableUtil.FastRemove = FastRemove
 
 
 return TableUtil
