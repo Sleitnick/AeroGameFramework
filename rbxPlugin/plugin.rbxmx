@@ -1,12 +1,12 @@
 <roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
 	<External>null</External>
 	<External>nil</External>
-	<Item class="Folder" referent="RBX03945751E21048AA92F52929C7D33B57">
+	<Item class="Folder" referent="RBXAF49FF7322584D458A2587664977E13A">
 		<Properties>
 			<string name="Name">AeroGameFrameworkPlugin</string>
 			<BinaryString name="Tags"></BinaryString>
 		</Properties>
-		<Item class="Script" referent="RBX538998912FED49B9BF719F44AB8E4D58">
+		<Item class="Script" referent="RBXA4ABD0609AC94D82AFA2E514E379CEFD">
 			<Properties>
 				<bool name="Disabled">false</bool>
 				<Content name="LinkedSource"><null></null></Content>
@@ -19,10 +19,10 @@
 
 
 local toolbar = plugin:CreateToolbar("Aero Game Framework")
-local pluginButton = toolbar:CreateButton("Aero Game Framework", "Aero Game Framework", "")
-local pluginCodeButton = toolbar:CreateButton("Code", "Code", "")
+local pluginButton = toolbar:CreateButton("Framework", "", "rbxassetid://1580440276")
+local pluginCodeButton = toolbar:CreateButton("Code", "", "rbxassetid://1580448001")
 
-local DEV = true
+local DEV = false
 
 -- Main widget:
 local dockWidgetPluginGuiInfo = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Left, false, false)
@@ -112,12 +112,17 @@ function CreateMethodsSourceTable(moduleName, methods, methodsDoc, isClient, num
 	local methodsSource = {}
 	local tab = ("\t"):rep(numTabs or 1)
 	for _,method in pairs(methods) do
+		table.insert(methodsDoc, tab .. moduleName .. ":" .. method .. "\n")
+		if (isClient) then
+			local params = GetMethodParameters(method)
+			table.insert(params, 1, "player")
+			method = method:sub(1, method:find("%(")) .. table.concat(params, ", ") .. ")"
+		end
 		if (method:sub(1, 3):lower() == "get") then
 			table.insert(methodsSource, "\nfunction " .. moduleName .. (isClient and ".Client" or "") .. ":" .. method .. "\n\treturn nil\nend\n\n")
 		else
 			table.insert(methodsSource, "\nfunction " .. moduleName .. (isClient and ".Client" or "") .. ":" .. method .. "\n\t\nend\n\n")
 		end
-		table.insert(methodsDoc, tab .. moduleName .. ":" .. method .. "\n")
 	end
 	return methodsSource
 end
@@ -235,6 +240,19 @@ function CreateControllerSource(name, moduleName, methods)
 	
 	return source
 	
+end
+
+
+function GetMethodParameters(methodSig)
+	local params = {}
+	local paramsStr = methodSig:match("%b()")
+	if (paramsStr) then
+		paramsStr = paramsStr:sub(2, #paramsStr - 1):gsub("%s+", "")
+		for param in paramsStr:gmatch("[^,]+") do
+			params[#params + 1] = param
+		end
+	end
+	return params
 end
 
 
@@ -379,6 +397,7 @@ function SetupPopup()
 		Item._selected:Expand()
 		plugin:OpenScript(ms)
 		game:GetService("Selection"):Set({ms})
+		game:GetService("ChangeHistoryService"):SetWaypoint("AeroGameFramework_CreateScript")
 	end)
 	
 	Item.AddClicked:Connect(function()
@@ -514,6 +533,8 @@ function On()
 		Item = require(script.Item)
 		Item._plugin = plugin
 		Item._pluginGuiPopup = pluginGuiPopup
+		SetupPopup()
+		SetupCode()
 	end
 	
 	local isInstalled = nil
@@ -631,13 +652,10 @@ pluginGui:GetPropertyChangedSignal("Enabled"):Connect(function()
 	if (on ~= pluginGui.Enabled) then
 		PluginButtonClicked()
 	end
-end)
-
-SetupPopup()
-SetupCode()]]></ProtectedString>
+end)]]></ProtectedString>
 				<BinaryString name="Tags"></BinaryString>
 			</Properties>
-			<Item class="ModuleScript" referent="RBX31509418953744D69B81892897EC2FBB">
+			<Item class="ModuleScript" referent="RBXD3EFBA66E51D42429D2843F27F3DA0A7">
 				<Properties>
 					<Content name="LinkedSource"><null></null></Content>
 					<string name="Name">Item</string>
@@ -961,7 +979,7 @@ return Item]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
-			<Item class="Script" referent="RBX6C8A637887AB4072AB92A7B3A1DC1226">
+			<Item class="Script" referent="RBXAF2EAB01DDBE4E0489B221F6ECBFBA97">
 				<Properties>
 					<bool name="Disabled">true</bool>
 					<Content name="LinkedSource"><null></null></Content>
@@ -985,7 +1003,7 @@ return __MODULENAME]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
-			<Item class="Script" referent="RBX9581EA16CA284385A2730AEE5D1C8D85">
+			<Item class="Script" referent="RBXB5CBDC1C7EEE4025B9581926C0C79AA0">
 				<Properties>
 					<bool name="Disabled">true</bool>
 					<Content name="LinkedSource"><null></null></Content>
@@ -1023,7 +1041,7 @@ return __MODULENAME]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
-			<Item class="Script" referent="RBXD4353954FDDE48CC80ED0AA3ABF20696">
+			<Item class="Script" referent="RBX058B6AED15BE40E8A618C503C52BE15E">
 				<Properties>
 					<bool name="Disabled">true</bool>
 					<Content name="LinkedSource"><null></null></Content>
@@ -1066,7 +1084,7 @@ return __MODULENAME]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
-			<Item class="Script" referent="RBXF240349E895B4BD49F5E93E4E5DA3E7A">
+			<Item class="Script" referent="RBX7BF06DF470C342A19B429574FCB08088">
 				<Properties>
 					<bool name="Disabled">true</bool>
 					<Content name="LinkedSource"><null></null></Content>
@@ -1100,7 +1118,7 @@ return __MODULENAME]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
-			<Item class="ScreenGui" referent="RBXA3DA8E13748146AD9B92690EF0882D4C">
+			<Item class="ScreenGui" referent="RBXDEF6A2F94B7B42DB84F4516AE644D468">
 				<Properties>
 					<bool name="AutoLocalize">true</bool>
 					<int name="DisplayOrder">0</int>
@@ -1111,7 +1129,7 @@ return __MODULENAME]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 					<token name="ZIndexBehavior">1</token>
 				</Properties>
-				<Item class="Frame" referent="RBX38A331E30ECA4DFDB884BD54F2756609">
+				<Item class="Frame" referent="RBX0412C273AFCF4130A5D72CB383097BCA">
 					<Properties>
 						<bool name="Active">false</bool>
 						<Vector2 name="AnchorPoint">
@@ -1148,13 +1166,12 @@ return __MODULENAME]]></ProtectedString>
 							<YO>500</YO>
 						</UDim2>
 						<token name="SizeConstraint">0</token>
-						<bool name="SizeFromContents">false</bool>
 						<token name="Style">0</token>
 						<BinaryString name="Tags"></BinaryString>
 						<bool name="Visible">true</bool>
 						<int name="ZIndex">1</int>
 					</Properties>
-					<Item class="Frame" referent="RBXFE2760C36A9D4DD8BEEB9DE801BF8EF9">
+					<Item class="Frame" referent="RBXDF23B0AE7C174A4B9730B566AF392B31">
 						<Properties>
 							<bool name="Active">false</bool>
 							<Vector2 name="AnchorPoint">
@@ -1191,13 +1208,12 @@ return __MODULENAME]]></ProtectedString>
 								<YO>0</YO>
 							</UDim2>
 							<token name="SizeConstraint">0</token>
-							<bool name="SizeFromContents">false</bool>
 							<token name="Style">0</token>
 							<BinaryString name="Tags"></BinaryString>
 							<bool name="Visible">true</bool>
 							<int name="ZIndex">1</int>
 						</Properties>
-						<Item class="Frame" referent="RBXB40D518AA0354D8E88251F659ACCEAAB">
+						<Item class="Frame" referent="RBXEF7EAB42EFA04D23A42C1B9FBE0CDB35">
 							<Properties>
 								<bool name="Active">false</bool>
 								<Vector2 name="AnchorPoint">
@@ -1234,13 +1250,12 @@ return __MODULENAME]]></ProtectedString>
 									<YO>0</YO>
 								</UDim2>
 								<token name="SizeConstraint">0</token>
-								<bool name="SizeFromContents">false</bool>
 								<token name="Style">0</token>
 								<BinaryString name="Tags"></BinaryString>
 								<bool name="Visible">false</bool>
 								<int name="ZIndex">1</int>
 							</Properties>
-							<Item class="TextLabel" referent="RBX1DB7D2049907488C82026467A19F8AF6">
+							<Item class="TextLabel" referent="RBXB46F7DBDBBBA4E05973A59F28C118EA7">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -1279,7 +1294,6 @@ return __MODULENAME]]></ProtectedString>
 										<YO>150</YO>
 									</UDim2>
 									<token name="SizeConstraint">0</token>
-									<bool name="SizeFromContents">false</bool>
 									<BinaryString name="Tags"></BinaryString>
 									<string name="Text">Please install the Aero Game Framework. To install the framework, run the following code in the command bar:</string>
 									<Color3 name="TextColor3">4294901760</Color3>
@@ -1295,7 +1309,7 @@ return __MODULENAME]]></ProtectedString>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">1</int>
 								</Properties>
-								<Item class="UITextSizeConstraint" referent="RBX7EAC52B5FE1042839375A2586E9CE856">
+								<Item class="UITextSizeConstraint" referent="RBX465D70AA076249CBA3A5EB072A6DD1BE">
 									<Properties>
 										<int name="MaxTextSize">16</int>
 										<int name="MinTextSize">1</int>
@@ -1304,7 +1318,7 @@ return __MODULENAME]]></ProtectedString>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="UIPadding" referent="RBX234F96B8C8C7446F9D73A23AC9670592">
+							<Item class="UIPadding" referent="RBX7273E20E73534592921FF88687BBB3B9">
 								<Properties>
 									<string name="Name">UIPadding</string>
 									<UDim name="PaddingBottom">
@@ -1326,7 +1340,7 @@ return __MODULENAME]]></ProtectedString>
 									<BinaryString name="Tags"></BinaryString>
 								</Properties>
 							</Item>
-							<Item class="Frame" referent="RBXDD8A4E56021D44599FE17A8FAEFBE8E4">
+							<Item class="Frame" referent="RBXE0829DBADE204060AE229DA85F480E8F">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -1363,13 +1377,12 @@ return __MODULENAME]]></ProtectedString>
 										<YO>30</YO>
 									</UDim2>
 									<token name="SizeConstraint">0</token>
-									<bool name="SizeFromContents">false</bool>
 									<token name="Style">0</token>
 									<BinaryString name="Tags"></BinaryString>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">1</int>
 								</Properties>
-								<Item class="TextLabel" referent="RBX6197FAD25C324FE9A657A423CF8C2897">
+								<Item class="TextLabel" referent="RBX59AC9CB95EC748C58BC9F664390672E6">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -1408,7 +1421,6 @@ return __MODULENAME]]></ProtectedString>
 											<YO>0</YO>
 										</UDim2>
 										<token name="SizeConstraint">0</token>
-										<bool name="SizeFromContents">false</bool>
 										<BinaryString name="Tags"></BinaryString>
 										<string name="Text">require(932606289)()</string>
 										<Color3 name="TextColor3">4283782527</Color3>
@@ -1427,7 +1439,7 @@ return __MODULENAME]]></ProtectedString>
 								</Item>
 							</Item>
 						</Item>
-						<Item class="Frame" referent="RBX30455F6BDD374733BCBF572BC957C63A">
+						<Item class="Frame" referent="RBXF2C70C695CDF41D588FD46E976E37C11">
 							<Properties>
 								<bool name="Active">false</bool>
 								<Vector2 name="AnchorPoint">
@@ -1464,13 +1476,12 @@ return __MODULENAME]]></ProtectedString>
 									<YO>0</YO>
 								</UDim2>
 								<token name="SizeConstraint">0</token>
-								<bool name="SizeFromContents">false</bool>
 								<token name="Style">0</token>
 								<BinaryString name="Tags"></BinaryString>
 								<bool name="Visible">true</bool>
 								<int name="ZIndex">1</int>
 							</Properties>
-							<Item class="ScrollingFrame" referent="RBX78CE0A00166449B1A2402A71B927F582">
+							<Item class="ScrollingFrame" referent="RBX4AFE79BDD373467B9DD0DB2E2421F754">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -1524,7 +1535,6 @@ return __MODULENAME]]></ProtectedString>
 										<YO>0</YO>
 									</UDim2>
 									<token name="SizeConstraint">0</token>
-									<bool name="SizeFromContents">false</bool>
 									<BinaryString name="Tags"></BinaryString>
 									<Content name="TopImage"><url>rbxassetid://1218039439</url></Content>
 									<token name="VerticalScrollBarInset">0</token>
@@ -1532,7 +1542,7 @@ return __MODULENAME]]></ProtectedString>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">1</int>
 								</Properties>
-								<Item class="UIListLayout" referent="RBX6374E373FB28466E97862E1D752E7CDC">
+								<Item class="UIListLayout" referent="RBX5E3F7C58213844C7A10860F64DB9B896">
 									<Properties>
 										<token name="FillDirection">1</token>
 										<token name="HorizontalAlignment">1</token>
@@ -1546,7 +1556,7 @@ return __MODULENAME]]></ProtectedString>
 										<token name="VerticalAlignment">1</token>
 									</Properties>
 								</Item>
-								<Item class="Frame" referent="RBXFA531E14EDFB47398A4204C7CD784D87">
+								<Item class="Frame" referent="RBX3AFE95C6F66C4236A42B74142F0A4F46">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -1583,13 +1593,12 @@ return __MODULENAME]]></ProtectedString>
 											<YO>20</YO>
 										</UDim2>
 										<token name="SizeConstraint">0</token>
-										<bool name="SizeFromContents">false</bool>
 										<token name="Style">0</token>
 										<BinaryString name="Tags"></BinaryString>
 										<bool name="Visible">false</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="ImageButton" referent="RBX86EE55491F3B47028CA77C0F8DC99686">
+									<Item class="ImageButton" referent="RBX8769048D97C94D2FB38330D011E788A4">
 										<Properties>
 											<bool name="Active">true</bool>
 											<Vector2 name="AnchorPoint">
@@ -1641,7 +1650,6 @@ return __MODULENAME]]></ProtectedString>
 												<YO>20</YO>
 											</UDim2>
 											<token name="SizeConstraint">0</token>
-											<bool name="SizeFromContents">false</bool>
 											<Rect2D name="SliceCenter">
 												<min>
 													<X>0</X>
@@ -1664,7 +1672,7 @@ return __MODULENAME]]></ProtectedString>
 											<int name="ZIndex">1</int>
 										</Properties>
 									</Item>
-									<Item class="TextLabel" referent="RBX33C55A4A67924FF5B444FBA459DAE559">
+									<Item class="TextLabel" referent="RBX013DE128239A4CAA971F6A352A55E52B">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -1703,7 +1711,6 @@ return __MODULENAME]]></ProtectedString>
 												<YO>20</YO>
 											</UDim2>
 											<token name="SizeConstraint">0</token>
-											<bool name="SizeFromContents">false</bool>
 											<BinaryString name="Tags"></BinaryString>
 											<string name="Text">Server</string>
 											<Color3 name="TextColor3">4283782527</Color3>
@@ -1720,7 +1727,7 @@ return __MODULENAME]]></ProtectedString>
 											<int name="ZIndex">1</int>
 										</Properties>
 									</Item>
-									<Item class="Frame" referent="RBX8F99E57C5AB24245B3D2FE536204324D">
+									<Item class="Frame" referent="RBX9A7A74E1289D4A3EBF3FE32576E3E56C">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -1757,7 +1764,6 @@ return __MODULENAME]]></ProtectedString>
 												<YO>0</YO>
 											</UDim2>
 											<token name="SizeConstraint">0</token>
-											<bool name="SizeFromContents">false</bool>
 											<token name="Style">0</token>
 											<BinaryString name="Tags"></BinaryString>
 											<bool name="Visible">true</bool>
@@ -1765,7 +1771,7 @@ return __MODULENAME]]></ProtectedString>
 										</Properties>
 									</Item>
 								</Item>
-								<Item class="Frame" referent="RBXA2CFDE62CD164EB9A545274D2CC09127">
+								<Item class="Frame" referent="RBX00973FAEFCD54B5D9BC4844ED4A50430">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -1802,13 +1808,12 @@ return __MODULENAME]]></ProtectedString>
 											<YO>20</YO>
 										</UDim2>
 										<token name="SizeConstraint">0</token>
-										<bool name="SizeFromContents">false</bool>
 										<token name="Style">0</token>
 										<BinaryString name="Tags"></BinaryString>
 										<bool name="Visible">false</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="ImageButton" referent="RBXB232C2C87AEB4B2994648C87B883CC05">
+									<Item class="ImageButton" referent="RBXF545778F84C94EF58952C88363285E52">
 										<Properties>
 											<bool name="Active">true</bool>
 											<Vector2 name="AnchorPoint">
@@ -1860,7 +1865,6 @@ return __MODULENAME]]></ProtectedString>
 												<YO>20</YO>
 											</UDim2>
 											<token name="SizeConstraint">0</token>
-											<bool name="SizeFromContents">false</bool>
 											<Rect2D name="SliceCenter">
 												<min>
 													<X>0</X>
@@ -1883,7 +1887,7 @@ return __MODULENAME]]></ProtectedString>
 											<int name="ZIndex">1</int>
 										</Properties>
 									</Item>
-									<Item class="TextLabel" referent="RBX6A5728D3BBB7423CBBD669ACC7EA335A">
+									<Item class="TextLabel" referent="RBXA7E917FDD93C4E428CC430CC11465DDA">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -1922,7 +1926,6 @@ return __MODULENAME]]></ProtectedString>
 												<YO>20</YO>
 											</UDim2>
 											<token name="SizeConstraint">0</token>
-											<bool name="SizeFromContents">false</bool>
 											<BinaryString name="Tags"></BinaryString>
 											<string name="Text">Client</string>
 											<Color3 name="TextColor3">4283782527</Color3>
@@ -1940,7 +1943,7 @@ return __MODULENAME]]></ProtectedString>
 										</Properties>
 									</Item>
 								</Item>
-								<Item class="Frame" referent="RBX1557030F4B27435E99C3CC316E104BB1">
+								<Item class="Frame" referent="RBX8C1E04170AE443978272BFCD9702F080">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -1977,13 +1980,12 @@ return __MODULENAME]]></ProtectedString>
 											<YO>20</YO>
 										</UDim2>
 										<token name="SizeConstraint">0</token>
-										<bool name="SizeFromContents">false</bool>
 										<token name="Style">0</token>
 										<BinaryString name="Tags"></BinaryString>
 										<bool name="Visible">false</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="ImageButton" referent="RBX669496754C764A68BCEEDC20262C97AF">
+									<Item class="ImageButton" referent="RBX3914110FF90D4243B5B43445C4631A3E">
 										<Properties>
 											<bool name="Active">true</bool>
 											<Vector2 name="AnchorPoint">
@@ -2035,7 +2037,6 @@ return __MODULENAME]]></ProtectedString>
 												<YO>20</YO>
 											</UDim2>
 											<token name="SizeConstraint">0</token>
-											<bool name="SizeFromContents">false</bool>
 											<Rect2D name="SliceCenter">
 												<min>
 													<X>0</X>
@@ -2058,7 +2059,7 @@ return __MODULENAME]]></ProtectedString>
 											<int name="ZIndex">1</int>
 										</Properties>
 									</Item>
-									<Item class="TextLabel" referent="RBXE7AED24AA3CF4C89AFC58C42AB25DC38">
+									<Item class="TextLabel" referent="RBXF4670176FA7C4401BD8A715B7FD9CD86">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -2097,7 +2098,6 @@ return __MODULENAME]]></ProtectedString>
 												<YO>20</YO>
 											</UDim2>
 											<token name="SizeConstraint">0</token>
-											<bool name="SizeFromContents">false</bool>
 											<BinaryString name="Tags"></BinaryString>
 											<string name="Text">Shared</string>
 											<Color3 name="TextColor3">4283782527</Color3>
@@ -2119,7 +2119,7 @@ return __MODULENAME]]></ProtectedString>
 						</Item>
 					</Item>
 				</Item>
-				<Item class="Frame" referent="RBX60E0BC91FD8F40EDB0BF1BD3D0A17724">
+				<Item class="Frame" referent="RBX97CB8E98A5614C79A44221B903A7681B">
 					<Properties>
 						<bool name="Active">false</bool>
 						<Vector2 name="AnchorPoint">
@@ -2156,13 +2156,12 @@ return __MODULENAME]]></ProtectedString>
 							<YO>200</YO>
 						</UDim2>
 						<token name="SizeConstraint">0</token>
-						<bool name="SizeFromContents">false</bool>
 						<token name="Style">0</token>
 						<BinaryString name="Tags"></BinaryString>
 						<bool name="Visible">true</bool>
 						<int name="ZIndex">1</int>
 					</Properties>
-					<Item class="Frame" referent="RBXAEF52474111B46878009E47110583D4F">
+					<Item class="Frame" referent="RBX4B12FF00B7854C96BF4891727FC1C9DB">
 						<Properties>
 							<bool name="Active">false</bool>
 							<Vector2 name="AnchorPoint">
@@ -2199,13 +2198,12 @@ return __MODULENAME]]></ProtectedString>
 								<YO>0</YO>
 							</UDim2>
 							<token name="SizeConstraint">0</token>
-							<bool name="SizeFromContents">false</bool>
 							<token name="Style">0</token>
 							<BinaryString name="Tags"></BinaryString>
 							<bool name="Visible">true</bool>
 							<int name="ZIndex">1</int>
 						</Properties>
-						<Item class="ScrollingFrame" referent="RBX5ECC347F07D949899C4F9AAD87774AA3">
+						<Item class="ScrollingFrame" referent="RBXE18A9D1AB77C4B6DB5DED5960D11B789">
 							<Properties>
 								<bool name="Active">false</bool>
 								<Vector2 name="AnchorPoint">
@@ -2223,7 +2221,7 @@ return __MODULENAME]]></ProtectedString>
 									<Y>0</Y>
 								</Vector2>
 								<UDim2 name="CanvasSize">
-									<XS>0</XS>
+									<XS>1</XS>
 									<XO>0</XO>
 									<YS>1</YS>
 									<YO>0</YO>
@@ -2259,7 +2257,6 @@ return __MODULENAME]]></ProtectedString>
 									<YO>0</YO>
 								</UDim2>
 								<token name="SizeConstraint">0</token>
-								<bool name="SizeFromContents">false</bool>
 								<BinaryString name="Tags"></BinaryString>
 								<Content name="TopImage"><url>rbxassetid://1218039439</url></Content>
 								<token name="VerticalScrollBarInset">0</token>
@@ -2267,7 +2264,7 @@ return __MODULENAME]]></ProtectedString>
 								<bool name="Visible">true</bool>
 								<int name="ZIndex">1</int>
 							</Properties>
-							<Item class="UIListLayout" referent="RBXAA4CC1333C224FD48B438963997330E5">
+							<Item class="UIListLayout" referent="RBXE676057E3A674DA796FCC502B6AC50E8">
 								<Properties>
 									<token name="FillDirection">1</token>
 									<token name="HorizontalAlignment">0</token>
@@ -2281,7 +2278,7 @@ return __MODULENAME]]></ProtectedString>
 									<token name="VerticalAlignment">1</token>
 								</Properties>
 							</Item>
-							<Item class="UIPadding" referent="RBX686473239CB94175AD7D903DA2505B68">
+							<Item class="UIPadding" referent="RBXEE73E3035F2040B1A9F6E4CA948A57EA">
 								<Properties>
 									<string name="Name">UIPadding</string>
 									<UDim name="PaddingBottom">
@@ -2294,7 +2291,7 @@ return __MODULENAME]]></ProtectedString>
 									</UDim>
 									<UDim name="PaddingRight">
 										<S>0</S>
-										<O>8</O>
+										<O>16</O>
 									</UDim>
 									<UDim name="PaddingTop">
 										<S>0</S>
@@ -2303,21 +2300,7 @@ return __MODULENAME]]></ProtectedString>
 									<BinaryString name="Tags"></BinaryString>
 								</Properties>
 							</Item>
-							<Item class="UISizeConstraint" referent="RBXB2D3FF60C8C840E0B587F16F85E8D7A5">
-								<Properties>
-									<Vector2 name="MaxSize">
-										<X>600</X>
-										<Y>600</Y>
-									</Vector2>
-									<Vector2 name="MinSize">
-										<X>0</X>
-										<Y>0</Y>
-									</Vector2>
-									<string name="Name">UISizeConstraint</string>
-									<BinaryString name="Tags"></BinaryString>
-								</Properties>
-							</Item>
-							<Item class="Frame" referent="RBXC6CAB3CDEAC24782BC3B7EF49466EBAF">
+							<Item class="Frame" referent="RBX6E5D4649D07A44D0845EDF578952AA2F">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -2354,13 +2337,12 @@ return __MODULENAME]]></ProtectedString>
 										<YO>60</YO>
 									</UDim2>
 									<token name="SizeConstraint">0</token>
-									<bool name="SizeFromContents">false</bool>
 									<token name="Style">0</token>
 									<BinaryString name="Tags"></BinaryString>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">1</int>
 								</Properties>
-								<Item class="TextLabel" referent="RBX91637F9EEBEB4C208805DCFB6D0F05DA">
+								<Item class="TextLabel" referent="RBXA0BEB5867328415CB44577825DA8AFA9">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -2399,7 +2381,6 @@ return __MODULENAME]]></ProtectedString>
 											<YO>60</YO>
 										</UDim2>
 										<token name="SizeConstraint">0</token>
-										<bool name="SizeFromContents">false</bool>
 										<BinaryString name="Tags"></BinaryString>
 										<string name="Text">Client Events:</string>
 										<Color3 name="TextColor3">4283782527</Color3>
@@ -2416,7 +2397,7 @@ return __MODULENAME]]></ProtectedString>
 										<int name="ZIndex">1</int>
 									</Properties>
 								</Item>
-								<Item class="Frame" referent="RBX1EEA48977CDC4C509206CF476664F250">
+								<Item class="Frame" referent="RBX0F5C37C669BD423A9584DF12B6648FD5">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -2424,10 +2405,10 @@ return __MODULENAME]]></ProtectedString>
 											<Y>0</Y>
 										</Vector2>
 										<bool name="AutoLocalize">true</bool>
-										<Color3 name="BackgroundColor3">4292861919</Color3>
+										<Color3 name="BackgroundColor3">4293980400</Color3>
 										<float name="BackgroundTransparency">0</float>
-										<Color3 name="BorderColor3">4279970357</Color3>
-										<int name="BorderSizePixel">0</int>
+										<Color3 name="BorderColor3">4292664540</Color3>
+										<int name="BorderSizePixel">1</int>
 										<bool name="ClipsDescendants">false</bool>
 										<bool name="Draggable">false</bool>
 										<int name="LayoutOrder">0</int>
@@ -2453,13 +2434,12 @@ return __MODULENAME]]></ProtectedString>
 											<YO>0</YO>
 										</UDim2>
 										<token name="SizeConstraint">0</token>
-										<bool name="SizeFromContents">false</bool>
 										<token name="Style">0</token>
 										<BinaryString name="Tags"></BinaryString>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="ScrollingFrame" referent="RBXF51A153854014D64918BDF4E457BBA9E">
+									<Item class="ScrollingFrame" referent="RBX96A4335241244CD28BC5FBC1F429A587">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -2513,7 +2493,6 @@ return __MODULENAME]]></ProtectedString>
 												<YO>0</YO>
 											</UDim2>
 											<token name="SizeConstraint">0</token>
-											<bool name="SizeFromContents">false</bool>
 											<BinaryString name="Tags"></BinaryString>
 											<Content name="TopImage"><url>rbxassetid://1218039439</url></Content>
 											<token name="VerticalScrollBarInset">0</token>
@@ -2521,7 +2500,7 @@ return __MODULENAME]]></ProtectedString>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="UIPadding" referent="RBX1CE50A6E5C474455A3CC563E1E522235">
+										<Item class="UIPadding" referent="RBX031ADA1340EC489C87C8B4D48FCA3432">
 											<Properties>
 												<string name="Name">UIPadding</string>
 												<UDim name="PaddingBottom">
@@ -2543,7 +2522,7 @@ return __MODULENAME]]></ProtectedString>
 												<BinaryString name="Tags"></BinaryString>
 											</Properties>
 										</Item>
-										<Item class="TextBox" referent="RBXDCF324AF18EF4857BC0010D33E6DF77C">
+										<Item class="TextBox" referent="RBX2A43F424ED684D54BC4574EE583204A7">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -2558,7 +2537,7 @@ return __MODULENAME]]></ProtectedString>
 												<bool name="ClearTextOnFocus">false</bool>
 												<bool name="ClipsDescendants">false</bool>
 												<bool name="Draggable">false</bool>
-												<token name="Font">4</token>
+												<token name="Font">10</token>
 												<int name="LayoutOrder">0</int>
 												<float name="LineHeight">1</float>
 												<bool name="MultiLine">true</bool>
@@ -2587,7 +2566,6 @@ return __MODULENAME]]></ProtectedString>
 													<YO>0</YO>
 												</UDim2>
 												<token name="SizeConstraint">0</token>
-												<bool name="SizeFromContents">false</bool>
 												<BinaryString name="Tags"></BinaryString>
 												<string name="Text"></string>
 												<Color3 name="TextColor3">4283782527</Color3>
@@ -2597,7 +2575,7 @@ return __MODULENAME]]></ProtectedString>
 												<float name="TextStrokeTransparency">1</float>
 												<float name="TextTransparency">0</float>
 												<token name="TextTruncate">0</token>
-												<bool name="TextWrapped">false</bool>
+												<bool name="TextWrapped">true</bool>
 												<token name="TextXAlignment">0</token>
 												<token name="TextYAlignment">0</token>
 												<bool name="Visible">true</bool>
@@ -2607,7 +2585,7 @@ return __MODULENAME]]></ProtectedString>
 									</Item>
 								</Item>
 							</Item>
-							<Item class="Frame" referent="RBX7390815ACAC44E17919CC73FD60CEB7C">
+							<Item class="Frame" referent="RBX509BBDA247E3412D95CCCE7EBD5DCAA2">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -2644,13 +2622,12 @@ return __MODULENAME]]></ProtectedString>
 										<YO>60</YO>
 									</UDim2>
 									<token name="SizeConstraint">0</token>
-									<bool name="SizeFromContents">false</bool>
 									<token name="Style">0</token>
 									<BinaryString name="Tags"></BinaryString>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">1</int>
 								</Properties>
-								<Item class="TextLabel" referent="RBX91327602EBA44DDC92F3500DA7CFB473">
+								<Item class="TextLabel" referent="RBXF2C35F5DDB6F4C3BAD6658EB1599A773">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -2689,7 +2666,6 @@ return __MODULENAME]]></ProtectedString>
 											<YO>60</YO>
 										</UDim2>
 										<token name="SizeConstraint">0</token>
-										<bool name="SizeFromContents">false</bool>
 										<BinaryString name="Tags"></BinaryString>
 										<string name="Text">Server Events:</string>
 										<Color3 name="TextColor3">4283782527</Color3>
@@ -2706,7 +2682,7 @@ return __MODULENAME]]></ProtectedString>
 										<int name="ZIndex">1</int>
 									</Properties>
 								</Item>
-								<Item class="Frame" referent="RBX26DE5ECE082E405795AA4BA54D822A16">
+								<Item class="Frame" referent="RBXF179F1A0DCE74BB58A8A3BD34710C6FD">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -2714,10 +2690,10 @@ return __MODULENAME]]></ProtectedString>
 											<Y>0</Y>
 										</Vector2>
 										<bool name="AutoLocalize">true</bool>
-										<Color3 name="BackgroundColor3">4292861919</Color3>
+										<Color3 name="BackgroundColor3">4293980400</Color3>
 										<float name="BackgroundTransparency">0</float>
-										<Color3 name="BorderColor3">4279970357</Color3>
-										<int name="BorderSizePixel">0</int>
+										<Color3 name="BorderColor3">4292664540</Color3>
+										<int name="BorderSizePixel">1</int>
 										<bool name="ClipsDescendants">false</bool>
 										<bool name="Draggable">false</bool>
 										<int name="LayoutOrder">0</int>
@@ -2743,13 +2719,12 @@ return __MODULENAME]]></ProtectedString>
 											<YO>0</YO>
 										</UDim2>
 										<token name="SizeConstraint">0</token>
-										<bool name="SizeFromContents">false</bool>
 										<token name="Style">0</token>
 										<BinaryString name="Tags"></BinaryString>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="ScrollingFrame" referent="RBX3AA8C04BE2F047209D81F906E7A0C35C">
+									<Item class="ScrollingFrame" referent="RBXEE4484D66BC44F0D844DFD08F7E3B6CD">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -2803,7 +2778,6 @@ return __MODULENAME]]></ProtectedString>
 												<YO>0</YO>
 											</UDim2>
 											<token name="SizeConstraint">0</token>
-											<bool name="SizeFromContents">false</bool>
 											<BinaryString name="Tags"></BinaryString>
 											<Content name="TopImage"><url>rbxassetid://1218039439</url></Content>
 											<token name="VerticalScrollBarInset">0</token>
@@ -2811,7 +2785,7 @@ return __MODULENAME]]></ProtectedString>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="UIPadding" referent="RBXF007A15AE3D04EF7AE302CD167A7F506">
+										<Item class="UIPadding" referent="RBXC91A41E517634478A98E98D0C3DB57B2">
 											<Properties>
 												<string name="Name">UIPadding</string>
 												<UDim name="PaddingBottom">
@@ -2833,7 +2807,7 @@ return __MODULENAME]]></ProtectedString>
 												<BinaryString name="Tags"></BinaryString>
 											</Properties>
 										</Item>
-										<Item class="TextBox" referent="RBX1C9C5B8580F741C78FD3A349826E6084">
+										<Item class="TextBox" referent="RBX8049EDBA04C5424C82C2F38BF535EA00">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -2848,7 +2822,7 @@ return __MODULENAME]]></ProtectedString>
 												<bool name="ClearTextOnFocus">false</bool>
 												<bool name="ClipsDescendants">false</bool>
 												<bool name="Draggable">false</bool>
-												<token name="Font">4</token>
+												<token name="Font">10</token>
 												<int name="LayoutOrder">0</int>
 												<float name="LineHeight">1</float>
 												<bool name="MultiLine">true</bool>
@@ -2877,7 +2851,6 @@ return __MODULENAME]]></ProtectedString>
 													<YO>0</YO>
 												</UDim2>
 												<token name="SizeConstraint">0</token>
-												<bool name="SizeFromContents">false</bool>
 												<BinaryString name="Tags"></BinaryString>
 												<string name="Text"></string>
 												<Color3 name="TextColor3">4283782527</Color3>
@@ -2887,7 +2860,7 @@ return __MODULENAME]]></ProtectedString>
 												<float name="TextStrokeTransparency">1</float>
 												<float name="TextTransparency">0</float>
 												<token name="TextTruncate">0</token>
-												<bool name="TextWrapped">false</bool>
+												<bool name="TextWrapped">true</bool>
 												<token name="TextXAlignment">0</token>
 												<token name="TextYAlignment">0</token>
 												<bool name="Visible">true</bool>
@@ -2897,7 +2870,7 @@ return __MODULENAME]]></ProtectedString>
 									</Item>
 								</Item>
 							</Item>
-							<Item class="Frame" referent="RBX29AE85C3102A4415A9C87D935CAFF1F9">
+							<Item class="Frame" referent="RBX59779293BF984676A90A7E85163A3602">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -2934,13 +2907,12 @@ return __MODULENAME]]></ProtectedString>
 										<YO>100</YO>
 									</UDim2>
 									<token name="SizeConstraint">0</token>
-									<bool name="SizeFromContents">false</bool>
 									<token name="Style">0</token>
 									<BinaryString name="Tags"></BinaryString>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">1</int>
 								</Properties>
-								<Item class="TextLabel" referent="RBXB512D89B5BD643BCACB13172D6C0222C">
+								<Item class="TextLabel" referent="RBXFD26C0CDFE0E4C6B988AE376C3EC518D">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -2979,7 +2951,6 @@ return __MODULENAME]]></ProtectedString>
 											<YO>30</YO>
 										</UDim2>
 										<token name="SizeConstraint">0</token>
-										<bool name="SizeFromContents">false</bool>
 										<BinaryString name="Tags"></BinaryString>
 										<string name="Text">Methods:</string>
 										<Color3 name="TextColor3">4283782527</Color3>
@@ -2996,7 +2967,7 @@ return __MODULENAME]]></ProtectedString>
 										<int name="ZIndex">1</int>
 									</Properties>
 								</Item>
-								<Item class="Frame" referent="RBXF973017D69CD4258A9E253CE600F6360">
+								<Item class="Frame" referent="RBX9987CD92665C43FDB141415C558BED42">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -3004,10 +2975,10 @@ return __MODULENAME]]></ProtectedString>
 											<Y>0</Y>
 										</Vector2>
 										<bool name="AutoLocalize">true</bool>
-										<Color3 name="BackgroundColor3">4292861919</Color3>
+										<Color3 name="BackgroundColor3">4293980400</Color3>
 										<float name="BackgroundTransparency">0</float>
-										<Color3 name="BorderColor3">4279970357</Color3>
-										<int name="BorderSizePixel">0</int>
+										<Color3 name="BorderColor3">4292664540</Color3>
+										<int name="BorderSizePixel">1</int>
 										<bool name="ClipsDescendants">false</bool>
 										<bool name="Draggable">false</bool>
 										<int name="LayoutOrder">0</int>
@@ -3033,13 +3004,12 @@ return __MODULENAME]]></ProtectedString>
 											<YO>0</YO>
 										</UDim2>
 										<token name="SizeConstraint">0</token>
-										<bool name="SizeFromContents">false</bool>
 										<token name="Style">0</token>
 										<BinaryString name="Tags"></BinaryString>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="ScrollingFrame" referent="RBX394C9728B975427E9AF724679597FD9B">
+									<Item class="ScrollingFrame" referent="RBX704870BC68A64120BB4FFCB3B8283B7D">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -3093,7 +3063,6 @@ return __MODULENAME]]></ProtectedString>
 												<YO>0</YO>
 											</UDim2>
 											<token name="SizeConstraint">0</token>
-											<bool name="SizeFromContents">false</bool>
 											<BinaryString name="Tags"></BinaryString>
 											<Content name="TopImage"><url>rbxassetid://1218039439</url></Content>
 											<token name="VerticalScrollBarInset">0</token>
@@ -3101,7 +3070,7 @@ return __MODULENAME]]></ProtectedString>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="UIPadding" referent="RBXBE73BC463CCC45AEA49C1B7C2CB6D8D0">
+										<Item class="UIPadding" referent="RBX1E9DCEA227134E0997ED17C3D6ECBFBA">
 											<Properties>
 												<string name="Name">UIPadding</string>
 												<UDim name="PaddingBottom">
@@ -3123,7 +3092,7 @@ return __MODULENAME]]></ProtectedString>
 												<BinaryString name="Tags"></BinaryString>
 											</Properties>
 										</Item>
-										<Item class="TextBox" referent="RBX01EA5052DA4147CFAA7E8F2F227DC99A">
+										<Item class="TextBox" referent="RBX96D1BA62473C42DDAAF4C01A48454C27">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -3138,7 +3107,7 @@ return __MODULENAME]]></ProtectedString>
 												<bool name="ClearTextOnFocus">false</bool>
 												<bool name="ClipsDescendants">false</bool>
 												<bool name="Draggable">false</bool>
-												<token name="Font">4</token>
+												<token name="Font">10</token>
 												<int name="LayoutOrder">0</int>
 												<float name="LineHeight">1</float>
 												<bool name="MultiLine">true</bool>
@@ -3168,7 +3137,6 @@ SetNumber(x)]]></string>
 													<YO>0</YO>
 												</UDim2>
 												<token name="SizeConstraint">0</token>
-												<bool name="SizeFromContents">false</bool>
 												<BinaryString name="Tags"></BinaryString>
 												<string name="Text"></string>
 												<Color3 name="TextColor3">4283782527</Color3>
@@ -3178,7 +3146,7 @@ SetNumber(x)]]></string>
 												<float name="TextStrokeTransparency">1</float>
 												<float name="TextTransparency">0</float>
 												<token name="TextTruncate">0</token>
-												<bool name="TextWrapped">false</bool>
+												<bool name="TextWrapped">true</bool>
 												<token name="TextXAlignment">0</token>
 												<token name="TextYAlignment">0</token>
 												<bool name="Visible">true</bool>
@@ -3188,7 +3156,7 @@ SetNumber(x)]]></string>
 									</Item>
 								</Item>
 							</Item>
-							<Item class="Frame" referent="RBXCEC41C5712334A378E69D16365C2E054">
+							<Item class="Frame" referent="RBX2744EA9A4856474EBC78820F6F68BDAA">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -3225,13 +3193,12 @@ SetNumber(x)]]></string>
 										<YO>100</YO>
 									</UDim2>
 									<token name="SizeConstraint">0</token>
-									<bool name="SizeFromContents">false</bool>
 									<token name="Style">0</token>
 									<BinaryString name="Tags"></BinaryString>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">1</int>
 								</Properties>
-								<Item class="TextLabel" referent="RBXAC3EEA3A2A9E41E598F4ADC3801E4D14">
+								<Item class="TextLabel" referent="RBXB32A9EBB557C415494750085AE28B6C7">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -3270,7 +3237,6 @@ SetNumber(x)]]></string>
 											<YO>60</YO>
 										</UDim2>
 										<token name="SizeConstraint">0</token>
-										<bool name="SizeFromContents">false</bool>
 										<BinaryString name="Tags"></BinaryString>
 										<string name="Text">Client Methods:</string>
 										<Color3 name="TextColor3">4283782527</Color3>
@@ -3287,7 +3253,7 @@ SetNumber(x)]]></string>
 										<int name="ZIndex">1</int>
 									</Properties>
 								</Item>
-								<Item class="Frame" referent="RBXE134BD060551458E9D97C6818E161D2B">
+								<Item class="Frame" referent="RBXC18B2B781C364F99B92DA1354F352565">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -3295,10 +3261,10 @@ SetNumber(x)]]></string>
 											<Y>0</Y>
 										</Vector2>
 										<bool name="AutoLocalize">true</bool>
-										<Color3 name="BackgroundColor3">4292861919</Color3>
+										<Color3 name="BackgroundColor3">4293980400</Color3>
 										<float name="BackgroundTransparency">0</float>
-										<Color3 name="BorderColor3">4279970357</Color3>
-										<int name="BorderSizePixel">0</int>
+										<Color3 name="BorderColor3">4292664540</Color3>
+										<int name="BorderSizePixel">1</int>
 										<bool name="ClipsDescendants">false</bool>
 										<bool name="Draggable">false</bool>
 										<int name="LayoutOrder">0</int>
@@ -3324,13 +3290,12 @@ SetNumber(x)]]></string>
 											<YO>0</YO>
 										</UDim2>
 										<token name="SizeConstraint">0</token>
-										<bool name="SizeFromContents">false</bool>
 										<token name="Style">0</token>
 										<BinaryString name="Tags"></BinaryString>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="ScrollingFrame" referent="RBXBA7877FACC52488191E76672D9BF0CED">
+									<Item class="ScrollingFrame" referent="RBX6AE68DE46F964C93A3A0A95C2AD1DA19">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -3384,7 +3349,6 @@ SetNumber(x)]]></string>
 												<YO>0</YO>
 											</UDim2>
 											<token name="SizeConstraint">0</token>
-											<bool name="SizeFromContents">false</bool>
 											<BinaryString name="Tags"></BinaryString>
 											<Content name="TopImage"><url>rbxassetid://1218039439</url></Content>
 											<token name="VerticalScrollBarInset">0</token>
@@ -3392,7 +3356,7 @@ SetNumber(x)]]></string>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="UIPadding" referent="RBXD80F271CE18747E882149ADAE870DE8B">
+										<Item class="UIPadding" referent="RBXFB1818E10CAC44F196131BF2BFA7531B">
 											<Properties>
 												<string name="Name">UIPadding</string>
 												<UDim name="PaddingBottom">
@@ -3414,7 +3378,7 @@ SetNumber(x)]]></string>
 												<BinaryString name="Tags"></BinaryString>
 											</Properties>
 										</Item>
-										<Item class="TextBox" referent="RBX812625CFB8F24A99A6F7A64E63D62125">
+										<Item class="TextBox" referent="RBX3DA34B77220B48DA8F2BB75AEDA61725">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -3429,7 +3393,7 @@ SetNumber(x)]]></string>
 												<bool name="ClearTextOnFocus">false</bool>
 												<bool name="ClipsDescendants">false</bool>
 												<bool name="Draggable">false</bool>
-												<token name="Font">4</token>
+												<token name="Font">10</token>
 												<int name="LayoutOrder">0</int>
 												<float name="LineHeight">1</float>
 												<bool name="MultiLine">true</bool>
@@ -3459,7 +3423,6 @@ SetNumber(x)]]></string>
 													<YO>0</YO>
 												</UDim2>
 												<token name="SizeConstraint">0</token>
-												<bool name="SizeFromContents">false</bool>
 												<BinaryString name="Tags"></BinaryString>
 												<string name="Text"></string>
 												<Color3 name="TextColor3">4283782527</Color3>
@@ -3469,7 +3432,7 @@ SetNumber(x)]]></string>
 												<float name="TextStrokeTransparency">1</float>
 												<float name="TextTransparency">0</float>
 												<token name="TextTruncate">0</token>
-												<bool name="TextWrapped">false</bool>
+												<bool name="TextWrapped">true</bool>
 												<token name="TextXAlignment">0</token>
 												<token name="TextYAlignment">0</token>
 												<bool name="Visible">true</bool>
@@ -3479,7 +3442,7 @@ SetNumber(x)]]></string>
 									</Item>
 								</Item>
 							</Item>
-							<Item class="Frame" referent="RBXE6580F74676C4986AF176CFF54644764">
+							<Item class="Frame" referent="RBXF9E66CA3D07F4351BD22E632A7D95380">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -3516,13 +3479,12 @@ SetNumber(x)]]></string>
 										<YO>100</YO>
 									</UDim2>
 									<token name="SizeConstraint">0</token>
-									<bool name="SizeFromContents">false</bool>
 									<token name="Style">0</token>
 									<BinaryString name="Tags"></BinaryString>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">1</int>
 								</Properties>
-								<Item class="TextLabel" referent="RBX449DE02B005A438BA2138B274D4B892A">
+								<Item class="TextLabel" referent="RBXF304E569A7CF4B2392CF8685C60E1A72">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -3561,7 +3523,6 @@ SetNumber(x)]]></string>
 											<YO>60</YO>
 										</UDim2>
 										<token name="SizeConstraint">0</token>
-										<bool name="SizeFromContents">false</bool>
 										<BinaryString name="Tags"></BinaryString>
 										<string name="Text">Server Methods:</string>
 										<Color3 name="TextColor3">4283782527</Color3>
@@ -3578,7 +3539,7 @@ SetNumber(x)]]></string>
 										<int name="ZIndex">1</int>
 									</Properties>
 								</Item>
-								<Item class="Frame" referent="RBX7DB7FB56FDA744BA9CBF09AD87610FF4">
+								<Item class="Frame" referent="RBX813002330B0649F3AE6B5B88E459CE10">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -3586,10 +3547,10 @@ SetNumber(x)]]></string>
 											<Y>0</Y>
 										</Vector2>
 										<bool name="AutoLocalize">true</bool>
-										<Color3 name="BackgroundColor3">4292861919</Color3>
+										<Color3 name="BackgroundColor3">4293980400</Color3>
 										<float name="BackgroundTransparency">0</float>
-										<Color3 name="BorderColor3">4279970357</Color3>
-										<int name="BorderSizePixel">0</int>
+										<Color3 name="BorderColor3">4292664540</Color3>
+										<int name="BorderSizePixel">1</int>
 										<bool name="ClipsDescendants">false</bool>
 										<bool name="Draggable">false</bool>
 										<int name="LayoutOrder">0</int>
@@ -3615,13 +3576,12 @@ SetNumber(x)]]></string>
 											<YO>0</YO>
 										</UDim2>
 										<token name="SizeConstraint">0</token>
-										<bool name="SizeFromContents">false</bool>
 										<token name="Style">0</token>
 										<BinaryString name="Tags"></BinaryString>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="ScrollingFrame" referent="RBX86BEC3E99F26455594DB82225FD48E37">
+									<Item class="ScrollingFrame" referent="RBXCCD6F02F540D42DFB4737B17DD72FD0F">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -3675,7 +3635,6 @@ SetNumber(x)]]></string>
 												<YO>0</YO>
 											</UDim2>
 											<token name="SizeConstraint">0</token>
-											<bool name="SizeFromContents">false</bool>
 											<BinaryString name="Tags"></BinaryString>
 											<Content name="TopImage"><url>rbxassetid://1218039439</url></Content>
 											<token name="VerticalScrollBarInset">0</token>
@@ -3683,7 +3642,7 @@ SetNumber(x)]]></string>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="UIPadding" referent="RBXDD6BE60D795D48D492DFD841D7311BC4">
+										<Item class="UIPadding" referent="RBX3F6B851C54394F74B04FB997DD37B798">
 											<Properties>
 												<string name="Name">UIPadding</string>
 												<UDim name="PaddingBottom">
@@ -3705,7 +3664,7 @@ SetNumber(x)]]></string>
 												<BinaryString name="Tags"></BinaryString>
 											</Properties>
 										</Item>
-										<Item class="TextBox" referent="RBXD829DABEF8C349A3876484CCF6913A54">
+										<Item class="TextBox" referent="RBX838AC12468184E688666C11EF3941530">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -3720,7 +3679,7 @@ SetNumber(x)]]></string>
 												<bool name="ClearTextOnFocus">false</bool>
 												<bool name="ClipsDescendants">false</bool>
 												<bool name="Draggable">false</bool>
-												<token name="Font">4</token>
+												<token name="Font">10</token>
 												<int name="LayoutOrder">0</int>
 												<float name="LineHeight">1</float>
 												<bool name="MultiLine">true</bool>
@@ -3750,7 +3709,6 @@ SetNumber(x)]]></string>
 													<YO>0</YO>
 												</UDim2>
 												<token name="SizeConstraint">0</token>
-												<bool name="SizeFromContents">false</bool>
 												<BinaryString name="Tags"></BinaryString>
 												<string name="Text"></string>
 												<Color3 name="TextColor3">4283782527</Color3>
@@ -3760,7 +3718,7 @@ SetNumber(x)]]></string>
 												<float name="TextStrokeTransparency">1</float>
 												<float name="TextTransparency">0</float>
 												<token name="TextTruncate">0</token>
-												<bool name="TextWrapped">false</bool>
+												<bool name="TextWrapped">true</bool>
 												<token name="TextXAlignment">0</token>
 												<token name="TextYAlignment">0</token>
 												<bool name="Visible">true</bool>
@@ -3770,7 +3728,7 @@ SetNumber(x)]]></string>
 									</Item>
 								</Item>
 							</Item>
-							<Item class="Frame" referent="RBXF33635ED128C4F35BA677BF885F3E6B8">
+							<Item class="Frame" referent="RBX0B9EEA34D77A477CB813105DC034F3B3">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -3807,13 +3765,12 @@ SetNumber(x)]]></string>
 										<YO>30</YO>
 									</UDim2>
 									<token name="SizeConstraint">0</token>
-									<bool name="SizeFromContents">false</bool>
 									<token name="Style">0</token>
 									<BinaryString name="Tags"></BinaryString>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">1</int>
 								</Properties>
-								<Item class="TextLabel" referent="RBX0F8E2D7119DA47FCA0BE9A89D3852E10">
+								<Item class="TextLabel" referent="RBXCBC710886733437C96471661669CB141">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -3852,7 +3809,6 @@ SetNumber(x)]]></string>
 											<YO>0</YO>
 										</UDim2>
 										<token name="SizeConstraint">0</token>
-										<bool name="SizeFromContents">false</bool>
 										<BinaryString name="Tags"></BinaryString>
 										<string name="Text">Name:</string>
 										<Color3 name="TextColor3">4283782527</Color3>
@@ -3869,7 +3825,7 @@ SetNumber(x)]]></string>
 										<int name="ZIndex">1</int>
 									</Properties>
 								</Item>
-								<Item class="Frame" referent="RBXC9E4FF24B9C0478CB5F8130A2223F6BA">
+								<Item class="Frame" referent="RBX2CCD82267BE14514AFED5E16C715D08C">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -3877,10 +3833,10 @@ SetNumber(x)]]></string>
 											<Y>0</Y>
 										</Vector2>
 										<bool name="AutoLocalize">true</bool>
-										<Color3 name="BackgroundColor3">4292861919</Color3>
+										<Color3 name="BackgroundColor3">4293980400</Color3>
 										<float name="BackgroundTransparency">0</float>
-										<Color3 name="BorderColor3">4279970357</Color3>
-										<int name="BorderSizePixel">0</int>
+										<Color3 name="BorderColor3">4292664540</Color3>
+										<int name="BorderSizePixel">1</int>
 										<bool name="ClipsDescendants">false</bool>
 										<bool name="Draggable">false</bool>
 										<int name="LayoutOrder">0</int>
@@ -3906,13 +3862,12 @@ SetNumber(x)]]></string>
 											<YO>0</YO>
 										</UDim2>
 										<token name="SizeConstraint">0</token>
-										<bool name="SizeFromContents">false</bool>
 										<token name="Style">0</token>
 										<BinaryString name="Tags"></BinaryString>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="TextBox" referent="RBXAF2F33FC29F44481B2622AA10AEAC4BD">
+									<Item class="TextBox" referent="RBX735B2DAD64E74A1AB05FB5D6FA40BD7B">
 										<Properties>
 											<bool name="Active">true</bool>
 											<Vector2 name="AnchorPoint">
@@ -3924,10 +3879,10 @@ SetNumber(x)]]></string>
 											<float name="BackgroundTransparency">1</float>
 											<Color3 name="BorderColor3">4279970357</Color3>
 											<int name="BorderSizePixel">1</int>
-											<bool name="ClearTextOnFocus">true</bool>
+											<bool name="ClearTextOnFocus">false</bool>
 											<bool name="ClipsDescendants">false</bool>
 											<bool name="Draggable">false</bool>
-											<token name="Font">4</token>
+											<token name="Font">10</token>
 											<int name="LayoutOrder">0</int>
 											<float name="LineHeight">1</float>
 											<bool name="MultiLine">false</bool>
@@ -3956,7 +3911,6 @@ SetNumber(x)]]></string>
 												<YO>0</YO>
 											</UDim2>
 											<token name="SizeConstraint">0</token>
-											<bool name="SizeFromContents">false</bool>
 											<BinaryString name="Tags"></BinaryString>
 											<string name="Text"></string>
 											<Color3 name="TextColor3">4283782527</Color3>
@@ -3966,7 +3920,7 @@ SetNumber(x)]]></string>
 											<float name="TextStrokeTransparency">1</float>
 											<float name="TextTransparency">0</float>
 											<token name="TextTruncate">0</token>
-											<bool name="TextWrapped">false</bool>
+											<bool name="TextWrapped">true</bool>
 											<token name="TextXAlignment">0</token>
 											<token name="TextYAlignment">1</token>
 											<bool name="Visible">true</bool>
@@ -3975,7 +3929,7 @@ SetNumber(x)]]></string>
 									</Item>
 								</Item>
 							</Item>
-							<Item class="TextButton" referent="RBXA9DADC8C02C74DF1B03F9710BBA09775">
+							<Item class="TextButton" referent="RBX6248B321F302482CA1288DFA814377F5">
 								<Properties>
 									<bool name="Active">true</bool>
 									<Vector2 name="AnchorPoint">
@@ -4017,7 +3971,6 @@ SetNumber(x)]]></string>
 										<YO>40</YO>
 									</UDim2>
 									<token name="SizeConstraint">0</token>
-									<bool name="SizeFromContents">false</bool>
 									<token name="Style">0</token>
 									<BinaryString name="Tags"></BinaryString>
 									<string name="Text">Create</string>
@@ -4035,7 +3988,7 @@ SetNumber(x)]]></string>
 									<int name="ZIndex">1</int>
 								</Properties>
 							</Item>
-							<Item class="Frame" referent="RBX3DA322DFB0124F9A9511166FE0F260CF">
+							<Item class="Frame" referent="RBX33B2280EC30641369979BB2ED90E6AC2">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -4072,13 +4025,12 @@ SetNumber(x)]]></string>
 										<YO>30</YO>
 									</UDim2>
 									<token name="SizeConstraint">0</token>
-									<bool name="SizeFromContents">false</bool>
 									<token name="Style">0</token>
 									<BinaryString name="Tags"></BinaryString>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">1</int>
 								</Properties>
-								<Item class="TextButton" referent="RBX24ADD0470AA248E697FD595778ADA75F">
+								<Item class="TextButton" referent="RBXCAF658985AE44A7E8776E9B86052DFC7">
 									<Properties>
 										<bool name="Active">true</bool>
 										<Vector2 name="AnchorPoint">
@@ -4120,7 +4072,6 @@ SetNumber(x)]]></string>
 											<YO>0</YO>
 										</UDim2>
 										<token name="SizeConstraint">0</token>
-										<bool name="SizeFromContents">false</bool>
 										<token name="Style">0</token>
 										<BinaryString name="Tags"></BinaryString>
 										<string name="Text"></string>
@@ -4137,7 +4088,7 @@ SetNumber(x)]]></string>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="TextLabel" referent="RBX60196BB05941402E8D80D7BC0DE67BD2">
+									<Item class="TextLabel" referent="RBXEA68E18D11634057B1B0DC6D0B1BA82C">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -4161,7 +4112,7 @@ SetNumber(x)]]></string>
 											<Ref name="NextSelectionUp">null</Ref>
 											<UDim2 name="Position">
 												<XS>0</XS>
-												<XO>60</XO>
+												<XO>68</XO>
 												<YS>0</YS>
 												<YO>0</YO>
 											</UDim2>
@@ -4171,12 +4122,11 @@ SetNumber(x)]]></string>
 											<Ref name="SelectionImageObject">null</Ref>
 											<UDim2 name="Size">
 												<XS>1</XS>
-												<XO>-60</XO>
+												<XO>-68</XO>
 												<YS>1</YS>
 												<YO>0</YO>
 											</UDim2>
 											<token name="SizeConstraint">0</token>
-											<bool name="SizeFromContents">false</bool>
 											<BinaryString name="Tags"></BinaryString>
 											<string name="Text">Is Object</string>
 											<Color3 name="TextColor3">4283782527</Color3>
@@ -4193,7 +4143,7 @@ SetNumber(x)]]></string>
 											<int name="ZIndex">1</int>
 										</Properties>
 									</Item>
-									<Item class="Frame" referent="RBX5D41C28B7D5641D9A989C10D0E62397A">
+									<Item class="Frame" referent="RBX14F7A921911C47C29E099295CDC1C1DA">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -4230,13 +4180,12 @@ SetNumber(x)]]></string>
 												<YO>0</YO>
 											</UDim2>
 											<token name="SizeConstraint">0</token>
-											<bool name="SizeFromContents">false</bool>
 											<token name="Style">0</token>
 											<BinaryString name="Tags"></BinaryString>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="TextButton" referent="RBXBAF4CE46CB2049E3A8582A9FD7427418">
+										<Item class="TextButton" referent="RBX3597C67F8C2F4CDBAF866CAC4C38364C">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -4245,10 +4194,10 @@ SetNumber(x)]]></string>
 												</Vector2>
 												<bool name="AutoButtonColor">true</bool>
 												<bool name="AutoLocalize">true</bool>
-												<Color3 name="BackgroundColor3">4292796126</Color3>
+												<Color3 name="BackgroundColor3">4293980400</Color3>
 												<float name="BackgroundTransparency">0</float>
-												<Color3 name="BorderColor3">4279970357</Color3>
-												<int name="BorderSizePixel">0</int>
+												<Color3 name="BorderColor3">4292664540</Color3>
+												<int name="BorderSizePixel">1</int>
 												<bool name="ClipsDescendants">false</bool>
 												<bool name="Draggable">false</bool>
 												<token name="Font">4</token>
@@ -4278,7 +4227,6 @@ SetNumber(x)]]></string>
 													<YO>0</YO>
 												</UDim2>
 												<token name="SizeConstraint">2</token>
-												<bool name="SizeFromContents">false</bool>
 												<token name="Style">0</token>
 												<BinaryString name="Tags"></BinaryString>
 												<string name="Text">X</string>
@@ -4300,9 +4248,23 @@ SetNumber(x)]]></string>
 								</Item>
 							</Item>
 						</Item>
+						<Item class="UISizeConstraint" referent="RBX88079B51D8B34233B32289FD3EF93110">
+							<Properties>
+								<Vector2 name="MaxSize">
+									<X>600</X>
+									<Y>INF</Y>
+								</Vector2>
+								<Vector2 name="MinSize">
+									<X>0</X>
+									<Y>0</Y>
+								</Vector2>
+								<string name="Name">UISizeConstraint</string>
+								<BinaryString name="Tags"></BinaryString>
+							</Properties>
+						</Item>
 					</Item>
 				</Item>
-				<Item class="Frame" referent="RBX12640E9425124B1D8F3C36AAEFCF258D">
+				<Item class="Frame" referent="RBXDA1A5C5CC83F427BAC932C82A79B32BE">
 					<Properties>
 						<bool name="Active">false</bool>
 						<Vector2 name="AnchorPoint">
@@ -4339,13 +4301,12 @@ SetNumber(x)]]></string>
 							<YO>200</YO>
 						</UDim2>
 						<token name="SizeConstraint">0</token>
-						<bool name="SizeFromContents">false</bool>
 						<token name="Style">0</token>
 						<BinaryString name="Tags"></BinaryString>
 						<bool name="Visible">true</bool>
 						<int name="ZIndex">1</int>
 					</Properties>
-					<Item class="Frame" referent="RBXD9EB60F72BE04622B2D886444BB209D6">
+					<Item class="Frame" referent="RBX209B242C6C4B450A9D0A9929FA7C4655">
 						<Properties>
 							<bool name="Active">false</bool>
 							<Vector2 name="AnchorPoint">
@@ -4382,13 +4343,12 @@ SetNumber(x)]]></string>
 								<YO>0</YO>
 							</UDim2>
 							<token name="SizeConstraint">0</token>
-							<bool name="SizeFromContents">false</bool>
 							<token name="Style">0</token>
 							<BinaryString name="Tags"></BinaryString>
 							<bool name="Visible">true</bool>
 							<int name="ZIndex">1</int>
 						</Properties>
-						<Item class="ScrollingFrame" referent="RBX472FBE27CB7D402D82F62F95D4C50186">
+						<Item class="ScrollingFrame" referent="RBX8C817D3481BD433A859048319BD912E2">
 							<Properties>
 								<bool name="Active">false</bool>
 								<Vector2 name="AnchorPoint">
@@ -4442,7 +4402,6 @@ SetNumber(x)]]></string>
 									<YO>0</YO>
 								</UDim2>
 								<token name="SizeConstraint">0</token>
-								<bool name="SizeFromContents">false</bool>
 								<BinaryString name="Tags"></BinaryString>
 								<Content name="TopImage"><url>rbxassetid://1218039439</url></Content>
 								<token name="VerticalScrollBarInset">0</token>
@@ -4450,7 +4409,7 @@ SetNumber(x)]]></string>
 								<bool name="Visible">true</bool>
 								<int name="ZIndex">1</int>
 							</Properties>
-							<Item class="UIPadding" referent="RBX293929F7F096461D838E0E18151F9747">
+							<Item class="UIPadding" referent="RBX61A0735DC1974F6680F0DE60781CA6A2">
 								<Properties>
 									<string name="Name">UIPadding</string>
 									<UDim name="PaddingBottom">
@@ -4472,7 +4431,7 @@ SetNumber(x)]]></string>
 									<BinaryString name="Tags"></BinaryString>
 								</Properties>
 							</Item>
-							<Item class="TextLabel" referent="RBX056A3927BA02454C837584C2FC9C4EDA">
+							<Item class="TextLabel" referent="RBX08FC39B52683449594594C0805DA5F2A">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -4511,7 +4470,6 @@ SetNumber(x)]]></string>
 										<YO>0</YO>
 									</UDim2>
 									<token name="SizeConstraint">0</token>
-									<bool name="SizeFromContents">false</bool>
 									<BinaryString name="Tags"></BinaryString>
 									<string name="Text">Label</string>
 									<Color3 name="TextColor3">4283782527</Color3>
@@ -4528,7 +4486,7 @@ SetNumber(x)]]></string>
 									<int name="ZIndex">1</int>
 								</Properties>
 							</Item>
-							<Item class="TextLabel" referent="RBX5552027785A847D69476A24BA95BB65E">
+							<Item class="TextLabel" referent="RBXE2BDC69BF6784ECC821E21B09462E141">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -4567,7 +4525,6 @@ SetNumber(x)]]></string>
 										<YO>0</YO>
 									</UDim2>
 									<token name="SizeConstraint">0</token>
-									<bool name="SizeFromContents">false</bool>
 									<BinaryString name="Tags"></BinaryString>
 									<string name="Text">1000</string>
 									<Color3 name="TextColor3">4289177511</Color3>
@@ -4585,7 +4542,7 @@ SetNumber(x)]]></string>
 								</Properties>
 							</Item>
 						</Item>
-						<Item class="TextButton" referent="RBXA827DDBA6AB346E28687BDAD94307600">
+						<Item class="TextButton" referent="RBX95B18A351E5A4FA397F8B7C0444D1FB3">
 							<Properties>
 								<bool name="Active">true</bool>
 								<Vector2 name="AnchorPoint">
@@ -4627,7 +4584,6 @@ SetNumber(x)]]></string>
 									<YO>20</YO>
 								</UDim2>
 								<token name="SizeConstraint">0</token>
-								<bool name="SizeFromContents">false</bool>
 								<token name="Style">0</token>
 								<BinaryString name="Tags"></BinaryString>
 								<string name="Text">+</string>
@@ -4645,7 +4601,7 @@ SetNumber(x)]]></string>
 								<int name="ZIndex">1</int>
 							</Properties>
 						</Item>
-						<Item class="TextButton" referent="RBX504C0AB648ED4944832D515E7DD47D5F">
+						<Item class="TextButton" referent="RBX2C8A3197764749DB856590E52140416C">
 							<Properties>
 								<bool name="Active">true</bool>
 								<Vector2 name="AnchorPoint">
@@ -4687,7 +4643,6 @@ SetNumber(x)]]></string>
 									<YO>20</YO>
 								</UDim2>
 								<token name="SizeConstraint">0</token>
-								<bool name="SizeFromContents">false</bool>
 								<token name="Style">0</token>
 								<BinaryString name="Tags"></BinaryString>
 								<string name="Text">-</string>
