@@ -172,3 +172,5 @@ end
 
 
 Init()
+
+_G.AeroServer = AeroServer
