@@ -14,7 +14,6 @@
         "StarterPlayer/StarterPlayerScripts/Aero/Modules/Tween.modulescript.lua", 
         "StarterPlayer/StarterPlayerScripts/Aero/Modules/Smooth.modulescript.lua", 
         "ServerStorage/Aero/Modules/DataStoreCache.SafeDataStore.modulescript.lua", 
-        "StarterPlayer/StarterPlayerScripts/Aero/Modules/Damping.modulescript.lua", 
         "StarterPlayer/StarterPlayerScripts/Aero/Controllers/Fade.modulescript.lua", 
         "StarterPlayer/StarterPlayerScripts/Aero/Modules/CameraShaker.modulescript.lua", 
         "StarterPlayer/StarterPlayerScripts/Aero/Modules/Tween.Easing.modulescript.lua", 
