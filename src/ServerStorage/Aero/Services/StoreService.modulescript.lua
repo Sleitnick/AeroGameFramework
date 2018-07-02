@@ -63,7 +63,7 @@ function ProcessReceipt(receiptInfo)
 			CurrencySpent          [Number]
 	--]]
 	
-	local player = game.Players:GetPlayerByUserId(receiptInfo.PlayerId)
+	local player = game:GetService("Players"):GetPlayerByUserId(receiptInfo.PlayerId)
 	
 	local dataStoreName = tostring(receiptInfo.PlayerId)
 	local key = tostring(receiptInfo.PurchaseId)

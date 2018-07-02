@@ -43,7 +43,7 @@ local MT = {}
 local realDataStoreService = game:GetService("DataStoreService")
 local allStores = {}
 
-if (game.Players.LocalPlayer) then
+if (game:GetService("Players").LocalPlayer) then
 	warn("Mocked DataStoreService is functioning on the client: The real DataStoreService will not work on the client")
 end
 

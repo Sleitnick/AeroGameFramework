@@ -232,7 +232,7 @@ function DataService:Start()
 		self:FlushAllConcurrent()
 	end
 	
-	game.Players.PlayerRemoving:Connect(PlayerRemoving)
+	game:GetService("Players").PlayerRemoving:Connect(PlayerRemoving)
 	
 	game:BindToClose(GameClosing)
 	

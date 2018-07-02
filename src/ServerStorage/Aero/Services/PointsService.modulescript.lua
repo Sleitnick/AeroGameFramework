@@ -88,9 +88,9 @@ function PointsService:Start()
 			realPoints[player] = nil
 		end)
 	end
-	game.Players.PlayerAdded:Connect(PlayerAdded)
-	game.Players.PlayerRemoving:Connect(PlayerRemoving)
-	for _,p in pairs(game.Players:GetPlayers()) do
+	game:GetService("Players").PlayerAdded:Connect(PlayerAdded)
+	game:GetService("Players").PlayerRemoving:Connect(PlayerRemoving)
+	for _,p in pairs(game:GetService("Players"):GetPlayers()) do
 		spawn(function()
 			PlayerAdded(p)
 		end)

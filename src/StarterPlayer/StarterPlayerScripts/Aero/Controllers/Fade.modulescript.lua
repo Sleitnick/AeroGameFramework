@@ -256,7 +256,7 @@ end
 
 
 function Fade:Start()
-	fadeGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+	fadeGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
 end
 
 
