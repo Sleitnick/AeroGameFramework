@@ -1,9 +1,10 @@
 # AeroGameFramework
 A game framework for the Roblox game platform.
 
-AeroGameFramework makes Roblox game development easy and fun. The framework is designed to alleviate the strain of communication between your code and to simplify communication between the server/client model.
+AeroGameFramework makes Roblox game development easy and fun. The framework is designed to alleviate the strain of communication between your code and to simplify communication between the server/client model. Never again will you have to touch RemoteFunctions or RemoteEvents.
 
 # Video Tutorial
+Learn how to use the framework in the video tutorial series:
 https://www.youtube.com/watch?v=0oOFgZJPIcY&list=PLk3R4TM3pnqv7doCTUHtn-wkydaA08npc
 
 # Install & Update
@@ -11,6 +12,8 @@ Run the following code snippet in the Command Line within Roblox Studio to insta
 ```lua
 require(932606289)()
 ```
+
+**Note:** Always be careful when executing code unfamiliar to you. Before running the code snippet above, feel free to inspect the [module that is being executed](https://www.roblox.com/library/932606289/AeroGameFramework-Installer), and inspect the `install.lua` file in the repository.
 
 # Structure
 AeroGameFramework is structured into three categories: Server, Client, and Shared.
@@ -98,6 +101,7 @@ return MyController
 - `controller.Modules` Table of all modules, referenced by the name of the ModuleScript
 - `controller.Shared` Table of all shared modules, referenced by the name of the ModuleScript
 - `controller.Services` Table of all service-side services, referenced by the name of the ModuleScript
+
 #### Injected Methods:
 - `Void        controller:RegisterEvent(String eventName)`
 - `Void        controller:FireEvent(String eventName, ...)`
@@ -299,8 +303,28 @@ end
 return MyController
 ```
 
+# Global
+In certain circumstances, you may want to access the framework from code executing independent from the framework. In order to do this, both the client and the server root tables have been exposed on the global scope. Because they are not exposed until fully loaded, you will have to wait for them to exist by using a `while` or `repeat` loop, as shown in the examples below.
+
+### Server Global Example
+```lua
+while (not _G.AeroServer) do wait() end
+local aeroServer = _G.AeroServer
+
+aeroServer.Services.SomeService:DoSomething()
+```
+
+### Client Global Example
+```lua
+while (not _G.Aero) do wait() end
+local aero = _G.Aero
+
+aero.Controllers.Fade:In()
+aero.Services.TestService:Hello()
+```
+
 # Internal
-AeroGameFramework is run by two scripts, `AeroServer` and `AeroClient`. The `AeroServer` script is located under `ServerScriptService.Aero`, and the `AeroClient` script is located under `StarterPlayerScripts.Aero`. These two scripts take care of executing the modules within the game framework. For the sake of stability, it is recommended that these scripts are not edited.
+AeroGameFramework is run by two scripts, `AeroServer` and `AeroClient`. The `AeroServer` script is located under `ServerScriptService.Aero`, and the `AeroClient` script is located under `StarterPlayerScripts.Aero`. These two scripts take care of executing the modules within the game framework. For the sake of stability, it is recommended that these scripts remain unaltered.
 
 When looking at in-game statistics, such as memory usage, it is important to note that all modules created within the framework will be listed under either of these two scripts.
 
