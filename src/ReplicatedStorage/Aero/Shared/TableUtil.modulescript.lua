@@ -6,6 +6,7 @@
 	
 	TableUtil.Copy(tbl)
 	TableUtil.Sync(tbl, templateTbl)
+	TableUtil.Print(tbl, label, deepPrint)
 	TableUtil.FastRemove(tbl, index)
 	
 --]]
@@ -81,9 +82,65 @@ function FastRemove(t, i)
 end
 
 
+function Print(tbl, label, deepPrint)
+	
+	label = (type(label) == "string" and label or "TABLE")
+	
+	local strTbl = {}
+	local indent = " - "
+	
+	-- Insert(string, indentLevel)
+	local function Insert(s, l)
+		strTbl[#strTbl + 1] = (indent:rep(l) .. s .. "\n")
+	end
+	
+	local function AlphaKeySort(a, b)
+		return (tostring(a.k) < tostring(b.k))
+	end
+	
+	local function PrintTable(t, lvl, lbl)
+		Insert(lbl .. ":", lvl - 1)
+		local nonTbls = {}
+		local tbls = {}
+		local keySpaces = 0
+		for k,v in pairs(t) do
+			if (type(v) == "table") then
+				table.insert(tbls, {k = k, v = v})
+			else
+				table.insert(nonTbls, {k = k, v = "[" .. typeof(v) .. "] " .. tostring(v)})
+			end
+			local spaces = #tostring(k) + 1
+			if (spaces > keySpaces) then
+				keySpaces = spaces
+			end
+		end
+		table.sort(nonTbls, AlphaKeySort)
+		table.sort(tbls, AlphaKeySort)
+		for _,v in pairs(nonTbls) do
+			Insert(tostring(v.k) .. ":" .. (" "):rep(keySpaces - #tostring(v.k)) .. v.v, lvl)
+		end
+		if (deepPrint) then
+			for _,v in pairs(tbls) do
+				PrintTable(v.v, lvl + 1, tostring(v.k) .. (" "):rep(keySpaces - #tostring(v.k)) .. " [Table]")
+			end
+		else
+			for _,v in pairs(tbls) do
+				Insert(tostring(v.k) .. ":" .. (" "):rep(keySpaces - #tostring(v.k)) .. "[Table]", lvl)
+			end
+		end
+	end
+	
+	PrintTable(tbl, 1, label)
+	
+	print(table.concat(strTbl, ""))
+	
+end
+
+
 TableUtil.Copy = CopyTable
 TableUtil.Sync = Sync
 TableUtil.FastRemove = FastRemove
+TableUtil.Print = Print
 
 
 return TableUtil
