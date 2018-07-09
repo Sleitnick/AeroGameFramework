@@ -147,6 +147,12 @@ function Fade:SetText(text)
 end
 
 
+-- Set font:
+function Fade:SetFont(font)
+	label.Font = font
+end
+
+
 -- Clear text:
 function Fade:ClearText()
 	self:SetText(nil)
