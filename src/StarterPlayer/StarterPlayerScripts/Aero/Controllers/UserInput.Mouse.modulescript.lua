@@ -4,8 +4,8 @@
 
 --[[
 	
-	Vector3   Mouse:GetPosition()
-	Vector3   Mouse:GetDelta()
+	Vector2   Mouse:GetPosition()
+	Vector2   Mouse:GetDelta()
 	Void      Mouse:Lock()
 	Void      Mouse:LockCenter()
 	Void      Mouse:Unlock()
