@@ -101,6 +101,7 @@ return MyController
 - `controller.Modules` Table of all modules, referenced by the name of the ModuleScript
 - `controller.Shared` Table of all shared modules, referenced by the name of the ModuleScript
 - `controller.Services` Table of all service-side services, referenced by the name of the ModuleScript
+- `controller.Player` Reference to the LocalPlayer (i.e. `game.Players.LocalPlayer`)
 
 #### Injected Methods:
 - `Void        controller:RegisterEvent(String eventName)`
