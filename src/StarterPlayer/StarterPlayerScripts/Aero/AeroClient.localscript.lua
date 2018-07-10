@@ -9,6 +9,7 @@ local Aero = {
 	Modules     = {};
 	Shared      = {};
 	Services    = {};
+	Player      = game:GetService("Players").LocalPlayer;
 }
 
 local mt = {__index = Aero}
