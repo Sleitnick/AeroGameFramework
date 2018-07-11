@@ -5,6 +5,8 @@
 
 
 local FILELIST_URL = "https://raw.githubusercontent.com/Sleitnick/AeroGameFramework/master/filelist.json"
+local VERSION_URL = "https://raw.githubusercontent.com/Sleitnick/AeroGameFramework/master/version.txt"
+local VERSION_OBJ_NAME = "__version__"
 
 if (_G._INSTALLING_AEROGAMEFRAMEWORK_) then
 	warn("Installation already in progress")
@@ -202,8 +204,9 @@ function BuildParent(path)
 				parentCreated = false
 			else
 				parentCreated = true
-				newParent = Instance.new("Folder", parent)
+				newParent = Instance.new("Folder")
 				newParent.Name = parentName
+				newParent.Parent = parent
 			end
 			parent = newParent
 		end
@@ -222,7 +225,23 @@ function Install()
 	gui.Archivable = false
 
 	local numPaths = 1
+	local version
 
+	-- Update local version in-game:
+	local function UpdateVersion()
+		local aero = game:GetService("ServerStorage"):FindFirstChild("Aero")
+		if (aero) then
+			local versionObj = aero:FindFirstChild(VERSION_OBJ_NAME)
+			if ((not versionObj) or (not versionObj:IsA("StringValue"))) then
+				versionObj = Instance.new("StringValue")
+				versionObj.Name = VERSION_OBJ_NAME
+				versionObj.Parent = aero
+			end
+			versionObj.Value = version
+		end
+	end
+
+	-- Update installer UI:
 	local function UpdateUI(numCompleted, item)
 		uiProgress.Size = UDim2.new((numCompleted / numPaths), 0, 1, 0)
 		uiLabel.Text = (numCompleted == numPaths and "Installation completed" or (item or ""))
@@ -230,11 +249,15 @@ function Install()
 	end
 	UpdateUI(0, "Fetching framework metadata...")
 
+	-- Main installation process:
 	local success, err = pcall(function()
+
+		version = http:GetAsync(VERSION_URL, true)
 
 		local filelist = http:JSONDecode(http:GetAsync(FILELIST_URL, true))
 		numPaths = #filelist.paths
 
+		-- Fetch and construct each file:
 		for i,path in pairs(filelist.paths) do
 			local sourceUrl = (filelist.url .. path)
 			local isEmpty = (path:match("/EMPTY$") ~= nil)
@@ -249,9 +272,10 @@ function Install()
 				local className = (scriptType == "localscript" and "LocalScript" or scriptType == "modulescript" and "ModuleScript" or "Script")
 				local obj = parent:FindFirstChild(scriptName)
 				if ((not obj) or (obj.ClassName ~= className)) then
-					scriptObj = Instance.new(className, parent)
+					scriptObj = Instance.new(className)
 					scriptObj.Name = scriptName
 					scriptObj.Source = source
+					scriptObj.Parent = parent
 				elseif (obj and obj.ClassName == className) then
 					scriptObj = obj
 					if (scriptObj.Source ~= source) then
@@ -274,6 +298,7 @@ function Install()
 
 	if (success) then
 		UpdateUI(numPaths)
+		UpdateVersion()
 	else
 		uiProgress.BackgroundColor3 = Color3.fromRGB(255, 85, 127)
 		uiProgress.Size = UDim2.new(1, 0, 1, 0)
