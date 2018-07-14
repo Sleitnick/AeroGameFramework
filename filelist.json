@@ -12,6 +12,7 @@
         "ServerStorage/Aero/Services/PointsService.modulescript.lua", 
         "ReplicatedStorage/Aero/Shared/ListenerList.modulescript.lua", 
         "StarterPlayer/StarterPlayerScripts/Aero/AeroClient.localscript.lua", 
+        "StarterPlayer/StarterPlayerScripts/Aero/Modules/PID.modulescript.lua", 
         "StarterPlayer/StarterPlayerScripts/Aero/Modules/Tween.modulescript.lua", 
         "StarterPlayer/StarterPlayerScripts/Aero/Modules/Smooth.modulescript.lua", 
         "ServerStorage/Aero/Modules/DataStoreCache.SafeDataStore.modulescript.lua", 
