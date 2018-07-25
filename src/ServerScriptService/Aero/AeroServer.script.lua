@@ -82,14 +82,12 @@ end
 
 
 -- Setup table to load modules on demand:
-function LazyLoadSetup(tbl, folder, exposeAero)
+function LazyLoadSetup(tbl, folder)
 	setmetatable(tbl, {
 		__index = function(t, i)
 			local obj = require(folder[i])
 			if (type(obj) == "table") then
-				if (exposeAero) then
-					setmetatable(obj, {__index = AeroServer})
-				end
+				setmetatable(obj, {__index = AeroServer})
 				if (type(obj.Init) == "function") then
 					obj:Init(AeroServer)
 				end
@@ -143,8 +141,8 @@ end
 function Init()
 	
 	-- Lazy-load server and shared modules:
-	LazyLoadSetup(AeroServer.Modules, modulesFolder, true)
-	LazyLoadSetup(AeroServer.Shared, sharedFolder, false)
+	LazyLoadSetup(AeroServer.Modules, modulesFolder)
+	LazyLoadSetup(AeroServer.Shared, sharedFolder)
 	
 	-- Load services:
 	local modules = {}
