@@ -5,9 +5,11 @@
 
 
 local AeroServer = {
-	Services = {};
-	Modules  = {};
-	Shared   = {};
+	Services		= {};
+	Modules			= {};
+	Shared			= {};
+	_events			= {};
+	_clientEvents		= {};
 }
 
 
@@ -91,6 +93,8 @@ function LazyLoadSetup(tbl, folder)
 				if (type(obj.Init) == "function") then
 					obj:Init(AeroServer)
 				end
+				obj._events = AeroServer._events
+				obj._clientEvents = AeroServer._clientEvents
 			end
 			rawset(t, i, obj)
 			return obj
@@ -114,8 +118,8 @@ function LoadService(module)
 	
 	setmetatable(service, {__index = AeroServer})
 	
-	service._events = {}
-	service._clientEvents = {}
+	service._events = AeroServer._events
+	service._clientEvents = AeroServer._clientEvents
 	service._remoteFolder = remoteFolder
 	
 end
