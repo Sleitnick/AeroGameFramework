@@ -8,8 +8,8 @@ local AeroServer = {
 	Services		= {};
 	Modules			= {};
 	Shared			= {};
-	_events			= {};
-	_clientEvents		= {};
+	Events			= {};
+	ClientEvents		= {};
 }
 
 
@@ -90,11 +90,11 @@ function LazyLoadSetup(tbl, folder)
 			local obj = require(folder[i])
 			if (type(obj) == "table") then
 				setmetatable(obj, {__index = AeroServer})
+				obj._events = AeroServer.Events
+				obj._clientEvents = AeroServer.ClientEvents
 				if (type(obj.Init) == "function") then
 					obj:Init(AeroServer)
 				end
-				obj._events = AeroServer._events
-				obj._clientEvents = AeroServer._clientEvents
 			end
 			rawset(t, i, obj)
 			return obj
@@ -118,8 +118,8 @@ function LoadService(module)
 	
 	setmetatable(service, {__index = AeroServer})
 	
-	service._events = AeroServer._events
-	service._clientEvents = AeroServer._clientEvents
+	service._events = AeroServer.Events
+	service._clientEvents = AeroServer.ClientEvents
 	service._remoteFolder = remoteFolder
 	
 end
