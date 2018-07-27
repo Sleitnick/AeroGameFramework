@@ -10,6 +10,7 @@ local Aero = {
 	Shared      = {};
 	Services    = {};
 	Player      = game:GetService("Players").LocalPlayer;
+	Events	    = {};
 }
 
 local mt = {__index = Aero}
@@ -80,7 +81,7 @@ function LazyLoadSetup(tbl, folder)
 		__index = function(t, i)
 			local obj = require(folder[i])
 			if (type(obj) == "table") then
-				obj._events = {}
+				obj._events = Aero.Events
 				setmetatable(obj, mt)
 				if (type(obj.Init) == "function") then
 					obj:Init(Aero)
@@ -96,7 +97,7 @@ end
 function LoadController(module)
 	local controller = require(module)
 	Aero.Controllers[module.Name] = controller
-	controller._events = {}
+	controller._events = Aero.Events
 	setmetatable(controller, mt)
 end
 
