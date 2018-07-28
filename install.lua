@@ -278,7 +278,7 @@ function Install()
 					scriptObj.Parent = parent
 				elseif (obj and obj.ClassName == className) then
 					scriptObj = obj
-					if (scriptObj.Source ~= source) then
+					if (scriptObj.Source ~= source && obj.Name ~= "AeroLoad") then
 						scriptObj.Source = source
 						wasUpdated = true
 					else
