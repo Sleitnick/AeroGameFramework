@@ -21,6 +21,8 @@ local sharedFolder = game:GetService("ReplicatedStorage"):WaitForChild("Aero"):W
 
 
 function Aero:RegisterEvent(eventName)
+	assert(not self._events[eventName], string.format("The event name '%s' is already registered.", eventName))
+	
 	local event = self.Shared.Event.new()
 	self._events[eventName] = event
 	return event
