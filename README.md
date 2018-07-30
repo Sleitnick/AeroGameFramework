@@ -45,7 +45,7 @@ Client-side modules have the exact functionality as server-side modules, except 
 ## Shared
 `ReplicatedStorage.Aero.Shared`
 
-Shared modules are modules that can be used by both the client and the server. This means that the same exact code runs on both the client and the server, as an exact copy is replicated from the server to the client.
+Shared modules are modules that can be used by both the client and the server. This means that the code is hosted on the server, and then replicated (copied) to the client when each player connects; so both the server and client can both execute the same code, but strictly in the client, or server. Imagine having a utility module that encodes a string to Base64, and you want both the server and client to both have access to this module but don't want to setup a remote function for the client to call to the server. This is what shared modules are for.
 
 # API
 Documentation of how to use server services and client modules.
