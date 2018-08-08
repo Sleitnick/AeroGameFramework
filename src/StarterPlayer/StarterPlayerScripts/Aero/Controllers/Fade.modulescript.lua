@@ -15,6 +15,7 @@
 		
 		Fade:SetText(text)                              Set text to show on fade screen
 		Fade:ClearText()                                Sets text to a blank string
+		Fade:SetTextSize(size)				Sets the text size (0 for auto scaling)
 		Fade:SetFont(font)                              Sets the font
 		
 		Fade:SetBackgroundColor(color)                  Set the fade color (can be a Color3 or BrickColor)
@@ -78,12 +79,14 @@ local fadeGui = Instance.new("ScreenGui")
 	fadeGui.Name = "FadeGui"
 	fadeGui.DisplayOrder = 9
 	fadeGui.ResetOnSpawn = false
+	fadeGui.IgnoreGuiInset = true -- Now ignores the inset because what kind of monster would want this off?
 
 -- Main overlay frame:
 local fade = Instance.new("Frame")
 	fade.Name = "Fade"
-	fade.Size = UDim2.new(1, 500, 1, 500)
-	fade.Position = UDim2.new(0, -250, 0, -250)
+	fade.Size = UDim2.new(1, 0, 1, 00)
+	fade.Position = UDim2.new(0.5, 0, 0.5, 0)
+	fade.AnchorPoint = Vector2.new(0.5, 0.5) -- Now using AnchorPoints!
 	fade.BorderSizePixel = 0
 	fade.BackgroundColor3 = Color3.new(0, 0, 0)
 	fade.BackgroundTransparency = 1
@@ -92,12 +95,13 @@ local fade = Instance.new("Frame")
 -- Text label:
 local label = Instance.new("TextLabel")
 	label.Name = "Label"
+	label.AnchorPoint = Vector2.new(0.5, 0.5)
 	label.BackgroundTransparency = 1
 	label.Font = Enum.Font.SourceSans
 	label.TextScaled = true
 	label.TextWrapped = true
-	label.Size = UDim2.new(1, -500, 1, -500)
-	label.Position = UDim2.new(0, 250, 0, 250)
+	label.Size = UDim2.new(1, 0, 1, 00)
+	label.Position = UDim2.new(0.5, 0, 0.5, 0)
 	label.TextColor3 = Color3.new(1, 1, 1)
 	label.Text = ""
 	label.Parent = fade
@@ -144,6 +148,15 @@ end
 -- Set text:
 function Fade:SetText(text)
 	label.Text = (text == nil and "" or tostring(text))
+end
+
+
+-- Set text size:
+function Fade:SetTextSize(size)
+	-- Turn off text wrapping no matter what because if we turn on text scaling, wrapping will automatically turn back on
+	label.TextWrapped = false
+	label.TextScaled = (size == 0 and true or false)
+	label.TextSize = (size == 0 and label.TextSize or size) -- Don't bother changing text size if we turn on auto scaling
 end
 
 
