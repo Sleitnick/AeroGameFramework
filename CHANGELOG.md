@@ -38,7 +38,7 @@ function Test:Start()
 end
 
 function Test:Init()
-  local fade = self.Controllers.Fade
+  fade = self.Controllers.Fade
 end
 
 -- Set up the table to integrate with the framework:
