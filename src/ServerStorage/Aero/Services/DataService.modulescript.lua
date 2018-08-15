@@ -5,31 +5,55 @@
 --[[
 	
 	Server:
+
+		PLAYER DATA METHODS:
 	
-		DataService:Set(player, key, value)
-		DataService:Get(player, key)
-		DataService:Remove(player, key)
-		DataService:Flush(player)
-		DataService:FlushKey(player, key)
-		DataService:FlushAll()
-		DataService:FlushAllConcurrent()
+			DataService:Set(player, key, value)
+			DataService:Get(player, key)
+			DataService:Remove(player, key)
+			DataService:Flush(player)
+			DataService:FlushKey(player, key)
+			DataService:FlushAll()
+			DataService:FlushAllConcurrent()
+
+
+		GLOBAL DATA METHODS:
+				
+			DataService:SetGlobal(key, value)
+			DataService:GetGlobal(key)
+			DataService:RemoveGlobal(key)
+			DataService:OnUpdateGlobal(key, callback)
+			DataService:FlushGlobal(key)
+			DataService:FlushAllGlobal()
+
+
+		CUSTOM DATA METHODS:
 		
-		DataService:SetGlobal(key, value)
-		DataService:GetGlobal(key)
-		DataService:RemoveGlobal(key)
+			DataService:SetCustom(name, scope, key, value)
+			DataService:GetCustom(name, scope, key)
+			DataService:RemoveCustom(name, scope, key)
+			DataService:OnUpdateCustom(name, scope, key, callback)
+			DataService:FlushCustom(name, scope, key)
+			DataService:FlushAllCustom(name, scope, key)
 		
-		DataService:SetCustom(dataStoreName, dataStoreScope, key, value)
-		DataService:GetCustom(dataStoreName, dataStoreScope, key)
-		DataService:RemoveCustom(dataStoreName, dataStoreScope, key)
-		DataService:FlushCustom(dataStoreName, dataStoreScope, key)
-		DataService:FlushAllCustom(dataStoreName, dataStoreScope, key)
+
+		GAME CLOSING CALLBACK:
+
+			DataService:BindToClose(callbackFunction)
+
+
+		EVENTS:
+
+			DataService.PlayerFailed(player, method, key, errorMessage)
+			DataService.GlobalFailed(method, key, errorMessage)
+			DataService.CustomFailed(name, scope, method, key, errorMessage)
 		
-		DataService:BindToClose(callbackFunction)
-	
 	
 	Client:
 	
 		DataService:Get(key)
+
+		DataService.Failed(method, key, errorMessage)
 	
 --]]
 
@@ -44,7 +68,12 @@ local AUTOSAVE_INTERVAL = 60
 
 local NAME_SCOPE_KEY_FORMAT = "name=%s;scope=%s"
 
-local Cache-- = require(script:WaitForChild("Cache"))
+local PLAYER_FAILED_EVENT = "PlayerFailed"
+local GLOBAL_FAILED_EVENT = "GlobalFailed"
+local CUSTOM_FAILED_EVENT = "CustomFailed"
+local CLIENT_FAILED_EVENT = "Failed"
+
+local Cache
 
 local playerCaches = {}
 local customCaches = {}
@@ -53,44 +82,51 @@ local globalCache
 local boundToCloseFuncs = {}
 
 
-local function GetPlayerCache(player)
+function DataService:GetPlayerCache(player)
 	local cache = playerCaches[player]
 	if (not cache) then
 		if (player.UserId > 0) then
 			cache = Cache.new(tostring(player.UserId), SCOPE)
 		else
-			-- Guest cache (not linked to DataStore):
+			-- Guest/offline cache (not linked to DataStore):
 			cache = Cache.new()
 		end
 		playerCaches[player] = cache
+		cache.Failed:Connect(function(method, key, errMsg)
+			self:FireEvent(PLAYER_FAILED_EVENT, player, method, key, errMsg)
+			self:FireClientEvent(CLIENT_FAILED_EVENT, player, method, key, errMsg)
+		end)
 	end
 	return cache
 end
 
 
-local function GetCustomCache(name, scope)
+function DataService:GetCustomCache(name, scope)
 	local nameScopeKey = NAME_SCOPE_KEY_FORMAT:format(name, scope)
 	local cache = customCaches[nameScopeKey]
 	if (not cache) then
 		cache = Cache.new(name, scope)
 		customCaches[nameScopeKey] = cache
+		cache.Failed:Connect(function(method, key, errMsg)
+			self:FireEvent(CUSTOM_FAILED_EVENT, name, scope, method, key, errMsg)
+		end)
 	end
 	return cache
 end
 
 
 function DataService:Set(player, key, value)
-	GetPlayerCache(player):Set(key, value)
+	self:GetPlayerCache(player):Set(key, value)
 end
 
 
 function DataService:Get(player, key)
-	return GetPlayerCache(player):Get(key)
+	return self:GetPlayerCache(player):Get(key)
 end
 
 
 function DataService:Remove(player, key)
-	GetPlayerCache(player):Remove(key)
+	self:GetPlayerCache(player):Remove(key)
 end
 
 
@@ -109,38 +145,58 @@ function DataService:RemoveGlobal(key)
 end
 
 
+function DataService:OnUpdateGlobal(key, callback)
+	return globalCache:OnUpdate(key, callback)
+end
+
+
 function DataService:SetCustom(name, scope, key, value)
-	GetCustomCache(name, scope):Set(key, value)
+	self:GetCustomCache(name, scope):Set(key, value)
 end
 
 
 function DataService:GetCustom(name, scope, key)
-	return GetCustomCache(name, scope):Get(key)
+	return self:GetCustomCache(name, scope):Get(key)
 end
 
 
 function DataService:RemoveCustom(name, scope, key)
-	GetCustomCache(name, scope):Remove(key)
+	self:GetCustomCache(name, scope):Remove(key)
+end
+
+
+function DataService:OnUpdateCustom(name, scope, key, callback)
+	return self:GetCustomCache(name, scope):OnUpdate(key, callback)
 end
 
 
 function DataService:Flush(player)
-	GetPlayerCache(player):FlushAll()
+	self:GetPlayerCache(player):FlushAll()
 end
 
 
 function DataService:FlushKey(player, key)
-	GetPlayerCache(player):Flush(key)
+	self:GetPlayerCache(player):Flush(key)
+end
+
+
+function DataService:FlushGlobal(key)
+	globalCache:Flush(key)
+end
+
+
+function DataService:FlushAllGlobal()
+	globalCache:FlushAll()
 end
 
 
 function DataService:FlushCustom(name, scope, key)
-	GetCustomCache(name, scope):Flush(key)
+	self:GetCustomCache(name, scope):Flush(key)
 end
 
 
 function DataService:FlushAllCustom(name, scope, key)
-	GetCustomCache(name, scope):FlushAll()
+	self:GetCustomCache(name, scope):FlushAll()
 end
 
 
@@ -223,7 +279,10 @@ function DataService:Start()
 		if (self.GameClosing) then return end
 		self:Flush(player)
 		wait(5)
-		playerCaches[player] = nil
+		if (playerCaches[player]) then
+			playerCaches[player]:Destroy()
+			playerCaches[player] = nil
+		end
 	end
 	
 	local function GameClosing()
@@ -244,8 +303,19 @@ end
 
 
 function DataService:Init()
+
+	self:RegisterEvent(PLAYER_FAILED_EVENT)
+	self:RegisterEvent(GLOBAL_FAILED_EVENT)
+	self:RegisterEvent(CUSTOM_FAILED_EVENT)
+	self:RegisterClientEvent(CLIENT_FAILED_EVENT)
+
 	Cache = self.Modules.DataStoreCache
+
 	globalCache = Cache.new("global", "global")
+	globalCache.Failed:Connect(function(method, key, errMsg)
+		self:FireEvent(GLOBAL_FAILED_EVENT, method, key, errMsg)
+	end)
+
 end
 
 

@@ -5,6 +5,8 @@
 --[[
 	
 	Works exactly like the real DataStore.
+
+	safeDataStore.Failed(method, key, errorMessage)
 	
 --]]
 
@@ -25,13 +27,16 @@ end
 
 function SafeDataStore.new(name, scope)
 	
-	local safeDataStore = setmetatable({
+	local self = setmetatable({
 		DataStore = dataStoreService:GetDataStore(name, scope);
 	}, SafeDataStore)
+
+	self.Failed = self.Shared.Event.new()
 	
-	return safeDataStore
+	return self
 	
 end
+
 
 function SafeDataStore:Try(method, k, v)
 	local value = nil
@@ -44,6 +49,7 @@ function SafeDataStore:Try(method, k, v)
 			break
 		elseif (i == MAX_ATTEMPTS) then
 			warn("DataStore " .. method .. " failed: " .. tostring(v))
+			self.Failed:Fire(method, k, tostring(v))
 		else
 			wait(ATTEMPT_INTERVAL)
 		end

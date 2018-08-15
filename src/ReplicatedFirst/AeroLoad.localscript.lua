@@ -9,6 +9,11 @@
 	
 	The following code shows how to do this with a custom GUI,
 	but you will have to fill in some of the code yourself.
+
+	IF YOU USE THIS CODE, MAKE SURE TO PUT IT IN A FILE NAMED 
+	SOMETHING OTHER THAN 'AeroLoad' SO FUTURE FRAMEWORK UPDATES 
+	DO NOT OVERWRITE YOUR CUSTOM 'AeroLoad' SCRIPT. YOU CAN NAME 
+	IT ANYTHING, LIKE 'MyCustomAeroLoad'
 	
 ]]
 

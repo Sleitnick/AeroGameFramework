@@ -22,7 +22,7 @@ local sharedFolder = game:GetService("ReplicatedStorage"):WaitForChild("Aero"):W
 
 function Aero:RegisterEvent(eventName)
 	assert(not self._events[eventName], string.format("The event name '%s' is already registered.", eventName))
-	
+
 	local event = self.Shared.Event.new()
 	self._events[eventName] = event
 	return event
@@ -41,6 +41,19 @@ end
 
 function Aero:WaitForEvent(eventName)
 	return self._events[eventName]:Wait()
+end
+
+
+function Aero:WrapModule(tbl)
+	assert(type(tbl) == "table", "Expected table for argument")
+	tbl._events = Aero.Events
+	setmetatable(tbl, mt)
+	if (type(tbl.Init) == "function") then
+		tbl:Init()
+	end
+	if (type(tbl.Start) == "function") then
+		coroutine.wrap(tbl.Start)(tbl)
+	end
 end
 
 
@@ -83,11 +96,7 @@ function LazyLoadSetup(tbl, folder)
 		__index = function(t, i)
 			local obj = require(folder[i])
 			if (type(obj) == "table") then
-				obj._events = Aero.Events
-				setmetatable(obj, mt)
-				if (type(obj.Init) == "function") then
-					obj:Init(Aero)
-				end
+				Aero:WrapModule(obj)
 			end
 			rawset(t, i, obj)
 			return obj
@@ -108,6 +117,16 @@ function InitController(controller)
 	if (type(controller.Init) == "function") then
 		controller:Init()
 	end
+end
+
+
+function StartController(controller)
+
+	-- Start controllers on separate threads:
+	if (type(controller.Start) == "function") then
+		coroutine.wrap(controller.Start)(controller)
+	end
+
 end
 
 
@@ -134,13 +153,13 @@ function Init()
 	
 	-- Start controllers:
 	for _,controller in pairs(Aero.Controllers) do
-		if (type(controller.Start) == "function") then
-			coroutine.wrap(controller.Start)(controller)
-		end
+		StartController(controller)
 	end
-	
+
+	-- Expose client framework globally:
+	_G.Aero = Aero
+
 end
 
 
 Init()
-_G.Aero = Aero
