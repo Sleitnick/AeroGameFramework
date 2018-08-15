@@ -10,6 +10,7 @@ local AeroServer = {
 	Shared   = {};
 }
 
+local mt = {__index = AeroServer}
 
 local servicesFolder = game:GetService("ServerStorage"):WaitForChild("Aero"):WaitForChild("Services")
 local modulesFolder = game:GetService("ServerStorage"):WaitForChild("Aero"):WaitForChild("Modules")
@@ -81,16 +82,26 @@ function AeroServer:RegisterClientFunction(funcName, func)
 end
 
 
+function AeroServer:WrapModule(tbl)
+	assert(type(tbl) == "table", "Expected table for argument")
+	tbl._events = {}
+	setmetatable(tbl, mt)
+	if (type(tbl.Init) == "function") then
+		tbl:Init()
+	end
+	if (type(tbl.Start) == "function") then
+		coroutine.wrap(tbl.Start)(tbl)
+	end
+end
+
+
 -- Setup table to load modules on demand:
 function LazyLoadSetup(tbl, folder)
 	setmetatable(tbl, {
 		__index = function(t, i)
 			local obj = require(folder[i])
 			if (type(obj) == "table") then
-				setmetatable(obj, {__index = AeroServer})
-				if (type(obj.Init) == "function") then
-					obj:Init(AeroServer)
-				end
+				AeroServer:WrapModule(obj)
 			end
 			rawset(t, i, obj)
 			return obj
@@ -109,10 +120,12 @@ function LoadService(module)
 	local service = require(module)
 	AeroServer.Services[module.Name] = service
 	
-	if (not service.Client) then service.Client = {} end
+	if (type(service.Client) ~= "table") then
+		service.Client = {}
+	end
 	service.Client.Server = service
 	
-	setmetatable(service, {__index = AeroServer})
+	setmetatable(service, mt)
 	
 	service._events = {}
 	service._clientEvents = {}
@@ -138,14 +151,23 @@ function InitService(service)
 end
 
 
+function StartService(service)
+
+	-- Start services on separate threads:
+	if (type(service.Start) == "function") then
+		coroutine.wrap(service.Start)(service)
+	end
+
+end
+
+
 function Init()
 	
 	-- Lazy-load server and shared modules:
 	LazyLoadSetup(AeroServer.Modules, modulesFolder)
 	LazyLoadSetup(AeroServer.Shared, sharedFolder)
 	
-	-- Load services:
-	local modules = {}
+	-- Load service modules:
 	for _,module in pairs(servicesFolder:GetChildren()) do
 		if (module:IsA("ModuleScript")) then
 			LoadService(module)
@@ -159,15 +181,14 @@ function Init()
 	
 	-- Start services:
 	for _,service in pairs(AeroServer.Services) do
-		if (type(service.Start) == "function") then
-			coroutine.wrap(service.Start)(service)
-		end
+		StartService(service)
 	end
 	
+	-- Expose server framework to client and global scope:
 	remoteServices.Parent = game:GetService("ReplicatedStorage").Aero
+	_G.AeroServer = AeroServer
 	
 end
 
 
 Init()
-_G.AeroServer = AeroServer

@@ -41,6 +41,19 @@ function Aero:WaitForEvent(eventName)
 end
 
 
+function Aero:WrapModule(tbl)
+	assert(type(tbl) == "table", "Expected table for argument")
+	tbl._events = {}
+	setmetatable(tbl, mt)
+	if (type(tbl.Init) == "function") then
+		tbl:Init()
+	end
+	if (type(tbl.Start) == "function") then
+		coroutine.wrap(tbl.Start)(tbl)
+	end
+end
+
+
 function LoadService(serviceFolder)
 	local service = {}
 	Aero.Services[serviceFolder.Name] = service
@@ -80,11 +93,7 @@ function LazyLoadSetup(tbl, folder)
 		__index = function(t, i)
 			local obj = require(folder[i])
 			if (type(obj) == "table") then
-				obj._events = {}
-				setmetatable(obj, mt)
-				if (type(obj.Init) == "function") then
-					obj:Init(Aero)
-				end
+				Aero:WrapModule(obj)
 			end
 			rawset(t, i, obj)
 			return obj
@@ -105,6 +114,16 @@ function InitController(controller)
 	if (type(controller.Init) == "function") then
 		controller:Init()
 	end
+end
+
+
+function StartController(controller)
+
+	-- Start controllers on separate threads:
+	if (type(controller.Start) == "function") then
+		coroutine.wrap(controller.Start)(controller)
+	end
+
 end
 
 
@@ -131,13 +150,13 @@ function Init()
 	
 	-- Start controllers:
 	for _,controller in pairs(Aero.Controllers) do
-		if (type(controller.Start) == "function") then
-			coroutine.wrap(controller.Start)(controller)
-		end
+		StartController(controller)
 	end
+
+	-- Expose client framework globally:
+	_G.Aero = Aero
 	
 end
 
 
 Init()
-_G.Aero = Aero
