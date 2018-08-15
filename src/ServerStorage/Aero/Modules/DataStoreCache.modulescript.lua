@@ -13,9 +13,12 @@
 	cache:Set(key, value)
 	cache:Remove(key)
 	cache:Load(key)
+	cache:OnUpdate(key, callback)
 	cache:Flush(key)
 	cache:FlushAll()
 	cache:FlushAllConcurrent()
+	
+	cache.Failed(method, key, errorMessage)
 	
 --]]
 
@@ -24,21 +27,36 @@
 local Cache = {}
 Cache.__index = Cache
 
-local SafeDataStore = require(script:WaitForChild("SafeDataStore"))
+local SafeDataStore
 
 
 function Cache.new(name, scope)
 	
-	local cache = setmetatable({
+	local self = setmetatable({
 		Name = name;
 		Scope = scope;
 		Data = {};
 		DataStore = (name and SafeDataStore.new(name, scope) or nil);
 		Flushing = false;
 	}, Cache)
+
+	self.Failed = self.Shared.Event.new()
+
+	if (self.DataStore) then
+		self._dsFailed = self.DataStore.Failed:Connect(function(method, key, errMsg)
+			self.Failed:Fire(method, key, errMsg)
+		end)
+	end
 	
-	return cache
+	return self
 	
+end
+
+
+function Cache:OnUpdate(key, callback)
+	if (self.DataStore) then
+		return self.DataStore:OnUpdate(key, callback)
+	end
 end
 
 
@@ -120,6 +138,20 @@ function Cache:Remove(key)
 		self.DataStore:RemoveAsync(key)
 		self.Data[key] = nil
 	end
+end
+
+
+function Cache:Destroy()
+	self.Failed:DisconnectAll()
+	if (self._dsFailed) then
+		self._dsFailed:Disconnect()
+	end
+end
+
+
+function Cache:Init()
+	SafeDataStore = require(script:WaitForChild("SafeDataStore"))
+	setmetatable(SafeDataStore, getmetatable(self))
 end
 
 

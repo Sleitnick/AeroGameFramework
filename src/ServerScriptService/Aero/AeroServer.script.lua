@@ -12,6 +12,7 @@ local AeroServer = {
 	ClientEvents	= {};
 }
 
+local mt = {__index = AeroServer}
 
 local servicesFolder = game:GetService("ServerStorage"):WaitForChild("Aero"):WaitForChild("Services")
 local modulesFolder = game:GetService("ServerStorage"):WaitForChild("Aero"):WaitForChild("Modules")
@@ -23,7 +24,7 @@ remoteServices.Name = "AeroRemoteServices"
 
 function AeroServer:RegisterEvent(eventName)
 	assert(not self._events[eventName], string.format("The event name '%s' is already registered.", eventName))
-	
+
 	local event = self.Shared.Event.new()
 	self._events[eventName] = event
 	return event
@@ -32,7 +33,7 @@ end
 
 function AeroServer:RegisterClientEvent(eventName)
 	assert(not self._clientEvents[eventName], string.format("The client event name '%s' is already registered.", eventName))
-	
+
 	local event = Instance.new("RemoteEvent")
 	event.Name = eventName
 	event.Parent = self._remoteFolder
@@ -99,7 +100,6 @@ function AeroServer:WrapModule(tbl)
 		coroutine.wrap(tbl.Start)(tbl)
 	end
 end
-
 
 -- Setup table to load modules on demand:
 function LazyLoadSetup(tbl, folder)
