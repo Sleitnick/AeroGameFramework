@@ -1,6 +1,6 @@
 # Aero Change Log
 
-The following are updates that have been implimented to the framework, so you can understand the impact of upgrading the plug-in or framework as we make changes.
+The following are updates that have been implimented to the framework, so you can understand the impact of upgrading the plugin or framework as we make changes.
 
 Understand that the framework may change frequently, so upcoming changes may break compatiblility with previous versions. Before upgrading, we recommend reading this `CHANGELOG.md` to see if there are BC Breaks, otherwise known as backwards compatibility breaks which may have an impact on your implimentation against the framework working.
 
@@ -12,10 +12,44 @@ As always, you can also check the commit history for a given version as well, an
 
 ## Version Changes
 
-Version | Date | Description
----|---|---
-[1.1.3](#1.1.3) | 2018-07-29 | <ul><li>==[BC Break]== Here is an item that has a backwards compatibility break.</li><li>Here is a normal updated item.</li></ul>
+| Version | Date | Description |
+| ---|---|--- |
+| [1.2.2](#1.2.2) | 2018-08-15 | <ul><li>Added Failed events for DataService.</li><li>Added Failed event for DataStoreCache.</li><li>Added Failed event for SafeDataStore.</li></ul> |
+| [1.2.3](#1.2.3) | 2018-08-15 | <ul><li>Added `WrapModule` method to Server and Client main scripts.</li></ul> |
 
 ### Version History Notes
-#### <a name="1.1.3"></a> Version 1.1.3
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+#### <a name="1.2.3"></a> Version 1.2.3
+Added the `WrapModule` method to both the AeroServer and AeroClient scripts. This method takes a `table` and will set its metatable to the same metatable used by other Aero-based modules/controllers/services. This allows you to easily integrate custom modules into the framework if needed.
+
+Internally, this sets the metatable of the given table, and also calls the associated `Start` and `Init` methods if available.
+
+Client example:
+```lua
+while (not _G.Aero) do wait() end
+
+local Test = {}
+local fade
+
+function Test:Start()
+  fade:SetText("Hello world")
+  fade:Out()
+  fade:In()
+end
+
+function Test:Init()
+  local fade = self.Controllers.Fade
+end
+
+-- Set up the table to integrate with the framework:
+_G.Aero:WrapModule(Test)
+```
+
+#### <a name="1.2.2"></a> Version 1.2.2
+Added Failed events for DataService. The DataService has always retried requests if DataStore calls have failed; however, it used to silently fail with a simple `warn()` if the maximum retry limit was reached. In this update, the service will now call an appropriated Failed event corresponding to the type of data call.
+
+In order to make this function, there are also Failed events added to the internal modules used by the DataService module. This includes the DataStoreCache and SafeDataStore.
+
+- If setting player data, then the `PlayerFailed(player, method, key, errMsg)` event will be fired, as well as the client `Failed(method, key, errMsg)` event.
+- If setting global data, then the `GlobalFailed(method, key, errMsg)` event will be fired.
+- If setting custom data, then the `CustomFailed(name, scope, method, key, errMsg)` event will be fired.
