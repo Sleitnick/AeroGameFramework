@@ -1,12 +1,12 @@
-# Aero Change Log
+# AeroGameFramework Change Log
 
-The following are updates that have been implimented to the framework, so you can understand the impact of upgrading the plugin or framework as we make changes.
+The following are updates that have been implemented into the framework, so you can understand the impact of upgrading the plugin or framework as changes are made.
 
-Understand that the framework may change frequently, so upcoming changes may break compatiblility with previous versions. Before upgrading, we recommend reading this `CHANGELOG.md` to see if there are BC Breaks, otherwise known as backwards compatibility breaks which may have an impact on your implimentation against the framework working.
+Understand that the framework may change frequently, so upcoming changes may break compatiblility with previous versions. Before upgrading, it is recommended that you read this `CHANGELOG.md` to see if there are BC Breaks, otherwise known as backwards-compatibility breaks, which may have an impact on your implementation against the framework working.
 
 Anything noted with a ==[BC Break]== you should be cautious about upgrading until you understand what refactoring you may have to do in order to support the framework version.
 
-If a version has a backwards compatibility break, and you are not ready to upgrade to that version, you can always look at our version tags in Github and checkout to use a previous version. Although, this would be a manual process for you to copy the scripts for the particular version and should not upgrade using the auto updater, since that will always provide the latest version.
+If a version has a backwards-compatibility break, and you are not ready to upgrade to that version, you can always look at our version tags in Github and checkout to use a previous version. Although, this would be a manual process for you to copy the scripts for the particular version and should not upgrade using the auto updater, since that will always provide the latest version.
 
 As always, you can also check the commit history for a given version as well, and examine the specific lines of code changed to understand how this may impact your project.
 
