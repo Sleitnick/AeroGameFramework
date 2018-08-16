@@ -52,6 +52,22 @@ The `Start` method is called after all services have been initiated (i.e. their 
 
 Each `Start` method is executed on a _separate_ thread. From here, it is safe to reference and invoke other services in the framework.
 
+### Custom Methods
+Adding your own methods to a service is very easy. Simply attach a function to the service table:
+```lua
+-- Custom method:
+function MyService:PrintSomething(...)
+	print("MyService:", ...)
+end
+
+function MyService:Start()
+	-- Invoke the custom method:
+	self:PrintSomething("Hi", "Hello", 32, true, "ABC")
+end
+```
+
+Other services can also invoke your custom service methods.
+
 ### Server Events
 You can create and listen to events using the `RegisterEvent`, `ConnectEvent`, and `FireEvent` methods. All events should _always_ be registered within the `Init` method. The `ConnectEvent` and `FireEvent` methods should _never_ be used within an `Init` method.
 ```lua
@@ -85,12 +101,17 @@ Note that the `player` argument must _always_ be the first argument for client m
 #### Client Events
 To expose an event to the client, use the `RegisterClientEvent` method in the `Init` method. Use `FireClientEvent` and `FireAllClientsEvent` to fire the event:
 ```lua
-function MyService:Init()
-	self:RegisterClientEvent("MyClientMethod")
-	----
+function MyService:Start()
+	-- Fire client event for a specific player:
 	self:FireClientEvent("MyClientEvent", somePlayer, "Hello")
-	----
+
+	-- Fire client event for all players:
 	self:FireAllClientsEvent("MyClientEvent", "Hello")
+end
+
+function MyService:Init()
+	-- Register client event:
+	self:RegisterClientEvent("MyClientMethod")
 end
 ```
 
@@ -112,7 +133,7 @@ end
 
 ## Other Examples
 
-#### Invoking another service
+#### Invoking another service:
 ```lua
 function MyService:Start()
 	-- Get some global data from the DataService:
