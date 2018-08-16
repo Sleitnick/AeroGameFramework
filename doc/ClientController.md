@@ -123,3 +123,13 @@ function MyController:Start()
 	print("Now", now)
 end
 ```
+
+#### Connecting to a service event:
+```lua
+function MyController:Start()
+	local dataService = self.Services.DataService
+	dataService.Failed:Connect(function(method, key, errorMessage)
+		warn("DataService failed:", method, key, errorMessage)
+	end)
+end
+```
