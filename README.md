@@ -31,7 +31,7 @@ AeroGameFramework is structured into three categories: Server, Client, and Share
 Services are modules that are initialized and ran at runtime. All services are exposed to each other. Services can also expose functions and events to the client.
 
 #### Modules
-Modules are lazy-loaded modules that services can access as needed.
+Modules are lazy-loaded modules that services can access as needed. Modules can also access Shared Modules and call upon Services.
 
 ## Client
 `StarterPlayerScripts.Aero.Controllers` & `StarterPlayerScripts.Aero.Modules`
@@ -45,12 +45,13 @@ Client-side modules have the exact functionality as server-side modules, except 
 ## Shared
 `ReplicatedStorage.Aero.Shared`
 
-Shared modules are modules that can be used by both the client and the server.
+Shared modules are modules that can be used by both the client and the server. This means that the code is hosted on the server, and then replicated (copied) to the client when each player connects; so both the server and client can both execute the same code, but strictly in the client, or server. Imagine having a utility module that encodes a string to Base64, and you want both the server and client to both have access to this module but don't want to setup a remote function for the client to call to the server. This is what shared modules are for.
 
 # API
 Documentation of how to use server services and client modules.
 
 ## API - Server Service
+Services are singletons. This means that only one instance of the service is running, and everytime you call a method in the service, it is always from the same instance.
 ```lua
 local MyService = {Client = {}}
 
@@ -78,7 +79,72 @@ return MyService
 - `Void        service:FireClientEvent(String eventName, Instance player, ...)`
 - `Void        service:FireAllClientsEvent(String eventName, ...)`
 - `Connection  service:ConnectEvent(String eventName, Function function)`
-- `Connection  service:ConnectClientEvent(String eventName, Funciton function)`
+- `Connection  service:ConnectClientEvent(String eventName, Function function)`
+
+## API - Server Module
+Modules are different than services, in that they are constructed new each time you use them. Calling a Module.new() instantiates the object as a brand new object. Unlike services, server modules are lazily loaded, which means they are not instantiated until you call them with the .new() constructor.
+```lua
+local MyServerModule = {}
+
+local MyServerModule.__index = MyServerModule
+
+function MyServerModule.new()
+  local self = setmetatable({
+    -- add properties you can access later wtih self.MyProperty
+  }, MyServerModule)
+end
+
+-- add methods
+function MyServerModule:MyMethod(a, b)
+  return a + b
+end
+
+return MyServerModule
+```
+#### Injected Properties:
+- `module.Services` Table of all other services, referenced by the name of the ModuleScript
+- `module.Modules` Table of all objects, referenced by the name of the ModuleScript
+- `module.Shared` Table of all shared modules, referenced by the name of the ModuleScript
+#### Injected Methods:
+- `Void        module:RegisterEvent(String eventName)`
+- `Void        module:RegisterClientEvent(String eventName)`
+- `Void        module:FireEvent(String eventName, ...)`
+- `Void        module:FireClientEvent(String eventName, Instance player, ...)`
+- `Void        module:FireAllClientsEvent(String eventName, ...)`
+- `Connection  module:ConnectEvent(String eventName, Function function)`
+- `Connection  module:ConnectClientEvent(String eventName, Function function)`
+
+## API - Server Shared
+Shared Modules are just like Server Modules, accept they are replicated between the server and client. This means that the same code that is on the server, is also on the client. However, the injected properties and methods are different, depending on if the code is on the server or client. Shared modules are good for utilities that both the server and the client need, so you can avoid adding repetitive code to your project. Just like server module, a shared module is is lazily loaded and instantiate new everytime you want to use it with the Module.new() method.
+```lua
+local MySharedModule = {}
+
+local MySharedModule.__index = MySharedModule
+
+function MySharedModule.new()
+  local self = setmetatable({
+    -- add properties you can access later wtih self.MyProperty
+  }, MyServerModule)
+end
+
+function MySharedModule:MyMethod(a, b)
+  return a + b
+end
+
+return MySharedModule
+```
+#### Injected Properties:
+- `shared.Services` Table of all other services, referenced by the name of the ModuleScript
+- `shared.Modules` Table of all objects, referenced by the name of the ModuleScript
+- `shared.Shared` Table of all shared modules, referenced by the name of the ModuleScript
+#### Injected Methods:
+- `Void        shared:RegisterEvent(String eventName)`
+- `Void        shared:FireEvent(String eventName, ...)`
+- `Connection  shared:ConnectEvent(String eventName, Function function)`
+
+Although shared modules can use the framework events, you must do so very carefully since the module runs on both the server and client. If you have a shared module that executes `shared:FireEvent`, then that event would be fired on both the client and server whenever that code is ran. So you would need to make sure you have properly execute `shared:RegisterEvent` before the FireEvent is fired on both the client and server somewhere in order to avoid error.
+
+A shared module should be very careful when referencing injected properties like `shared.Services`, `shared.Modules` and etc. Injected properties point to objects which might not be available on the client or server at runtime, depending on the reference. Normally, it is desireable to reference only `shared.Shared` within a shared module.
 
 ## API - Client Controller
 ```lua
@@ -108,25 +174,101 @@ return MyController
 - `Void        controller:FireEvent(String eventName, ...)`
 - `Connection  controller:ConnectEvent(String eventName, Function function)`
 
+## API - Client Module
+Modules are different than controllers, in that they are constructed new each time you use them, just like server modules. Calling a Module.new() instantiates the object as a brand new object. Unlike controllers, server modules are lazily loaded, which means they are not instantiated until you call them with the .new() constructor.
+```lua
+local MyClientModule = {}
+
+local MyClientModule.__index = MyClientModule
+
+function MyClientModule.new()
+  local self = setmetatable({
+    -- add properties you can access later wtih self.MyProperty
+  }, MyClientModule)
+end
+
+function MyClientModule:MyMethod(a, b)
+  return a + b
+end
+
+return MyClientModule
+```
+#### Injected Properties:
+- `module.Controllers` Table of all other controllers, referenced by the name of the ModuleScript
+- `module.Modules` Table of all modules, referenced by the name of the ModuleScript
+- `module.Shared` Table of all shared modules, referenced by the name of the ModuleScript
+- `module.Services` Table of all service-side services, referenced by the name of the ModuleScript
+
+#### Injected Methods:
+- `Void        module:RegisterEvent(String eventName)`
+- `Void        module:FireEvent(String eventName, ...)`
+- `Connection  module:ConnectEvent(String eventName, Function function)`
+
+## API - Client Shared Module
+Shared Modules are just like Server Modules, accept they are replicated between the server and client. This means that the same code that is on the server, is also on the client. However, the injected properties and methods are different, depending on if the code is on the server or client. Shared modules are good for utilities that both the server and the client need, so you can avoid adding repetitive code to your project. Just like server module, a shared module is is lazily loaded and instantiate new everytime you want to use it with the Module.new() method.
+```lua
+local MyClientSharedModule = {}
+
+local MyClientSharedModule.__index = MyClientSharedModule
+
+function MyClientSharedModule.new()
+  local self = setmetatable({
+    -- add properties you can access later wtih self.MyProperty
+  }, MyClientSharedModule)
+end
+
+function MyClientSharedModule:MyMethod(a, b)
+  return a + b
+end
+
+return MyClientSharedModule
+```
+#### Injected Properties:
+- `shared.Controllers` Table of all other controllers, referenced by the name of the ModuleScript
+- `shared.Modules` Table of all modules, referenced by the name of the ModuleScript
+- `shared.Shared` Table of all shared modules, referenced by the name of the ModuleScript
+- `shared.Services` Table of all service-side services, referenced by the name of the ModuleScript
+
+Although shared modules can use the framework events, you must do so very carefully since the module runs on both the server and client. If you have a shared module that executes `shared:FireEvent`, then that event would be fired on both the client and server whenever that code is ran. So you would need to make sure you have properly execute `shared:RegisterEvent` before the FireEvent is fired on both the client and server somewhere in order to avoid error.
+
+A shared module should be very careful when referencing injected properties like `shared.Controllers`, `shared.Modules` and etc. Injected properties point to objects which might not be available on the client or server at runtime, depending on the reference. Normally, it is desireable to reference only `shared.Shared` within a shared module.
+
+#### Injected Methods:
+- `Void        shared:RegisterEvent(String eventName)`
+- `Void        shared:FireEvent(String eventName, ...)`
+- `Connection  shared:ConnectEvent(String eventName, Function function)`
+
+## Events
+Server events share a common dictionary between service, modules and shared modules. On the client-side, events share a dictionary between controllers, modules and shared modules. This means that if you `RegisterEvent("MY_EVENT_NAME")` using the framework provided event method, that `MY_EVENT_NAME` is registered globally within the scope of Aero or AreoServer and will be able to be used in any of the other event methods, even in seperate modules. This is particularly useful when you need to manage events across different modules.
+
+Sometimes, it is desired to use duplicate event names which are actually different events. For example, I might have two scripts, and I want to have an event name for both that is `ON_CLICKED`, and no other script/module/service/etc is expected to interact with that event. In this case, use the `Shared.Event.new()` shared module for creating individual events which need to be maintained outside the framework dictionary of events. It works similarly to the framework methods, and actually, the framework uses this shared library for the management of framework events.
+
 # Basic Examples - Server
 
 ## Server Service
 Here is a basic service:
 
 ```lua
-local TestService = {}
+local TestService = {
+  -- add properties to the object for later use
+  Debug = true;
+}
 
 function TestService:Add(a, b)
+  if self.Debug then print("TestService:Add running.") end
+
   return a + b
 end
 
 function TestService:Start()
-  -- Ran after all services have been initialized
+  -- Ran after all services have been initialized.
+  -- Safe to run code from other services.
 end
 
 function TestService:Init()
-  -- Do anything to set up the service.
+  -- Do anything to set up the service, such as hydrating object properties.
   -- It is NOT safe to run code from other services, but they CAN be referenced.
+  -- It is NOT safe to call modules which call upon other services.
 end
 
 return TestService
@@ -149,6 +291,27 @@ end
 function AnotherService:Init()
   -- Reference the TestService:
   testService = self.Services.TestService
+end
+
+return AnotherService
+```
+
+Or, using properties within the service:
+
+```lua
+local AnotherService = {
+    TestService = nil;
+}
+
+function AnotherService:Start()
+  -- Invoke the TestService:
+  local sum = self.TestService:Add(5, 3)
+  print("5 + 3 = ", sum)
+end
+
+function AnotherService:Init()
+  -- Reference the TestService:
+  self.TestService = self.Services.TestService
 end
 
 return AnotherService
@@ -177,6 +340,73 @@ function MyService:Init()
   -- Fire the event after 5 seconds:
   delay(5, function()
     self:FireEvent("Hello", "How are you?")
+  end)
+
+end
+
+return MyService
+```
+
+Or, using internal service functions:
+
+```lua
+local MyService = {}
+
+function MyService:OnSayHello(msg)
+  print(msg)
+end
+
+function MyService:Start()
+
+  -- Connect to the event:
+  self:ConnectEvent("Hello", function(msg)
+    self:OnSayHello(msg)
+  end)
+
+end
+
+function MyService:Init()
+
+  -- Register the event globally:
+  self:RegisterEvent("Hello")
+
+  -- Fire the event after 5 seconds:
+  delay(5, function()
+    self:FireEvent("Hello", "How are you?")
+  end)
+
+end
+
+return MyService
+```
+
+Or, using the `Shared.Event` module:
+
+```lua
+local MyService = {
+  MyHelloEvent = nil;
+}
+
+function MyService:OnSayHello(msg)
+  print(msg)
+end
+
+function MyService:Start()
+
+  -- Connect to the event:
+  self.MyHelloEvent:Connect(function(msg)
+      self.MyService:OnSayHello(msg)
+  end)
+
+end
+
+function MyService:Init()
+
+  self.MyHelloEvent = self.Shared.Event.new()
+
+  -- Fire the event after 5 seconds:
+  delay(5, function()
+    self.MyHelloEvent:Fire("How are you?")
   end)
 
 end
@@ -277,6 +507,57 @@ end
 function SomeController:Init()
   -- Run code here to set up the controller.
   -- Similar to services, it is NOT safe to invoke other controllers in this method, but you CAN reference them.
+end
+
+return SomeController
+```
+
+Controllers have the `Player` injected into them, available as `self.Player`. Since controllers do not execute everytime the player spawns, getting access to the player character can be challenging.
+
+Here is an example of gettng access to the player character:
+
+```lua
+local SomeController = {
+  PlayerCharacter = nil;
+}
+
+function SomeContoller:MyMethod()
+    -- do something with self.PlayerCharacter
+end
+
+function SomeController:Start()
+
+  self.PlayerCharacter = self.Player.Character
+  
+  if not self.PlayerCharacter or not self.PlayerCharacter.Parent then
+    self.PlayerCharacter = self.Player.CharacterAdded:wait()
+  end
+  
+  -- handle when the character respawns
+  self.Player.CharacterAdded:connect(function(Character)
+    -- do stuff when the character respawns
+    self.PlayerCharacter = Character
+    
+    self:MyMethod()
+    
+    self.PlayerCharacter:WaitForChild("Humanoid").Died:connect(function()
+      -- do stuff when the player dies
+    end)
+  end)
+  
+  -- following code executes when player first joins server
+  -- The PlayerAdded event will not fire as this controller fires AFTER they already joined
+  self.PlayerCharacter:WaitForChild("Humanoid").Died:connect(function()
+    -- do stuff when the player dies the first time
+  end)
+  
+  -- do stuff as the player was just added to the server
+  self:MyMethod()
+  
+end
+
+function SomeController:Init()
+  -- Run code here to set up the controller.
 end
 
 return SomeController
