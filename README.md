@@ -1,7 +1,7 @@
 # AeroGameFramework
-A game framework for the Roblox game platform.
+A powerful game framework for the Roblox game platform.
 
-AeroGameFramework makes Roblox game development easy and fun. The framework is designed to alleviate the strain of communication between your code and to simplify communication between the server/client model. Never again will you have to touch RemoteFunctions or RemoteEvents.
+AeroGameFramework is a Roblox game framework that makes development easy and fun. The framework is designed to simplify the communication between modules and seamlessly bridge the gap between the server and client. Never again will you have to touch RemoteFunctions or RemoteEvents.
 
 # Video Tutorial
 Learn how to use the framework in the video tutorial series:
