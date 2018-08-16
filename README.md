@@ -28,7 +28,7 @@ AeroGameFramework is structured into three categories: Server, Client, and Share
 `ServerStorage.Aero.Services` & `ServerStorage.Aero.Modules`
 
 #### Services
-Services are modules that are initialized and ran at runtime. All services are exposed to each other. Services can also expose functions and events to the client.
+Services are modules that are initialized and run at runtime. All services are exposed to each other. Services can also expose functions and events to the client.
 
 #### Modules
 Modules are lazy-loaded modules that services can access as needed.
@@ -40,7 +40,7 @@ Modules are lazy-loaded modules that services can access as needed.
 Client controllers work similarly to server-side services, whereas all the modules are initialized and started at runtime and all modules are exposed to each other. Services that expose client-side methods and events can be accessed with these controller modules.
 
 #### Modules
-Client-side modules have the exact functionality as server-side modules, except that they are ran on the client.
+Client-side modules have the exact functionality as server-side modules, except that they are run on the client.
 
 ## Shared
 `ReplicatedStorage.Aero.Shared`
@@ -77,8 +77,8 @@ return MyService
 - `Void        service:FireEvent(String eventName, ...)`
 - `Void        service:FireClientEvent(String eventName, Instance player, ...)`
 - `Void        service:FireAllClientsEvent(String eventName, ...)`
-- `Connection  service:ConnectEvent(String eventName, Function function)`
-- `Connection  service:ConnectClientEvent(String eventName, Funciton function)`
+- `Connection  service:ConnectEvent(String eventName, Function handler)`
+- `Connection  service:ConnectClientEvent(String eventName, Function handler)`
 
 ## API - Client Controller
 ```lua
