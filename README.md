@@ -100,13 +100,13 @@ return MyController
 - `controller.Controllers` Table of all other controllers, referenced by the name of the ModuleScript
 - `controller.Modules` Table of all modules, referenced by the name of the ModuleScript
 - `controller.Shared` Table of all shared modules, referenced by the name of the ModuleScript
-- `controller.Services` Table of all service-side services, referenced by the name of the ModuleScript
+- `controller.Services` Table of all server-side services, referenced by the name of the ModuleScript
 - `controller.Player` Reference to the LocalPlayer (i.e. `game.Players.LocalPlayer`)
 
 #### Injected Methods:
 - `Void        controller:RegisterEvent(String eventName)`
 - `Void        controller:FireEvent(String eventName, ...)`
-- `Connection  controller:ConnectEvent(String eventName, Function function)`
+- `Connection  controller:ConnectEvent(String eventName, Function handler)`
 
 # Basic Examples - Server
 

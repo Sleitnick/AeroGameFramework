@@ -45,7 +45,7 @@ The `Init` method is called on each service in the framework in a synchronous an
 
 This method should be used to set up your service. For instance, you might want to create events or reference other services.
 
-The `Init` method should _not_ invoke any methods from other services yet, because it is not guaranteed that those services have had their `Init` methods invoked yet. It is safe to reference other services, but not invoke their methods.
+The `Init` method should _not_ invoke any methods from other services yet, because it is not guaranteed that those services have had their `Init` methods invoked yet. It is safe to _reference_ other services, but not invoke their methods.
 
 ### Start
 The `Start` method is called after all services have been initiated (i.e. their `Init` methods have been fully executed).
