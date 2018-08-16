@@ -1392,6 +1392,8 @@ return Version]]></ProtectedString>
 
 local Theme = {}
 
+local fallback = Enum.UITheme.Light
+
 
 Theme[Enum.UITheme.Light] = {
 	Background = Color3.fromRGB(255, 255, 255);
@@ -1425,7 +1427,15 @@ Theme[Enum.UITheme.Dark] = {
 }
 
 
-return Theme[settings().Studio["UI Theme"]]]]></ProtectedString>
+local success, theme = pcall(function()
+	return Theme[settings().Studio["UI Theme"]]
+end)
+
+if (not success) then
+	warn("AeroGameFramework: Using settings().Studio[\"UI Theme\"] is no longer supported; using default theme")
+end
+
+return (success and theme or Theme[fallback])]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
