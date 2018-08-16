@@ -30,6 +30,7 @@ return MyService
 - `service.Client.Server` Reference back to the service, so client-facing methods can invoke server-facing methods
 
 #### Injected Methods:
+- `Void service:WrapModule(Table tbl)`
 - `Void service:RegisterEvent(String eventName)`
 - `Void service:RegisterClientEvent(String eventName)`
 - `Void service:FireEvent(String eventName, ...)`
