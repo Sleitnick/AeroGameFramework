@@ -106,7 +106,7 @@ function MyController:Start()
 end
 ```
 
-#### Using a Module:
+#### Using a module:
 ```lua
 function MyController:Start()
 	local someModule = self.Modules.SomeModule
@@ -114,7 +114,7 @@ function MyController:Start()
 end
 ```
 
-#### Using a Shared module:
+#### Using a shared module:
 ```lua
 function MyController:Start()
 	-- Print the current date:
