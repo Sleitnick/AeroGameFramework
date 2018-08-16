@@ -31,6 +31,7 @@ return MyController
 - `controller.Player` Reference to the LocalPlayer (i.e. `game.Players.LocalPlayer`)
 
 #### Injected Methods:
+- `Void controller:WrapModule(Table tbl)`
 - `Void controller:RegisterEvent(String eventName)`
 - `Void controller:FireEvent(String eventName, ...)`
 - `Connection controller:ConnectEvent(String eventName, Function handler)`
@@ -80,6 +81,29 @@ function MyController:Init()
 	self:RegisterEvent("Hello")
 end
 ```
+
+### WrapModule
+The `WrapModule` method can be used to transform a table into a framework-like module. In other words, it sets the table's metatable to the same metatable used by other framework modules, thus exposing the framework to the given table.
+```lua
+function MyController:Start()
+
+	local thisThing = {}
+
+	function thisThing:Start()
+		print("thisThing started")
+	end
+
+	function thisThing:Init()
+		print("thisThing initialized")
+	end
+
+	-- Transform 'thisThing' into a framework object:
+	self:WrapModule(thisThing)
+
+end
+```
+
+This can be useful if you are requiring other non-framework modules in which you want to expose the framework.
 
 -----------------------------------------------
 

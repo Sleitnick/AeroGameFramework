@@ -86,6 +86,29 @@ function MyService:Init()
 end
 ```
 
+### WrapModule
+The `WrapModule` method can be used to transform a table into a framework-like module. In other words, it sets the table's metatable to the same metatable used by other framework modules, thus exposing the framework to the given table.
+```lua
+function MyService:Start()
+
+	local thisThing = {}
+
+	function thisThing:Start()
+		print("thisThing started")
+	end
+
+	function thisThing:Init()
+		print("thisThing initialized")
+	end
+
+	-- Transform 'thisThing' into a framework object:
+	self:WrapModule(thisThing)
+
+end
+```
+
+This can be useful if you are requiring other non-framework modules in which you want to expose the framework.
+
 ### Client Table
 The `Client` table is used to expose methods and events to the client.
 
