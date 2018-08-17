@@ -9,6 +9,7 @@ Please refer to the files within this directory for a more in-depth documentatio
 
 | File | Description |
 | ---- | ----------- |
+| Structure | Overall structure of the framework within Studio |
 | ExecutionModel | Documents the order of execution and lists some best practices |
 | ServerService | Server-side Service module - API and examples |
 | ClientController | Client-side Controller module - API and examples |
