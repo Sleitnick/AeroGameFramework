@@ -9,6 +9,7 @@
 	Void      Mouse:Lock()
 	Void      Mouse:LockCenter()
 	Void      Mouse:Unlock()
+	Void	  Mouse:SetMouseIcon(iconId)
 	Void      Mouse:SetMouseIconEnabled(isEnabled)
 	Boolean   Mouse:IsMouseIconEnabled()
 	Many      Mouse:Cast(ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
@@ -30,6 +31,7 @@
 
 local Mouse = {}
 
+local playerMouse = game:GetService("Players").LocalPlayer:GetMouse()
 local userInput = game:GetService("UserInputService")
 local cam = workspace.CurrentCamera
 
@@ -59,6 +61,11 @@ end
 
 function Mouse:Unlock()
 	userInput.MouseBehavior = Enum.MouseBehavior.Default
+end
+
+
+function Mouse:SetMouseIcon(iconId)
+	playerMouse.Icon = (not iconId and "rbxassetid://advCursor-default" or "rbxassetid://"..iconId)
 end
 
 
