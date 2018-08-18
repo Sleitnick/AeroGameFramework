@@ -65,7 +65,7 @@ end
 
 
 function Mouse:SetMouseIcon(iconId)
-	playerMouse.Icon = (not iconId and "" or "rbxassetid://"..iconId)
+   playerMouse.Icon = (iconId and ("rbxassetid://" .. iconId) or "")
 end
 
 
