@@ -6,6 +6,9 @@
 	
 	gamepad = Gamepad.new(gamepadUserInputType)
 	
+	Vector3	     gamepad.LeftPosition
+	Vector3      gamepad.RightPosition
+
 	Boolean      gamepad:IsConnected()
 	InputObject  gamepad:GetState(keyCode)
 	Void         gamepad:SetMotor(motor, value)
@@ -45,6 +48,9 @@ function Gamepad.new(gamepad)
 		_state = {};
 		_isConnected = false;
 	}, Gamepad)
+	
+	self.LeftPosition 	= Vector3.new()
+	self.RightPosition 	= Vector3.new
 	
 	self.ButtonDown   = self.Shared.Event.new()
 	self.ButtonUp     = self.Shared.Event.new()
@@ -110,6 +116,11 @@ function Gamepad:ConnectAll()
 	self._listeners:Connect(userInput.InputChanged, function(input, processed)
 		if (input.UserInputType == self._gamepadInput) then
 			self.Changed:Fire(input.KeyCode, input)
+			if (input.KeyCode == Enum.KeyCode.Thumbstick1) then
+				self.LeftPosition = input.Position
+			elseif (input.KeyCode == Enum.KeyCode.Thumbstick2) then
+				self.RightPosition = input.Position
+			end
 		end
 	end)
 	
