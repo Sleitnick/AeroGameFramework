@@ -212,6 +212,7 @@ end
 
 
 function DataService:FlushAllConcurrent()
+	local thread = coroutine.running()
 	local numCaches = 0
 	local numFlushed = 0
 	for _ in pairs(playerCaches) do
@@ -220,20 +221,26 @@ function DataService:FlushAllConcurrent()
 	for _,cache in pairs(customCaches) do
 		numCaches = (numCaches + 1)
 	end
+	local function IncFlushed()
+		numFlushed = (numFlushed + 1)
+		if (numFlushed == numCaches) then
+			coroutine.resume(thread)
+		end
+	end
 	for player,cache in pairs(playerCaches) do
 		spawn(function()
 			cache:FlushAllConcurrent()
-			numFlushed = (numFlushed + 1)
+			IncFlushed()
 		end)
 	end	
 	for _,cache in pairs(customCaches) do
 		spawn(function()
 			cache:FlushAll()
-			numFlushed = (numFlushed + 1)
+			IncFlushed()
 		end)
 	end
 	globalCache:FlushAll()
-	while (numFlushed < numCaches) do wait() end
+	coroutine.yield()
 end
 
 
@@ -261,17 +268,21 @@ function DataService:Start()
 	self.GameClosing = false
 	
 	local function FireBoundToCloseCallbacks()
+		local thread = coroutine.running()
 		local numBinded = #boundToCloseFuncs
 		local numCompleted = 0
 		local maxWait = 20
 		local start = tick()
 		for _,func in pairs(boundToCloseFuncs) do
 			coroutine.wrap(function()
-				func()
+				pcall(func)
 				numCompleted = (numCompleted + 1)
+				if (numCompleted == numBinded) then
+					coroutine.resume(thread)
+				end
 			end)()
 		end
-		while (numCompleted < numBinded and (tick() - start) < maxWait) do wait() end
+		coroutine.yield()
 	end
 	
 	-- Flush cache:

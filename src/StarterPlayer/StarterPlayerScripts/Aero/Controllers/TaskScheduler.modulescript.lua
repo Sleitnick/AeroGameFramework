@@ -1,12 +1,11 @@
 -- Author: EchoReaper
--- ROBLOX Link: https://www.roblox.com/Task-Scheduler-item?id=348019935
+-- Roblox Link: https://www.roblox.com/Task-Scheduler-item?id=348019935
 -- Publically released January 25, 2016
 
--- Optimizations and edits made by Crazyman32
--- Changes from EchoReaper's version:
+-- Changes made from EchoReaper's version:
 	-- GetCurrentFPS() method removed
 	-- FPS is only tracked when the 'Loop' function is running for performance reasons
-	-- Styled code in consistency with the rest of the Team Crazy Game Framework codebase
+	-- Styled code in consistency with the rest of the AeroGameFramework codebase
 
 --[[
 	
@@ -22,12 +21,12 @@
 
 
 
+local TaskScheduler = {}
+
 local lastIteration
 local frameUpdateTable = {}
 
 local runService = game:GetService("RunService")
-
-local TaskScheduler = {}
 
 --[[
 	param targetFps  Task scheduler won't run a task if it'd make the FPS drop below this amount
@@ -60,7 +59,7 @@ local TaskScheduler = {}
 			plugin:Union({partA, partB}):Destroy()
 			totalOperations = totalOperations + 1
 			print("Times unioned:", totalOperations)
-			if totalOperations == 50 then
+			if (totalOperations == 50) then
 				scheduler:Pause()
 				paused = true
 			end
@@ -71,6 +70,8 @@ local TaskScheduler = {}
 	wait(2)
 	scheduler:Resume()
 --]]
+
+
 function TaskScheduler:CreateScheduler(targetFps)
 	
 	local scheduler = {}
@@ -81,7 +82,7 @@ function TaskScheduler:CreateScheduler(targetFps)
 	local updateFrameTableEvent = nil
 	
 	local start = tick()
-	runService.RenderStepped:wait()
+	runService.RenderStepped:Wait()
 	
 	local function UpdateFrameTable()
 		lastIteration = tick()
@@ -92,7 +93,7 @@ function TaskScheduler:CreateScheduler(targetFps)
 	end
 
 	local function Loop()
-		updateFrameTableEvent = runService.RenderStepped:connect(UpdateFrameTable)
+		updateFrameTableEvent = runService.RenderStepped:Connect(UpdateFrameTable)
 		while (true) do
 			if (sleeping) then break end
 			local fps = (((tick() - start) >= 1 and #frameUpdateTable) or (#frameUpdateTable / (tick() - start)))
@@ -105,10 +106,10 @@ function TaskScheduler:CreateScheduler(targetFps)
 					break
 				end
 			else
-				runService.RenderStepped:wait()
+				runService.RenderStepped:Wait()
 			end
 		end
-		updateFrameTableEvent:disconnect()
+		updateFrameTableEvent:Disconnect()
 		updateFrameTableEvent = nil
 	end
 

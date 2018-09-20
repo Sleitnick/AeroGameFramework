@@ -57,16 +57,13 @@ end
 
 
 function Event:Wait()
-	local c, returnArgs = nil, nil
-	local be = Instance.new("BindableEvent")
-	c = self:Connect(function(...)
-		c:Disconnect()
-		returnArgs = {...}
-		be:Fire()
+	local thread = coroutine.running()
+	local connection
+	connection = self:Connect(function(...)
+		connection:Disconnect()
+		coroutine.resume(thread, ...)
 	end)
-	be.Event:Wait()
-	be:Destroy()
-	return unpack(returnArgs)
+	return coroutine.yield()
 end
 
 

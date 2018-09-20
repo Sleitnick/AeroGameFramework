@@ -97,6 +97,7 @@ end
 
 function Cache:FlushAllConcurrent()
 	if (not self.DataStore) then return end
+	local thread = coroutine.running()
 	local numData = 0
 	local numFlushed = 0
 	for key,_ in pairs(self.Data) do
@@ -106,9 +107,12 @@ function Cache:FlushAllConcurrent()
 		spawn(function()
 			self:Flush(key, true)
 			numFlushed = (numFlushed + 1)
+			if (numFlushed == numData) then
+				coroutine.resume(thread)
+			end
 		end)
 	end
-	while (numFlushed < numData) do wait() end
+	coroutine.yield()
 end
 
 
