@@ -2,12 +2,12 @@
 	<Meta name="ExplicitAutoJoints">false</Meta>
 	<External>null</External>
 	<External>nil</External>
-	<Item class="Folder" referent="RBX12DA3C7F463244F098947A354E1A6C33">
+	<Item class="Folder" referent="RBX14F1DA49CE354D7AB47971BF964F91A2">
 		<Properties>
 			<string name="Name">AeroGameFrameworkPlugin</string>
 			<BinaryString name="Tags"></BinaryString>
 		</Properties>
-		<Item class="Script" referent="RBXBA8508290980418CA401FA7E57524E55">
+		<Item class="Script" referent="RBXB7534C134B9A4CE6A4C1A97FBAB213F6">
 			<Properties>
 				<bool name="Disabled">false</bool>
 				<Content name="LinkedSource"><null></null></Content>
@@ -626,7 +626,7 @@ function SetupCode()
 			
 			guiCode.ScrollingFrame.Content.Code:ClearAllChildren()
 			StartNewLine()
-			for token,src in Lexer.lua(code, {}, {}) do
+			for token,src in Lexer.scan(code) do
 				src = tostring(src):gsub("\t", "   ")
 				if (token == "space") then
 					local newLines = select(2, src:gsub("\n", "\n"))
@@ -932,7 +932,7 @@ pluginGui:GetPropertyChangedSignal("Enabled"):Connect(function()
 end)]]></ProtectedString>
 				<BinaryString name="Tags"></BinaryString>
 			</Properties>
-			<Item class="ModuleScript" referent="RBX7372FEC3AC5344FE86C066572CDE0F68">
+			<Item class="ModuleScript" referent="RBX87B0277C4C844926A03A4D3EABFFB105">
 				<Properties>
 					<Content name="LinkedSource"><null></null></Content>
 					<string name="Name">Item</string>
@@ -1307,7 +1307,7 @@ return Item]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
-			<Item class="Script" referent="RBX0B4A13F1D8234AB394112502D94FC656">
+			<Item class="Script" referent="RBX541D5A97F33844D69292C5DE51E7D7B8">
 				<Properties>
 					<bool name="Disabled">true</bool>
 					<Content name="LinkedSource"><null></null></Content>
@@ -1331,7 +1331,7 @@ return __MODULENAME]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
-			<Item class="Script" referent="RBXA8D6BD065EA246809A4F0BC36DC6A92E">
+			<Item class="Script" referent="RBX70A69C5BB0AB4D1988FE7FA76D62725B">
 				<Properties>
 					<bool name="Disabled">true</bool>
 					<Content name="LinkedSource"><null></null></Content>
@@ -1369,7 +1369,7 @@ return __MODULENAME]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
-			<Item class="Script" referent="RBX1FDEDA8C83E44B258F719A2DDF0F9743">
+			<Item class="Script" referent="RBX838F0D85B3024D71AEDCB5AE27775984">
 				<Properties>
 					<bool name="Disabled">true</bool>
 					<Content name="LinkedSource"><null></null></Content>
@@ -1412,7 +1412,7 @@ return __MODULENAME]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
-			<Item class="Script" referent="RBX276FCED34F684A1D838F0E9AA39C39C0">
+			<Item class="Script" referent="RBX1355ED69761943FA992AE91DBCCC1556">
 				<Properties>
 					<bool name="Disabled">true</bool>
 					<Content name="LinkedSource"><null></null></Content>
@@ -1446,7 +1446,7 @@ return __MODULENAME]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
-			<Item class="ModuleScript" referent="RBXB05B5F6E31D546559BCA44BD372783D9">
+			<Item class="ModuleScript" referent="RBX10415BF67FA24E1B8D4B91B25764F7FB">
 				<Properties>
 					<Content name="LinkedSource"><null></null></Content>
 					<string name="Name">UpdateChecker</string>
@@ -1501,7 +1501,7 @@ end
 return UpdateChecker]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
-				<Item class="ModuleScript" referent="RBX6923D8C8CE564292BF3D87948F9DCB8B">
+				<Item class="ModuleScript" referent="RBX542ABAE28BC143D884172A872A2C4C99">
 					<Properties>
 						<Content name="LinkedSource"><null></null></Content>
 						<string name="Name">Version</string>
@@ -1584,7 +1584,7 @@ return Version]]></ProtectedString>
 					</Properties>
 				</Item>
 			</Item>
-			<Item class="ModuleScript" referent="RBX5803812C2EAD4620A91B5B5958262245">
+			<Item class="ModuleScript" referent="RBX33F9D2D839784378AA949365EDB859F0">
 				<Properties>
 					<Content name="LinkedSource"><null></null></Content>
 					<string name="Name">Theme</string>
@@ -1711,484 +1711,7 @@ return Theme]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
-			<Item class="ModuleScript" referent="RBX37663EA967594357BA572A7F6B73676C">
-				<Properties>
-					<Content name="LinkedSource"><null></null></Content>
-					<string name="Name">Lexer</string>
-					<string name="ScriptGuid">{29AB533B-B989-4EBA-99E0-AC0ACF9F6C78}</string>
-					<ProtectedString name="Source"><![CDATA[--- Lexical scanner for creating a sequence of tokens from text.
--- `lexer.scan(s)` returns an iterator over all tokens found in the
--- string `s`. This iterator returns two values, a token type string
--- (such as 'string' for quoted string, 'iden' for identifier) and the value of the
--- token.
---
--- Versions specialized for Lua and C are available; these also handle block comments
--- and classify keywords as 'keyword' tokens. For example:
---
---    > s = "for i=1,n do"
---    > for t,v in lexer.lua(s)  do print(t,v) end
---    keyword for
---    iden    i
---    =       =
---    number  1
---    ,       ,
---    iden    n
---    keyword do
---
--- See the Guide for further @{06-data.md.Lexical_Scanning|discussion}
--- @module pl.lexer
-
-local yield, wrap = coroutine.yield, coroutine.wrap
-local strfind = string.find
-local strsub = string.sub
-local append = table.insert
-
-local function assert_arg(idx, val, tp)
-	if (type(val) ~= tp) then
-		error("argument " .. idx .. " must be " .. tp, 2)
-	end
-end
-
-local lexer = {}
-
-local NUMBER1 = "^[%+%-]?%d+%.?%d*[eE][%+%-]?%d+"
-local NUMBER2 = "^[%+%-]?%d+%.?%d*"
-local NUMBER3 = "^0x[%da-fA-F]+"
-local NUMBER4 = "^%d+%.?%d*[eE][%+%-]?%d+"
-local NUMBER5 = "^%d+%.?%d*"
-local IDEN = "^[%a_][%w_]*"
-local WSPACE = "^%s+"
-local STRING1 = "^(['\"])%1" -- empty string
-local STRING2 = [[^(['"])(\*)%2%1]]
-local STRING3 = [[^(['"]).-[^\](\*)%2%1]]
-local CHAR1 = "^''"
-local CHAR2 = [[^'(\*)%1']]
-local CHAR3 = [[^'.-[^\](\*)%1']]
-local PREPRO = "^#.-[^\\]\n"
-
-local plain_matches, lua_matches, cpp_matches, lua_keyword, cpp_keyword, lua_builtin
-
-local function tdump(tok)
-	return yield(tok,tok)
-end
-
-local function ndump(tok, options)
-	if (options and options.number) then
-		tok = tonumber(tok)
-	end
-	return yield("number", tok)
-end
-
--- regular strings, single or double quotes; usually we want them
--- without the quotes
-local function sdump(tok, options)
-	if (options and options.string) then
-		tok = tok:sub(2, -2)
-	end
-	return yield("string", tok)
-end
-
--- long Lua strings need extra work to get rid of the quotes
-local function sdump_l(tok, options, findres)
-	if (options and options.string) then
-		local quotelen = 3
-		if (findres[3]) then
-			quotelen = (quotelen + findres[3]:len())
-		end
-		tok = tok:sub(quotelen, -quotelen)
-		if (tok:sub(1, 1) == "\n") then
-			tok = tok:sub(2)
-		end
-	end
-	return yield("string", tok)
-end
-
-local function chdump(tok, options)
-	if (options and options.string) then
-		tok = tok:sub(2, -2)
-	end
-	return yield("char", tok)
-end
-
-local function cdump(tok)
-	return yield("comment", tok)
-end
-
-local function wsdump(tok)
-	return yield("space", tok)
-end
-
-local function pdump(tok)
-	return yield("prepro", tok)
-end
-
-local function plain_vdump(tok)
-	return yield("iden", tok)
-end
-
-local function lua_vdump(tok)
-	if (lua_keyword[tok]) then
-		return yield("keyword", tok)
-	elseif (lua_builtin[tok]) then
-		return yield("builtin", tok)
-	else
-		return yield("iden", tok)
-	end
-end
-
-local function cpp_vdump(tok)
-	if (cpp_keyword[tok]) then
-		return yield("keyword", tok)
-	else
-		return yield("iden", tok)
-	end
-end
-
---- create a plain token iterator from a string or file-like object.
--- @tparam string|file s a string or a file-like object with `:read()` method returning lines.
--- @tab matches an optional match table - array of token descriptions.
--- A token is described by a `{pattern, action}` pair, where `pattern` should match
--- token body and `action` is a function called when a token of described type is found.
--- @tab[opt] filter a table of token types to exclude, by default `{space=true}`
--- @tab[opt] options a table of options; by default, `{number=true,string=true}`,
--- which means convert numbers and strip string quotes.
-function lexer.scan(s, matches, filter, options)
-	local file = (type(s) ~= "string" and s)
-	filter = (filter or {space = true})
-	options = (options or {number = true, string = true})
-	if (filter) then
-		if (filter.space) then
-			filter[wsdump] = true
-		end
-		if (filter.comments) then
-			filter[cdump] = true
-		end
-	end
-	if (not matches) then
-		if (not plain_matches) then
-			plain_matches = {
-				{WSPACE, wsdump},
-				{NUMBER3, ndump},
-				{IDEN, plain_vdump},
-				{NUMBER1, ndump},
-				{NUMBER2, ndump},
-				{STRING1, sdump},
-				{STRING2, sdump},
-				{STRING3, sdump},
-				{"^.", tdump}
-			}
-		end
-		matches = plain_matches
-	end
-	local function lex(first_arg)
-		local line_nr = 0
-		local next_line = (file and file:read())
-		local sz = (file and 0 or #s)
-		local idx = 1
-
-		-- res is the value used to resume the coroutine.
-		local function handle_requests(res)
-			while (res) do
-				local tp = type(res)
-				-- insert a token list
-				if (tp == "table") then
-					res = yield("", "")
-					for _,t in ipairs(res) do
-						res = yield(t[1], t[2])
-					end
-				elseif (tp == "string") then -- or search up to some special pattern
-					local i1, i2 = strfind(s, res, idx)
-					if (i1) then
-						local tok = strsub(s, i1, i2)
-						idx = (i2 + 1)
-						res = yield("", tok)
-					else
-						res = yield("", "")
-						idx = (sz + 1)
-					end
-				else
-					res = yield(line_nr, idx)
-				end
-			end
-		end
-
-		handle_requests(first_arg)
-		if (not file) then
-			line_nr = 1
-		end
-
-		while (true) do
-			if (idx > sz) then
-				if (file) then
-					if (not next_line) then return end
-					s = next_line
-					line_nr = (line_nr + 1)
-					next_line = file:read()
-					if next_line then
-						s = (s .. "\n")
-					end
-					idx, sz = 1, #s
-				else
-					while (true) do
-						handle_requests(yield())
-					end
-				end
-			end
-
-			for _,m in ipairs(matches) do
-				local pat = m[1]
-				local fun = m[2]
-				local findres = {strfind(s, pat, idx)}
-				local i1, i2 = findres[1], findres[2]
-				if (i1) then
-					local tok = strsub(s, i1, i2)
-					idx = (i2 + 1)
-					local res
-					if (not (filter and filter[fun])) then
-						lexer.finished = (idx > sz)
-						res = fun(tok, options, findres)
-					end
-					if (not file and tok:find("\n")) then
-						-- Update line number.
-						local _, newlines = tok:gsub("\n", {})
-						line_nr = (line_nr + newlines)
-					end
-					handle_requests(res)
-					break
-				end
-			end
-		end
-	end
-	return wrap(lex)
-end
-
-local function isstring(s)
-	return (type(s) == "string")
-end
-
---- insert tokens into a stream.
--- @param tok a token stream
--- @param a1 a string is the type, a table is a token list and
--- a function is assumed to be a token-like iterator (returns type & value)
--- @string a2 a string is the value
-function lexer.insert(tok, a1, a2)
-	if (not a1) then return end
-	local ts
-	if (isstring(a1) and isstring(a2)) then
-		ts = {{a1,a2}}
-	elseif (type(a1) == "function") then
-		ts = {}
-		for t,v in a1() do
-			append(ts, {t, v})
-		end
-	else
-		ts = a1
-	end
-	tok(ts)
-end
-
---- get everything in a stream upto a newline.
--- @param tok a token stream
--- @return a string
-function lexer.getline(tok)
-	local _,v = tok(".-\n")
-	return v
-end
-
---- get current line number.
--- @param tok a token stream
--- @return the line number.
--- if the input source is a file-like object,
--- also return the column.
-function lexer.lineno(tok)
-	return tok(0)
-end
-
---- get the rest of the stream.
--- @param tok a token stream
--- @return a string
-function lexer.getrest(tok)
-	local _,v = tok(".+")
-	return v
-end
-
---- get the Lua keywords as a set-like table.
--- So `res["and"]` etc would be `true`.
--- @return a table
-function lexer.get_keywords()
-	if (not lua_keyword) then
-		lua_keyword = {
-			["and"] = true, ["break"] = true,  ["do"] = true,
-			["else"] = true, ["elseif"] = true, ["end"] = true,
-			["false"] = true, ["for"] = true, ["function"] = true,
-			["if"] = true, ["in"] = true,  ["local"] = true, ["nil"] = true,
-			["not"] = true, ["or"] = true, ["repeat"] = true,
-			["return"] = true, ["then"] = true, ["true"] = true,
-			["until"] = true,  ["while"] = true, ["self"] = true
-		}
-	end
-	return lua_keyword
-end
-
-
-function lexer.get_builtins()
-	if (not lua_builtin) then
-		lua_builtin = {
-			["assert"] = true;["collectgarbage"] = true;["error"] = true;["_G"] = true;
-			["gcinfo"] = true;["getfenv"] = true;["getmetatable"] = true;["ipairs"] = true;
-			["loadstring"] = true;["newproxy"] = true;["next"] = true;["pairs"] = true;
-			["pcall"] = true;["print"] = true;["rawequal"] = true;["rawget"] = true;["rawset"] = true;
-			["select"] = true;["setfenv"] = true;["setmetatable"] = true;["tonumber"] = true;
-			["tostring"] = true;["type"] = true;["unpack"] = true;["_VERSION"] = true;["xpcall"] = true;
-			["delay"] = true;["elapsedTime"] = true;["require"] = true;["spawn"] = true;["tick"] = true;
-			["time"] = true;["typeof"] = true;["UserSettings"] = true;["wait"] = true;["warn"] = true;
-			["game"] = true;["Enum"] = true;["script"] = true;["shared"] = true;["workspace"] = true;
-			["Axes"] = true;["BrickColor"] = true;["CFrame"] = true;["Color3"] = true;["ColorSequence"] = true;
-			["ColorSequenceKeypoint"] = true;["Faces"] = true;["Instance"] = true;["NumberRange"] = true;
-			["NumberSequence"] = true;["NumberSequenceKeypoint"] = true;["PhysicalProperties"] = true;
-			["Random"] = true;["Ray"] = true;["Rect"] = true;["Region3"] = true;["Region3int16"] = true;
-			["TweenInfo"] = true;["UDim"] = true;["UDim2"] = true;["Vector2"] = true;["Vector3"] = true;
-			["Vector3int16"] = true;["next"] = true;
-			["os"] = true;
-			--["os.time"] = true;["os.date"] = true;["os.difftime"] = true;
-			["debug"] = true;
-			--["debug.traceback"] = true;["debug.profilebegin"] = true;["debug.profileend"] = true;
-			["math"] = true;
-			--["math.abs"] = true;["math.acos"] = true;["math.asin"] = true;["math.atan"] = true;["math.atan2"] = true;["math.ceil"] = true;["math.clamp"] = true;["math.cos"] = true;["math.cosh"] = true;["math.deg"] = true;["math.exp"] = true;["math.floor"] = true;["math.fmod"] = true;["math.frexp"] = true;["math.ldexp"] = true;["math.log"] = true;["math.log10"] = true;["math.max"] = true;["math.min"] = true;["math.modf"] = true;["math.noise"] = true;["math.pow"] = true;["math.rad"] = true;["math.random"] = true;["math.randomseed"] = true;["math.sign"] = true;["math.sin"] = true;["math.sinh"] = true;["math.sqrt"] = true;["math.tan"] = true;["math.tanh"] = true;
-			["coroutine"] = true;
-			--["coroutine.create"] = true;["coroutine.resume"] = true;["coroutine.running"] = true;["coroutine.status"] = true;["coroutine.wrap"] = true;["coroutine.yield"] = true;
-			["string"] = true;
-			--["string.byte"] = true;["string.char"] = true;["string.dump"] = true;["string.find"] = true;["string.format"] = true;["string.len"] = true;["string.lower"] = true;["string.match"] = true;["string.rep"] = true;["string.reverse"] = true;["string.sub"] = true;["string.upper"] = true;["string.gmatch"] = true;["string.gsub"] = true;
-			["table"] = true;
-			--["table.concat"] = true;["table.insert"] = true;["table.remove"] = true;["table.sort"] = true;
-		}
-	end
-	return lua_builtin
-end
-
---- create a Lua token iterator from a string or file-like object.
--- Will return the token type and value.
--- @string s the string
--- @tab[opt] filter a table of token types to exclude, by default `{space=true,comments=true}`
--- @tab[opt] options a table of options; by default, `{number=true,string=true}`,
--- which means convert numbers and strip string quotes.
-function lexer.lua(s, filter, options)
-	filter = (filter or {space = true, comments = true})
-	lexer.get_keywords()
-	lexer.get_builtins()
-	if (not lua_matches) then
-		lua_matches = {
-			{WSPACE, wsdump},
-			{NUMBER3, ndump},
-			{IDEN, lua_vdump},
-			{NUMBER4, ndump},
-			{NUMBER5, ndump},
-			{STRING1, sdump},
-			{STRING2, sdump},
-			{STRING3, sdump},
-			{"^%-%-%[(=*)%[.-%]%1%]", cdump},
-			{"^%-%-.-\n", cdump},
-			{"^%[(=*)%[.-%]%1%]", sdump_l},
-			{"^==", tdump},
-			{"^~=", tdump},
-			{"^<=", tdump},
-			{"^>=", tdump},
-			{"^%.%.%.", tdump},
-			{"^%.%.", tdump},
-			{"^.", tdump}
-		}
-	end
-	return lexer.scan(s, lua_matches, filter, options)
-end
-
---- get a list of parameters separated by a delimiter from a stream.
--- @param tok the token stream
--- @string[opt=')'] endtoken end of list. Can be '\n'
--- @string[opt=','] delim separator
--- @return a list of token lists.
-function lexer.get_separated_list(tok, endtoken, delim)
-	endtoken = (endtoken or ")")
-	delim = (delim or ",")
-	local parm_values = {}
-	local level = 1 -- used to count ( and )
-	local tl = {}
-	local function tappend(tl, t, val)
-		val = (val or t)
-		append(tl, {t, val})
-	end
-	local is_end
-	if (endtoken == "\n") then
-		is_end = function(t,val)
-			return (t == "space" and val:find("\n"))
-		end
-	else
-		is_end = function (t)
-			return (t == endtoken)
-		end
-	end
-	local token, value
-	while (true) do
-		token, value = tok()
-		if (not token) then return nil, "EOS" end -- end of stream is an error!
-		if (is_end(token, value) and level == 1) then
-			append(parm_values, tl)
-			break
-		elseif (token == "(") then
-			level = (level + 1)
-			tappend(tl, "(")
-		elseif (token == ")") then
-			level = (level - 1)
-			if (level == 0) then -- finished with parm list
-				append(parm_values, tl)
-				break
-			else
-				tappend(tl, ")")
-			end
-		elseif (token == delim and level == 1) then
-			append(parm_values, tl) -- a new parm
-			tl = {}
-		else
-			tappend(tl, token, value)
-		end
-	end
-	return parm_values, {token, value}
-end
-
---- get the next non-space token from the stream.
--- @param tok the token stream.
-function lexer.skipws(tok)
-	local t,v = tok()
-	while (t == "space") do
-		t,v = tok()
-	end
-	return t,v
-end
-
-local skipws = lexer.skipws
-
---- get the next token, which must be of the expected type.
--- Throws an error if this type does not match!
--- @param tok the token stream
--- @string expected_type the token type
--- @bool no_skip_ws whether we should skip whitespace
-function lexer.expecting(tok, expected_type, no_skip_ws)
-	assert_arg(1, tok, "function")
-	assert_arg(2, expected_type, "string")
-	local t,v
-	if (no_skip_ws) then
-		t,v = tok()
-	else
-		t,v = skipws(tok)
-	end
-	if (t ~= expected_type) then error("expecting " .. expected_type, 2) end
-	return v
-end
-
-return lexer]]></ProtectedString>
-					<BinaryString name="Tags"></BinaryString>
-				</Properties>
-			</Item>
-			<Item class="ScreenGui" referent="RBXC0D1AE1A68454BB797DE6C71CA3B4FEE">
+			<Item class="ScreenGui" referent="RBXD52A09009B1A4A9B97658D01A1D31B56">
 				<Properties>
 					<bool name="AutoLocalize">true</bool>
 					<int name="DisplayOrder">0</int>
@@ -2200,7 +1723,7 @@ return lexer]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 					<token name="ZIndexBehavior">1</token>
 				</Properties>
-				<Item class="Frame" referent="RBXAAF80D2B92D84C00B43B175A9F71C2C4">
+				<Item class="Frame" referent="RBXAF257B4E71AA40D2A3D54AF4F4146FC0">
 					<Properties>
 						<bool name="Active">false</bool>
 						<Vector2 name="AnchorPoint">
@@ -2242,7 +1765,7 @@ return lexer]]></ProtectedString>
 						<bool name="Visible">true</bool>
 						<int name="ZIndex">1</int>
 					</Properties>
-					<Item class="Frame" referent="RBX43E8E342AF304549BB0B2D0712EA437A">
+					<Item class="Frame" referent="RBXAB939FC91C4C4A72B2F3B842A0799EEB">
 						<Properties>
 							<bool name="Active">false</bool>
 							<Vector2 name="AnchorPoint">
@@ -2284,7 +1807,7 @@ return lexer]]></ProtectedString>
 							<bool name="Visible">true</bool>
 							<int name="ZIndex">1</int>
 						</Properties>
-						<Item class="Frame" referent="RBX2904081B97BD4F199421291DD244EDEB">
+						<Item class="Frame" referent="RBX5AE0E7D7C91E428B9852FF25D96A4200">
 							<Properties>
 								<bool name="Active">false</bool>
 								<Vector2 name="AnchorPoint">
@@ -2326,7 +1849,7 @@ return lexer]]></ProtectedString>
 								<bool name="Visible">false</bool>
 								<int name="ZIndex">1</int>
 							</Properties>
-							<Item class="TextLabel" referent="RBX6AAC28140B794CE0BBDCD81D3E7AA575">
+							<Item class="TextLabel" referent="RBX6E68081D6CF04B839B0D2DBA2BF63A94">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -2380,7 +1903,7 @@ return lexer]]></ProtectedString>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">1</int>
 								</Properties>
-								<Item class="UITextSizeConstraint" referent="RBX3DB97693CE4D450F9745CA97E0772D61">
+								<Item class="UITextSizeConstraint" referent="RBX821894F3E7134B4BB31774F3D0481A65">
 									<Properties>
 										<int name="MaxTextSize">16</int>
 										<int name="MinTextSize">1</int>
@@ -2389,7 +1912,7 @@ return lexer]]></ProtectedString>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="UIPadding" referent="RBXA06CA1C815CF457197A7C1FA6E47DB0A">
+							<Item class="UIPadding" referent="RBXBE84949ABAAB470C9EE25918CC77E1EA">
 								<Properties>
 									<string name="Name">UIPadding</string>
 									<UDim name="PaddingBottom">
@@ -2411,7 +1934,7 @@ return lexer]]></ProtectedString>
 									<BinaryString name="Tags"></BinaryString>
 								</Properties>
 							</Item>
-							<Item class="Frame" referent="RBX12C04C61C6BF4777B72E0B90AA331484">
+							<Item class="Frame" referent="RBXABDD462978044CF18E97D904D8762C45">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -2453,7 +1976,7 @@ return lexer]]></ProtectedString>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">1</int>
 								</Properties>
-								<Item class="TextLabel" referent="RBXD11B0E38C82F4E868C8FBFCE9F1B298B">
+								<Item class="TextLabel" referent="RBXA9657C3C1F9449C4A9C356CA323CF3CD">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -2510,7 +2033,7 @@ return lexer]]></ProtectedString>
 								</Item>
 							</Item>
 						</Item>
-						<Item class="Frame" referent="RBX230B09DE252E4995BB5DD4C7AE51BDB6">
+						<Item class="Frame" referent="RBX984D6E20DDEB4FE2ABB83C36801F8FD2">
 							<Properties>
 								<bool name="Active">false</bool>
 								<Vector2 name="AnchorPoint">
@@ -2552,7 +2075,7 @@ return lexer]]></ProtectedString>
 								<bool name="Visible">true</bool>
 								<int name="ZIndex">1</int>
 							</Properties>
-							<Item class="ScrollingFrame" referent="RBX7703430EB4224A74AE28AD635D98BA56">
+							<Item class="ScrollingFrame" referent="RBX4170C8F3CA354732AC747CF2E027A395">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -2615,7 +2138,7 @@ return lexer]]></ProtectedString>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">1</int>
 								</Properties>
-								<Item class="Frame" referent="RBX8434FDA8C6FA46A9B8475FD5939CBCB1">
+								<Item class="Frame" referent="RBX1030E3C796764F24B23AE76EC3665C90">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -2658,7 +2181,7 @@ return lexer]]></ProtectedString>
 										<int name="ZIndex">1</int>
 									</Properties>
 								</Item>
-								<Item class="Frame" referent="RBXC0EA9A705AF54A429BD92BA3B976CEDB">
+								<Item class="Frame" referent="RBX223D3D2A21EC4B8B98BC353B144CC209">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -2700,7 +2223,7 @@ return lexer]]></ProtectedString>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">2</int>
 									</Properties>
-									<Item class="UIListLayout" referent="RBX97B99784579D4A8AB2FD7B8FDC920466">
+									<Item class="UIListLayout" referent="RBXD67FF865D0DC4FFABA1BDB254D04AEC4">
 										<Properties>
 											<token name="FillDirection">1</token>
 											<token name="HorizontalAlignment">1</token>
@@ -2714,7 +2237,7 @@ return lexer]]></ProtectedString>
 											<token name="VerticalAlignment">1</token>
 										</Properties>
 									</Item>
-									<Item class="Frame" referent="RBXF73BADFB0D124ED7B5667F38107FEB1C">
+									<Item class="Frame" referent="RBXE4CBB0B5F0D148F7A4A2DAFCF8ACDAD7">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -2756,7 +2279,7 @@ return lexer]]></ProtectedString>
 											<bool name="Visible">false</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="ImageButton" referent="RBXA43641A4F3E941C0939EEB679FC5A234">
+										<Item class="ImageButton" referent="RBX9C402DE3E3ED4332A4167068D73A380D">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -2832,7 +2355,7 @@ return lexer]]></ProtectedString>
 												<int name="ZIndex">1</int>
 											</Properties>
 										</Item>
-										<Item class="TextLabel" referent="RBX89CB1C1EEDE24E06983EB6FE2EC0F6CA">
+										<Item class="TextLabel" referent="RBX212BEC8B9DD743FB96004E078A62B5EC">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -2888,7 +2411,7 @@ return lexer]]></ProtectedString>
 											</Properties>
 										</Item>
 									</Item>
-									<Item class="Frame" referent="RBX13D6656797F64C68AA4E5033D01EB0E6">
+									<Item class="Frame" referent="RBXE330D5D4714C454F88E59E52AE1D6368">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -2930,7 +2453,7 @@ return lexer]]></ProtectedString>
 											<bool name="Visible">false</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="ImageButton" referent="RBXFA3E87D651F140DC97C8D4906580142E">
+										<Item class="ImageButton" referent="RBXC1309EE59CB54E929FBAD98188D7CB3F">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -3006,7 +2529,7 @@ return lexer]]></ProtectedString>
 												<int name="ZIndex">1</int>
 											</Properties>
 										</Item>
-										<Item class="TextLabel" referent="RBX451E1281C138428DA1E2B48AAC54B04F">
+										<Item class="TextLabel" referent="RBXD8E868BBE161495FBF03315C883E9553">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -3061,7 +2584,7 @@ return lexer]]></ProtectedString>
 												<int name="ZIndex">1</int>
 											</Properties>
 										</Item>
-										<Item class="Frame" referent="RBXF2124F79E5CF46BDA21B4CD730E520D2">
+										<Item class="Frame" referent="RBX80D5728369994D1FA6311710CB13741B">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -3105,7 +2628,7 @@ return lexer]]></ProtectedString>
 											</Properties>
 										</Item>
 									</Item>
-									<Item class="Frame" referent="RBX5B687060F37F4114A10634D848579CAE">
+									<Item class="Frame" referent="RBX08EFA534366E4E4C9902544E637E7E6C">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -3147,7 +2670,7 @@ return lexer]]></ProtectedString>
 											<bool name="Visible">false</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="ImageButton" referent="RBX0A119C8756B74788BA7EB311A284C97C">
+										<Item class="ImageButton" referent="RBXEF950725627547BFAB2BD86F9B275C87">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -3223,7 +2746,7 @@ return lexer]]></ProtectedString>
 												<int name="ZIndex">1</int>
 											</Properties>
 										</Item>
-										<Item class="TextLabel" referent="RBX54E220E78D824A3C9D8B2C894BF78180">
+										<Item class="TextLabel" referent="RBX66765374A67F441DBEF7021F6756A8D0">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -3281,7 +2804,7 @@ return lexer]]></ProtectedString>
 									</Item>
 								</Item>
 							</Item>
-							<Item class="Frame" referent="RBX3A23466D7F244F049B965FB7E17808EA">
+							<Item class="Frame" referent="RBXEA15F7B50EC645DD9CC005236E3796E7">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -3323,7 +2846,7 @@ return lexer]]></ProtectedString>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">1</int>
 								</Properties>
-								<Item class="TextLabel" referent="RBX2DC1D75CF7AA4A6FBD8E3D9C40FF27B4">
+								<Item class="TextLabel" referent="RBXD88B483653E24DA88AC438C48A9619C2">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -3378,7 +2901,7 @@ return lexer]]></ProtectedString>
 										<int name="ZIndex">2</int>
 									</Properties>
 								</Item>
-								<Item class="UIPadding" referent="RBXAE1AA7B9EC9748099323F75073CD77D9">
+								<Item class="UIPadding" referent="RBXFEA8DD0FC40B4C2FB14C1FED66A8CD0E">
 									<Properties>
 										<string name="Name">UIPadding</string>
 										<UDim name="PaddingBottom">
@@ -3400,7 +2923,7 @@ return lexer]]></ProtectedString>
 										<BinaryString name="Tags"></BinaryString>
 									</Properties>
 								</Item>
-								<Item class="TextButton" referent="RBXF1D302425F1A4204A3B410E69AFC30EF">
+								<Item class="TextButton" referent="RBX350357EEFAB84F7CA53A1C7CDC5BC1F8">
 									<Properties>
 										<bool name="Active">true</bool>
 										<Vector2 name="AnchorPoint">
@@ -3459,7 +2982,7 @@ return lexer]]></ProtectedString>
 										<int name="ZIndex">1</int>
 									</Properties>
 								</Item>
-								<Item class="TextLabel" referent="RBXCE0E3D01DC794DC0A26240D774CD8F6C">
+								<Item class="TextLabel" referent="RBXFB936D87D70C4939B536389401982DE7">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -3518,7 +3041,7 @@ return lexer]]></ProtectedString>
 						</Item>
 					</Item>
 				</Item>
-				<Item class="Frame" referent="RBXE4CB0FF2C87749C3A09C9738F081A0E6">
+				<Item class="Frame" referent="RBXBAD64C2633644BC8BC6FD1303BAD1BD3">
 					<Properties>
 						<bool name="Active">false</bool>
 						<Vector2 name="AnchorPoint">
@@ -3560,7 +3083,7 @@ return lexer]]></ProtectedString>
 						<bool name="Visible">true</bool>
 						<int name="ZIndex">1</int>
 					</Properties>
-					<Item class="Frame" referent="RBX5993E0BE14684D729613E15D4B42FB6D">
+					<Item class="Frame" referent="RBX40011FA45B9F4DD3898503C50FA4029A">
 						<Properties>
 							<bool name="Active">false</bool>
 							<Vector2 name="AnchorPoint">
@@ -3602,7 +3125,7 @@ return lexer]]></ProtectedString>
 							<bool name="Visible">true</bool>
 							<int name="ZIndex">1</int>
 						</Properties>
-						<Item class="ScrollingFrame" referent="RBX9F5B0E27F4604617B607BA4742CBD805">
+						<Item class="ScrollingFrame" referent="RBXBF06868611FF46B3A340F3C5CA9E83BF">
 							<Properties>
 								<bool name="Active">false</bool>
 								<Vector2 name="AnchorPoint">
@@ -3665,7 +3188,7 @@ return lexer]]></ProtectedString>
 								<bool name="Visible">true</bool>
 								<int name="ZIndex">1</int>
 							</Properties>
-							<Item class="Frame" referent="RBX243D80CEC15A48A69AE3412D0F574A03">
+							<Item class="Frame" referent="RBXDA0E6C2939B649BD98C063C241205F98">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -3707,7 +3230,7 @@ return lexer]]></ProtectedString>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">2</int>
 								</Properties>
-								<Item class="Frame" referent="RBXF9EEAA9B77544B31AC9145FE9C33747D">
+								<Item class="Frame" referent="RBXF216B2BB1610471AB1F9F0BAE5ABB2D4">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -3749,7 +3272,7 @@ return lexer]]></ProtectedString>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="TextLabel" referent="RBX4E09D7B85D1C4C63AA95A70DC318E721">
+									<Item class="TextLabel" referent="RBX79626271E4CA456B871CD2F8A02884CB">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -3804,7 +3327,7 @@ return lexer]]></ProtectedString>
 											<int name="ZIndex">1</int>
 										</Properties>
 									</Item>
-									<Item class="Frame" referent="RBXAC0E7ADF492947ECBC21A2F8B5FAC547">
+									<Item class="Frame" referent="RBXE1881C7BCB8E40CAA52D05FB4623E4C0">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -3846,7 +3369,7 @@ return lexer]]></ProtectedString>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="ScrollingFrame" referent="RBXC69B2319D7EF415F9D338172CA90FFBC">
+										<Item class="ScrollingFrame" referent="RBX4A908EA57121489D990411EA2D19D6ED">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -3909,7 +3432,7 @@ return lexer]]></ProtectedString>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="UIPadding" referent="RBX1B492BB59B874D0AA62D75C611323A97">
+											<Item class="UIPadding" referent="RBXAC84CD0F88E64898AB32160C1A13E8E5">
 												<Properties>
 													<string name="Name">UIPadding</string>
 													<UDim name="PaddingBottom">
@@ -3931,7 +3454,7 @@ return lexer]]></ProtectedString>
 													<BinaryString name="Tags"></BinaryString>
 												</Properties>
 											</Item>
-											<Item class="TextBox" referent="RBX3595E53E91AB4950AE5F8A45B213411A">
+											<Item class="TextBox" referent="RBX35C0ABDE2F884F6497DBBCE57DB15D49">
 												<Properties>
 													<bool name="Active">true</bool>
 													<Vector2 name="AnchorPoint">
@@ -3992,7 +3515,7 @@ return lexer]]></ProtectedString>
 												</Properties>
 											</Item>
 										</Item>
-										<Item class="TextButton" referent="RBX7F7077600F504B339C2AA5155A6DC14B">
+										<Item class="TextButton" referent="RBXC9F41DB2CCD044F78BB2E09A061BB31D">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -4053,7 +3576,7 @@ return lexer]]></ProtectedString>
 										</Item>
 									</Item>
 								</Item>
-								<Item class="Frame" referent="RBX3AA50B683AEF48CBB4B4718E55DE0596">
+								<Item class="Frame" referent="RBX77B32D1FB588442FA7A1BAE5BC12E87B">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -4095,7 +3618,7 @@ return lexer]]></ProtectedString>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="TextLabel" referent="RBX98744F86C6BE446EA4DC642559866DD4">
+									<Item class="TextLabel" referent="RBXB412E13421A94AE59E9A26C8B1772CB2">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -4150,7 +3673,7 @@ return lexer]]></ProtectedString>
 											<int name="ZIndex">1</int>
 										</Properties>
 									</Item>
-									<Item class="Frame" referent="RBX6EAE2296A31842E4ABC97FF581A58406">
+									<Item class="Frame" referent="RBX7BC45B0CD5A64D9E9E6D2A7FC2C8837F">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -4192,7 +3715,7 @@ return lexer]]></ProtectedString>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="ScrollingFrame" referent="RBX4F09F70B2FD0489A9D3C2CAFE5897EDA">
+										<Item class="ScrollingFrame" referent="RBX4B1DE4724CE3440DA2FF07F7CAF578CD">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -4255,7 +3778,7 @@ return lexer]]></ProtectedString>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="UIPadding" referent="RBX77A84A111CAA4C34BBF4AD182454A5E4">
+											<Item class="UIPadding" referent="RBX64A7EE36087143778AD2F51DE112A896">
 												<Properties>
 													<string name="Name">UIPadding</string>
 													<UDim name="PaddingBottom">
@@ -4277,7 +3800,7 @@ return lexer]]></ProtectedString>
 													<BinaryString name="Tags"></BinaryString>
 												</Properties>
 											</Item>
-											<Item class="TextBox" referent="RBXF6B474FD1C43437E8AFA1FB49F92E2AF">
+											<Item class="TextBox" referent="RBX51173B4D27A84199A060231D56E1FF70">
 												<Properties>
 													<bool name="Active">true</bool>
 													<Vector2 name="AnchorPoint">
@@ -4338,7 +3861,7 @@ return lexer]]></ProtectedString>
 												</Properties>
 											</Item>
 										</Item>
-										<Item class="TextButton" referent="RBX5A99EA37500741E394146D3152C0B8A5">
+										<Item class="TextButton" referent="RBXA3B3AE8922D646F184B2D7607065ECD6">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -4399,7 +3922,7 @@ return lexer]]></ProtectedString>
 										</Item>
 									</Item>
 								</Item>
-								<Item class="Frame" referent="RBX790217303E8B4E8C8A9D14523F34C6EF">
+								<Item class="Frame" referent="RBXD19191DA3298486785288D8B66A9C964">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -4441,7 +3964,7 @@ return lexer]]></ProtectedString>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="TextButton" referent="RBX50A32C8A2AB141EABB4A0D4596BF740E">
+									<Item class="TextButton" referent="RBX8D1EA37BFF854E0C9CC986941BEAEEBA">
 										<Properties>
 											<bool name="Active">true</bool>
 											<Vector2 name="AnchorPoint">
@@ -4499,7 +4022,7 @@ return lexer]]></ProtectedString>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="TextLabel" referent="RBX8DEBBEF02D854C81A23AC3A8810230FA">
+										<Item class="TextLabel" referent="RBX3662A4BAE15B4F25B79334C3948702A1">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -4554,7 +4077,7 @@ return lexer]]></ProtectedString>
 												<int name="ZIndex">1</int>
 											</Properties>
 										</Item>
-										<Item class="Frame" referent="RBXDA4450FC542441828E7D9799F5DD1E48">
+										<Item class="Frame" referent="RBX395DB039464149F6A411D8035A31D8FC">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -4596,7 +4119,7 @@ return lexer]]></ProtectedString>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="TextButton" referent="RBX66C71349815D472398056AD2BDA0060A">
+											<Item class="TextButton" referent="RBX5577D71F8526499D9AD433C95E59E198">
 												<Properties>
 													<bool name="Active">true</bool>
 													<Vector2 name="AnchorPoint">
@@ -4658,7 +4181,7 @@ return lexer]]></ProtectedString>
 										</Item>
 									</Item>
 								</Item>
-								<Item class="Frame" referent="RBXAB5995C89B964CAA8E1D30D29F887339">
+								<Item class="Frame" referent="RBXF8124F4CF88A4B77B0E1D7D56A9FD7CF">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -4700,7 +4223,7 @@ return lexer]]></ProtectedString>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="TextLabel" referent="RBXB1CF3A010227443AB1FA2DFB95E4AED8">
+									<Item class="TextLabel" referent="RBX5CAEC5EFDC244FB19BE0418841A0E260">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -4755,7 +4278,7 @@ return lexer]]></ProtectedString>
 											<int name="ZIndex">1</int>
 										</Properties>
 									</Item>
-									<Item class="Frame" referent="RBX460AE2ED07BB41D0ACC7845C4415F1B5">
+									<Item class="Frame" referent="RBX64C239A17AED41A3A95B85677F941396">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -4797,7 +4320,7 @@ return lexer]]></ProtectedString>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="ScrollingFrame" referent="RBX635962DAF43F4619B80F083CDD4C804A">
+										<Item class="ScrollingFrame" referent="RBX90BC4A25A92D42AB901491F4D15402B0">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -4860,7 +4383,7 @@ return lexer]]></ProtectedString>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="UIPadding" referent="RBX2AF2608632AC40C0B39DDDA59E73EFAA">
+											<Item class="UIPadding" referent="RBX1ED34BE6C180482FA50ACC0B14338AF7">
 												<Properties>
 													<string name="Name">UIPadding</string>
 													<UDim name="PaddingBottom">
@@ -4882,7 +4405,7 @@ return lexer]]></ProtectedString>
 													<BinaryString name="Tags"></BinaryString>
 												</Properties>
 											</Item>
-											<Item class="TextBox" referent="RBX416634298F7A4F8E93FD3A6CDB02DEA9">
+											<Item class="TextBox" referent="RBX07B54E56BB974E95963B28DF0858D95F">
 												<Properties>
 													<bool name="Active">true</bool>
 													<Vector2 name="AnchorPoint">
@@ -4944,7 +4467,7 @@ SetNumber(x)]]></string>
 												</Properties>
 											</Item>
 										</Item>
-										<Item class="TextButton" referent="RBX196057A3E7C44FE5A57AC827EC2C414E">
+										<Item class="TextButton" referent="RBX15F0D1DA5774498FB8E3045AB1CC5D87">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -5005,7 +4528,7 @@ SetNumber(x)]]></string>
 										</Item>
 									</Item>
 								</Item>
-								<Item class="Frame" referent="RBX13B3D57CB4CC429E9936585467297587">
+								<Item class="Frame" referent="RBX1021EFCCE6DE407E8142088F88F35199">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -5047,7 +4570,7 @@ SetNumber(x)]]></string>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="TextLabel" referent="RBXA6A39DF5B49D4A53B071545F0F912D07">
+									<Item class="TextLabel" referent="RBX42B47A5974D44F84BE35B2E009E6A1DB">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -5102,7 +4625,7 @@ SetNumber(x)]]></string>
 											<int name="ZIndex">1</int>
 										</Properties>
 									</Item>
-									<Item class="Frame" referent="RBX5D3C3ECAEBF2415FB169C1B4A7EAA5D3">
+									<Item class="Frame" referent="RBX4F78711FCFDD41B7B935EB524E25835D">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -5144,7 +4667,7 @@ SetNumber(x)]]></string>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="ScrollingFrame" referent="RBX1224938B87EA4BFE8AEE31C93C2C3F02">
+										<Item class="ScrollingFrame" referent="RBXB95F18BD9FFD4A6ABB3871B4994963DF">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -5207,7 +4730,7 @@ SetNumber(x)]]></string>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="UIPadding" referent="RBXA09B8FCBDA2E489395B12ACE48C37BE6">
+											<Item class="UIPadding" referent="RBX931B75807B074BB5B6DAE07D6C1A68AA">
 												<Properties>
 													<string name="Name">UIPadding</string>
 													<UDim name="PaddingBottom">
@@ -5229,7 +4752,7 @@ SetNumber(x)]]></string>
 													<BinaryString name="Tags"></BinaryString>
 												</Properties>
 											</Item>
-											<Item class="TextBox" referent="RBX0508EBB65A264650A2093AD9E679A0F4">
+											<Item class="TextBox" referent="RBX6282CF20726A4B46B24DF39A7558DFC8">
 												<Properties>
 													<bool name="Active">true</bool>
 													<Vector2 name="AnchorPoint">
@@ -5291,7 +4814,7 @@ SetNumber(x)]]></string>
 												</Properties>
 											</Item>
 										</Item>
-										<Item class="TextButton" referent="RBXE7FA2F317F894DE69DF58BD8A1C76CFD">
+										<Item class="TextButton" referent="RBX1D23DC84A9304065906340AA3F35005E">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -5352,7 +4875,7 @@ SetNumber(x)]]></string>
 										</Item>
 									</Item>
 								</Item>
-								<Item class="Frame" referent="RBX55D27F2B36984421A17DC967FE91275B">
+								<Item class="Frame" referent="RBX2EF80FA9E8C54CC7B8AE2473A0C02141">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -5394,7 +4917,7 @@ SetNumber(x)]]></string>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="TextLabel" referent="RBX61719B3C4A8A4469B348EE96B6BA8728">
+									<Item class="TextLabel" referent="RBX53849C48437C4182B440291E165F30FD">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -5449,7 +4972,7 @@ SetNumber(x)]]></string>
 											<int name="ZIndex">1</int>
 										</Properties>
 									</Item>
-									<Item class="Frame" referent="RBX4E7B068CF12541ECA251B9C1490A38F6">
+									<Item class="Frame" referent="RBX4776C4E265834DD7BDA38CB7486971FC">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -5491,7 +5014,7 @@ SetNumber(x)]]></string>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="ScrollingFrame" referent="RBX2C4311F61E834C29BB6FA94D79C34C20">
+										<Item class="ScrollingFrame" referent="RBX8FF73D796D5E4BC9ADC782208DBC06AD">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -5554,7 +5077,7 @@ SetNumber(x)]]></string>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="UIPadding" referent="RBX6D43EF2120314DB2B88B2D90B5212EBC">
+											<Item class="UIPadding" referent="RBX20E71775639E4BBB8F506C34F4C3E36D">
 												<Properties>
 													<string name="Name">UIPadding</string>
 													<UDim name="PaddingBottom">
@@ -5576,7 +5099,7 @@ SetNumber(x)]]></string>
 													<BinaryString name="Tags"></BinaryString>
 												</Properties>
 											</Item>
-											<Item class="TextBox" referent="RBX7F0353EA843843A8A5B9401780FA3F64">
+											<Item class="TextBox" referent="RBX6E73289F4866499995957871177D4F60">
 												<Properties>
 													<bool name="Active">true</bool>
 													<Vector2 name="AnchorPoint">
@@ -5638,7 +5161,7 @@ SetNumber(x)]]></string>
 												</Properties>
 											</Item>
 										</Item>
-										<Item class="TextButton" referent="RBX0FCD38E7B4E049BEA7F3ACADD23BB907">
+										<Item class="TextButton" referent="RBX70D4081784704A6F99882DB3B88135FD">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -5699,7 +5222,7 @@ SetNumber(x)]]></string>
 										</Item>
 									</Item>
 								</Item>
-								<Item class="Frame" referent="RBX3C7876B1895F4E8ABE780A33843CFE82">
+								<Item class="Frame" referent="RBXD5CBF77B7F7A4E608691F67030D71D6D">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -5741,7 +5264,7 @@ SetNumber(x)]]></string>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="TextLabel" referent="RBX749DCA9A570D4828ACF222D090FA1BEF">
+									<Item class="TextLabel" referent="RBX1BAF44BDD88847A9ACE89DCA224AABD2">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -5796,7 +5319,7 @@ SetNumber(x)]]></string>
 											<int name="ZIndex">1</int>
 										</Properties>
 									</Item>
-									<Item class="Frame" referent="RBX1908447766BB49C8800EDA7CDF5600FF">
+									<Item class="Frame" referent="RBX28EDD375CD8F4675862D15EF28524879">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -5838,7 +5361,7 @@ SetNumber(x)]]></string>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="TextBox" referent="RBX3F6F19550F0F49CF90ACF6A89A8CDB85">
+										<Item class="TextBox" referent="RBX9CCF5723A2054D028A26B38A246E465D">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -5898,7 +5421,7 @@ SetNumber(x)]]></string>
 												<int name="ZIndex">1</int>
 											</Properties>
 										</Item>
-										<Item class="TextButton" referent="RBX22022DA2D7D54364988E838FC991E08E">
+										<Item class="TextButton" referent="RBX4A3BCEFC35F44096B2AD8BB4A3016028">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -5959,7 +5482,7 @@ SetNumber(x)]]></string>
 										</Item>
 									</Item>
 								</Item>
-								<Item class="TextButton" referent="RBXC04E020B84704C22B9258979FD35EA4B">
+								<Item class="TextButton" referent="RBX8606D37CCB9B410AAEEEF9FCE77F4778">
 									<Properties>
 										<bool name="Active">true</bool>
 										<Vector2 name="AnchorPoint">
@@ -6018,7 +5541,7 @@ SetNumber(x)]]></string>
 										<int name="ZIndex">1</int>
 									</Properties>
 								</Item>
-								<Item class="UIListLayout" referent="RBX7594BA6833AC42B8A3E2EF8105BBDF9F">
+								<Item class="UIListLayout" referent="RBX2D9CEECAEC074395A8A2E51ED29D8EDC">
 									<Properties>
 										<token name="FillDirection">1</token>
 										<token name="HorizontalAlignment">0</token>
@@ -6032,7 +5555,7 @@ SetNumber(x)]]></string>
 										<token name="VerticalAlignment">1</token>
 									</Properties>
 								</Item>
-								<Item class="UIPadding" referent="RBXCBF10359341847978B751EDBE1763F4B">
+								<Item class="UIPadding" referent="RBX67E30AD14A1649189BD343C5172FAB15">
 									<Properties>
 										<string name="Name">UIPadding</string>
 										<UDim name="PaddingBottom">
@@ -6055,7 +5578,7 @@ SetNumber(x)]]></string>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="Frame" referent="RBX41AF94969FB748138E7046A2C40681F2">
+							<Item class="Frame" referent="RBX4EABE5BA0AB843B38CA3D6B206B16FE5">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -6101,7 +5624,7 @@ SetNumber(x)]]></string>
 						</Item>
 					</Item>
 				</Item>
-				<Item class="Frame" referent="RBX0E2248EC7298465DA49407DC4E7BD7EE">
+				<Item class="Frame" referent="RBX68CDD8EFA49649ED936D968ADE49CE2E">
 					<Properties>
 						<bool name="Active">false</bool>
 						<Vector2 name="AnchorPoint">
@@ -6143,7 +5666,7 @@ SetNumber(x)]]></string>
 						<bool name="Visible">true</bool>
 						<int name="ZIndex">1</int>
 					</Properties>
-					<Item class="Frame" referent="RBX2A67986E96064DB89DA779165156D759">
+					<Item class="Frame" referent="RBX0F701937487C4C84AFCABA50BAA58409">
 						<Properties>
 							<bool name="Active">false</bool>
 							<Vector2 name="AnchorPoint">
@@ -6185,7 +5708,7 @@ SetNumber(x)]]></string>
 							<bool name="Visible">true</bool>
 							<int name="ZIndex">1</int>
 						</Properties>
-						<Item class="ScrollingFrame" referent="RBXC076B62556464F14937DFE510951E8A6">
+						<Item class="ScrollingFrame" referent="RBXA6C0D5F5AD22456B9B6D0FD5EB6551D1">
 							<Properties>
 								<bool name="Active">false</bool>
 								<Vector2 name="AnchorPoint">
@@ -6248,7 +5771,7 @@ SetNumber(x)]]></string>
 								<bool name="Visible">false</bool>
 								<int name="ZIndex">1</int>
 							</Properties>
-							<Item class="Frame" referent="RBXB44522F321874594BE74F66A4F89AD04">
+							<Item class="Frame" referent="RBXDBBAB2C0A8C04F4FA2E5B0B588C8E82A">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -6290,7 +5813,7 @@ SetNumber(x)]]></string>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">2</int>
 								</Properties>
-								<Item class="UIPadding" referent="RBX76B643A86D8D4C40ABCE0118C22E3F26">
+								<Item class="UIPadding" referent="RBX19A974550052406DA0DE334B761534B4">
 									<Properties>
 										<string name="Name">UIPadding</string>
 										<UDim name="PaddingBottom">
@@ -6312,7 +5835,7 @@ SetNumber(x)]]></string>
 										<BinaryString name="Tags"></BinaryString>
 									</Properties>
 								</Item>
-								<Item class="Frame" referent="RBXB50688C4220F4BABACED66414CC41D4F">
+								<Item class="Frame" referent="RBXF3264B7922004F888A7EBDF468DEF754">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -6356,7 +5879,7 @@ SetNumber(x)]]></string>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="Frame" referent="RBX00C6F31F84ED48B58CD81E785B2290B9">
+							<Item class="Frame" referent="RBX57A04D9200174FC7B59E52C2EEFC9EC9">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -6400,7 +5923,7 @@ SetNumber(x)]]></string>
 								</Properties>
 							</Item>
 						</Item>
-						<Item class="Frame" referent="RBX9C855622604444728217DB35038F0A45">
+						<Item class="Frame" referent="RBX25E809132C8849C0927B2B522A1F2A40">
 							<Properties>
 								<bool name="Active">false</bool>
 								<Vector2 name="AnchorPoint">
@@ -6442,7 +5965,7 @@ SetNumber(x)]]></string>
 								<bool name="Visible">true</bool>
 								<int name="ZIndex">1</int>
 							</Properties>
-							<Item class="UIPadding" referent="RBX9C83809948E242AA8956420B21378516">
+							<Item class="UIPadding" referent="RBX41788B7665AE4C89B3B2A5EB4633EE13">
 								<Properties>
 									<string name="Name">UIPadding</string>
 									<UDim name="PaddingBottom">
@@ -6464,7 +5987,7 @@ SetNumber(x)]]></string>
 									<BinaryString name="Tags"></BinaryString>
 								</Properties>
 							</Item>
-							<Item class="TextLabel" referent="RBX88328251A6B64C0EA143A76F14DF9A1B">
+							<Item class="TextLabel" referent="RBX9DB9CB2A0DC942E5A1B09B87E7BC90E5">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -6522,6 +6045,269 @@ SetNumber(x)]]></string>
 						</Item>
 					</Item>
 				</Item>
+			</Item>
+			<Item class="ModuleScript" referent="RBX0D9C7D4DAD29425F93B0EB3E855DBD3F">
+				<Properties>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">Lexer</string>
+					<string name="ScriptGuid">{7D941203-FF5D-430D-A233-5689182E8BAC}</string>
+					<ProtectedString name="Source"><![CDATA[--[[
+
+	Lexical scanner for creating a sequence of tokens from Lua source code.
+
+	This is a heavily modified and Roblox-optimized version of
+	the original Penlight Lexer module:
+		https://github.com/stevedonovan/Penlight
+
+	Authors:
+		stevedonovan <https://github.com/stevedonovan> ----------------- Original Penlight lexer author
+		ryanjmulder  <https://github.com/ryanjmulder>  ----------------- Penlight lexer contributer
+		mpeterv      <https://github.com/mpeterv>      ----------------- Penlight lexer contributer
+		Tieske       <https://github.com/Tieske>       ----------------- Penlight lexer contributer
+		boatbomber   <https://github.com/boatbomber>   ----------------- Roblox port, optimizations, and bug fixes
+		Sleitnick    <https://github.com/Sleitnick>    ----------------- Roblox optimizations
+
+	Usage:
+
+		local source = "for i = 1,n do end"
+		
+		-- The 'scan' function returns a token iterator:
+		for token,src in lexer.scan(source) do
+			print(token, src)
+		end
+
+			> keyword for
+			> iden    i
+			> =       =
+			> number  1
+			> ,       ,
+			> iden    n
+			> keyword do
+			> keyword end
+
+	List of tokens:
+		- keyword
+		- builtin
+		- iden
+		- string
+		- number
+		- space
+		- comment
+
+	Other tokens that don't fall into the above categories
+	will simply be returned as itself. For instance, operators
+	like "+" will simply return "+" as the token.
+
+--]]
+
+local lexer = {}
+
+local yield, wrap  = coroutine.yield, coroutine.wrap
+local strfind      = string.find
+local strsub       = string.sub
+local append       = table.insert
+local type         = type
+
+local NUMBER1	= "^[%+%-]?%d+%.?%d*[eE][%+%-]?%d+"
+local NUMBER2	= "^[%+%-]?%d+%.?%d*"
+local NUMBER3	= "^0x[%da-fA-F]+"
+local NUMBER4	= "^%d+%.?%d*[eE][%+%-]?%d+"
+local NUMBER5	= "^%d+%.?%d*"
+local IDEN		= "^[%a_][%w_]*"
+local WSPACE	= "^%s+"
+local STRING1	= "^(['\"])%1"							--Empty String
+local STRING2	= [[^(['"])(\*)%2%1]]
+local STRING3	= [[^(['"]).-[^\](\*)%2%1]]
+local STRING4	= "^(['\"]).-.*"						--Incompleted String
+local STRING5	= "^%[(=*)%[.-%]%1%]"					--Multiline-String
+local STRING6	= "^%[%[.-.*"							--Incompleted Multiline-String
+local CHAR1		= "^''"
+local CHAR2		= [[^'(\*)%1']]
+local CHAR3		= [[^'.-[^\](\*)%1']]
+local PREPRO	= "^#.-[^\\]\n"
+local MCOMMENT1	= "^%-%-%[(=*)%[.-%]%1%]"				--Completed Multiline-Comment
+local MCOMMENT2	= "^%-%-%[%[.-.*"						--Incompleted Multiline-Comment
+local SCOMMENT1	= "^%-%-.-\n"							--Completed Singleline-Comment
+local SCOMMENT2	= "^%-%-.-.*"							--Incompleted Singleline-Comment
+
+local lua_keyword = {
+	["and"] = true,  ["break"] = true,  ["do"] = true,      ["else"] = true,      ["elseif"] = true,
+	["end"] = true,  ["false"] = true,  ["for"] = true,     ["function"] = true,  ["if"] = true,
+	["in"] = true,   ["local"] = true,  ["nil"] = true,     ["not"] = true,       ["while"] = true,
+	["or"] = true,   ["repeat"] = true, ["return"] = true,  ["then"] = true,      ["true"] = true,
+	["self"] = true, ["until"] = true
+}
+
+local lua_builtin = {
+	["assert"] = true;["collectgarbage"] = true;["error"] = true;["_G"] = true;
+	["gcinfo"] = true;["getfenv"] = true;["getmetatable"] = true;["ipairs"] = true;
+	["loadstring"] = true;["newproxy"] = true;["next"] = true;["pairs"] = true;
+	["pcall"] = true;["print"] = true;["rawequal"] = true;["rawget"] = true;["rawset"] = true;
+	["select"] = true;["setfenv"] = true;["setmetatable"] = true;["tonumber"] = true;
+	["tostring"] = true;["type"] = true;["unpack"] = true;["_VERSION"] = true;["xpcall"] = true;
+	["delay"] = true;["elapsedTime"] = true;["require"] = true;["spawn"] = true;["tick"] = true;
+	["time"] = true;["typeof"] = true;["UserSettings"] = true;["wait"] = true;["warn"] = true;
+	["game"] = true;["Enum"] = true;["script"] = true;["shared"] = true;["workspace"] = true;
+	["Axes"] = true;["BrickColor"] = true;["CFrame"] = true;["Color3"] = true;["ColorSequence"] = true;
+	["ColorSequenceKeypoint"] = true;["Faces"] = true;["Instance"] = true;["NumberRange"] = true;
+	["NumberSequence"] = true;["NumberSequenceKeypoint"] = true;["PhysicalProperties"] = true;
+	["Random"] = true;["Ray"] = true;["Rect"] = true;["Region3"] = true;["Region3int16"] = true;
+	["TweenInfo"] = true;["UDim"] = true;["UDim2"] = true;["Vector2"] = true;["Vector3"] = true;
+	["Vector3int16"] = true;["next"] = true;
+	["os"] = true;
+		--["os.time"] = true;["os.date"] = true;["os.difftime"] = true;
+	["debug"] = true;
+		--["debug.traceback"] = true;["debug.profilebegin"] = true;["debug.profileend"] = true;
+	["math"] = true;
+		--["math.abs"] = true;["math.acos"] = true;["math.asin"] = true;["math.atan"] = true;["math.atan2"] = true;["math.ceil"] = true;["math.clamp"] = true;["math.cos"] = true;["math.cosh"] = true;["math.deg"] = true;["math.exp"] = true;["math.floor"] = true;["math.fmod"] = true;["math.frexp"] = true;["math.ldexp"] = true;["math.log"] = true;["math.log10"] = true;["math.max"] = true;["math.min"] = true;["math.modf"] = true;["math.noise"] = true;["math.pow"] = true;["math.rad"] = true;["math.random"] = true;["math.randomseed"] = true;["math.sign"] = true;["math.sin"] = true;["math.sinh"] = true;["math.sqrt"] = true;["math.tan"] = true;["math.tanh"] = true;
+	["coroutine"] = true;
+		--["coroutine.create"] = true;["coroutine.resume"] = true;["coroutine.running"] = true;["coroutine.status"] = true;["coroutine.wrap"] = true;["coroutine.yield"] = true;
+	["string"] = true;
+		--["string.byte"] = true;["string.char"] = true;["string.dump"] = true;["string.find"] = true;["string.format"] = true;["string.len"] = true;["string.lower"] = true;["string.match"] = true;["string.rep"] = true;["string.reverse"] = true;["string.sub"] = true;["string.upper"] = true;["string.gmatch"] = true;["string.gsub"] = true;
+	["table"] = true;
+		--["table.concat"] = true;["table.insert"] = true;["table.remove"] = true;["table.sort"] = true;
+}
+
+local function tdump(tok)
+	return yield(tok, tok)
+end
+
+local function ndump(tok)
+	return yield("number", tok)
+end
+
+local function sdump(tok)
+	return yield("string", tok)
+end
+
+local function cdump(tok)
+	return yield("comment", tok)
+end
+
+local function wsdump(tok)
+	return yield("space", tok)
+end
+
+local function lua_vdump(tok)
+	if (lua_keyword[tok]) then
+		return yield("keyword", tok)
+	elseif (lua_builtin[tok]) then
+		return yield("builtin", tok)
+	else
+		return yield("iden", tok)
+	end
+end
+
+local lua_matches = {
+	{IDEN,      lua_vdump},        -- Indentifiers
+	{WSPACE,    wsdump},           -- Whitespace
+	{NUMBER3,   ndump},            -- Numbers
+	{NUMBER4,   ndump},
+	{NUMBER5,   ndump},
+	{STRING1,   sdump},            -- Strings
+	{STRING2,   sdump},
+	{STRING3,   sdump},
+	{STRING4,   sdump},
+	{STRING5,   sdump},            -- Multiline-Strings
+	{STRING6,   sdump},            -- Multiline-Strings
+	
+	{MCOMMENT1, cdump},            -- Multiline-Comments
+	{MCOMMENT2, cdump},			
+	{SCOMMENT1, cdump},            -- Singleline-Comments
+	{SCOMMENT2, cdump},
+	
+	{"^==",     tdump},            -- Operators
+	{"^~=",     tdump},
+	{"^<=",     tdump},
+	{"^>=",     tdump},
+	{"^%.%.%.", tdump},
+	{"^%.%.",   tdump},
+	{"^.",      tdump}
+}
+
+local num_lua_matches = #lua_matches
+
+
+--- Create a plain token iterator from a string.
+-- @tparam string s a string.
+function lexer.scan(s)
+
+	local function lex(first_arg)
+
+		local line_nr = 0
+		local sz = #s
+		local idx = 1
+
+		-- res is the value used to resume the coroutine.
+		local function handle_requests(res)
+			while (res) do
+				local tp = type(res)
+				-- Insert a token list:
+				if (tp == "table") then
+					res = yield("", "")
+					for i = 1,#res do
+						local t = res[i]
+						res = yield(t[1], t[2])
+					end
+				elseif (tp == "string") then -- Or search up to some special pattern:
+					local i1, i2 = strfind(s, res, idx)
+					if (i1) then
+						local tok = strsub(s, i1, i2)
+						idx = (i2 + 1)
+						res = yield("", tok)
+					else
+						res = yield("", "")
+						idx = (sz + 1)
+					end
+				else
+					res = yield(line_nr, idx)
+				end
+			end
+		end
+
+		handle_requests(first_arg)
+		line_nr = 1
+
+		while (true) do
+
+			if (idx > sz) then
+				while (true) do
+					handle_requests(yield())
+				end
+			end
+
+			for i = 1,num_lua_matches do
+				local m = lua_matches[i]
+				local pat = m[1]
+				local fun = m[2]
+				local findres = {strfind(s, pat, idx)}
+				local i1, i2 = findres[1], findres[2]
+				if (i1) then
+					local tok = strsub(s, i1, i2)
+					idx = (i2 + 1)
+					lexer.finished = (idx > sz)
+					local res = fun(tok, findres)
+					if (tok:find("\n")) then
+						-- Update line number:
+						local _,newlines = tok:gsub("\n", {})
+						line_nr = (line_nr + newlines)
+					end
+					handle_requests(res)
+					break
+				end
+			end
+
+		end
+
+	end
+
+	return wrap(lex)
+
+end
+
+return lexer]]></ProtectedString>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
 			</Item>
 		</Item>
 	</Item>
