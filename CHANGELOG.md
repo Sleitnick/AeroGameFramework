@@ -14,11 +14,35 @@ As always, you can also check the commit history for a given version as well, an
 
 | Version | Date | Description |
 | ---|---|--- |
+| [1.2.5](#1.2.5) | 2018-09-20 | <ul><li>Added `__aeroPreventStart` flag for modules that already implement a Start method.</li><li>Added `__aeroPreventInit` flag for modules that already implement an Init method.</li><li>Flagged `__aeroPreventStart` for CameraShaker module.</li></ul>
 | [1.2.4](#1.2.4) | 2018-09-20 | <ul><li>Using `coroutine` yielding/resuming where applicable</li><li>Cleaned up deprecated code in TaskScheduler</li></ul>
 | [1.2.3](#1.2.3) | 2018-08-15 | <ul><li>Added `WrapModule` method to Server and Client main scripts.</li></ul> |
 | [1.2.2](#1.2.2) | 2018-08-15 | <ul><li>Added Failed events for DataService.</li><li>Added Failed event for DataStoreCache.</li><li>Added Failed event for SafeDataStore.</li></ul> |
 
 ### Version History Notes
+
+#### <a name="1.2.5"> Version 1.2.5
+Added `__aeroPreventStart` and `__aeroPreventInit` flags for modules (both server and client). If the `__aeroPreventStart` flag is present for a module, then the framework will not invoke the `Start` method for that module when first loaded. Similarly, `__aeroPreventInit` will prevent the framework from invoking the `Init` method when first loaded. In summary, the two flags will prevent the default behavior of the framework calling the associated `Start` and `Init` methods. This is useful if an existing module is added to the framework that has already implemented these methods for other uses.
+
+This change will also apply to any modules using the `WrapModule` method on either the server or client.
+
+The above flags were added to address a bug with the `CameraShaker` module, which already had a `Start` method built into the module. This caused issues when the module was loaded. The `__aeroPreventStart` flag has been added to prevent this.
+
+Example:
+```lua
+local MyModule = {}
+
+-- Flagging to prevent the Start method:
+MyModule.__aeroPreventStart = true
+
+function MyModule:Start()
+	print("The framework will not invoke this method when first loaded")
+end
+
+function MyModule:Init()
+	print("Still invoked from the framework")
+end
+```
 
 #### <a name="1.2.4"> Version 1.2.4
 Instead of using `while` loops to wait for code to complete, proper usage of `coroutine.yield` and `coroutine.resume` have been implemented. This change reflects best practices on Roblox. Doing this was not possible before a recent Roblox update. The overall behavior of the code remains entirely the same.

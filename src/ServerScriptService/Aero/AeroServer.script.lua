@@ -86,10 +86,10 @@ function AeroServer:WrapModule(tbl)
 	assert(type(tbl) == "table", "Expected table for argument")
 	tbl._events = {}
 	setmetatable(tbl, mt)
-	if (type(tbl.Init) == "function") then
+	if (type(tbl.Init) == "function" and not tbl.__aeroPreventInit) then
 		tbl:Init()
 	end
-	if (type(tbl.Start) == "function") then
+	if (type(tbl.Start) == "function" and not tbl.__aeroPreventStart) then
 		coroutine.wrap(tbl.Start)(tbl)
 	end
 end

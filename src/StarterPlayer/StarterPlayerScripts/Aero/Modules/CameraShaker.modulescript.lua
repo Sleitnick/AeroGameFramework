@@ -49,6 +49,7 @@
 
 local CameraShaker = {}
 CameraShaker.__index = CameraShaker
+CameraShaker.__aeroPreventStart = true
 
 local profileBegin = debug.profilebegin
 local profileEnd = debug.profileend
