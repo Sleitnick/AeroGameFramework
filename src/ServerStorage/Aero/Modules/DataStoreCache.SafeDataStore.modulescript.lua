@@ -24,6 +24,19 @@ if (game.PlaceId == 0) then
 	dataStoreService = require(script:WaitForChild("MockDataStoreService"))
 end
 
+-- Map DataStoreService methods to associated RequestTypes:
+local requestTypes = {
+	GetAsync = Enum.DataStoreRequestType.GetAsync;
+	SetAsync = Enum.DataStoreRequestType.SetIncrementAsync;
+	OnUpdate = Enum.DataStoreRequestType.OnUpdate;
+	IncrementAsync = Enum.DataStoreRequestType.SetIncrementAsync;
+}
+
+
+local function GetBudget(method)
+	return dataStoreService:GetRequestBudgetForRequestType(requestTypes[method])
+end
+
 
 function SafeDataStore.new(name, scope)
 	
@@ -39,6 +52,10 @@ end
 
 
 function SafeDataStore:Try(method, k, v)
+	local budget = GetBudget(method)
+	if (budget == 0) then
+		-- Do something in later implementation
+	end
 	local value = nil
 	for i = 1,MAX_ATTEMPTS do
 		local success,v = pcall(function()

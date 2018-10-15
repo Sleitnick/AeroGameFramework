@@ -28,6 +28,12 @@
 local Base64 = {}
 Base64.__index = Base64
 
+local sub = string.sub
+local byte = string.byte
+local char = string.char
+local gsub = string.gsub
+local find = string.find
+
 --- Object constructor
 -- @return Base64
 function Base64.new()
@@ -50,7 +56,7 @@ function Base64:__BinaryEncode(Integer)
 	local BinaryBits = ''
 
 	for i = 7, 0, -1 do
-		local CurrentPower = math.pow(2, i)
+		local CurrentPower = 2 ^ i
 
 		if Remaining >= CurrentPower then
 			BinaryBits = BinaryBits .. '1'
@@ -84,28 +90,28 @@ function Base64:Encode(Value)
 	local Encoded = ''
 	local Trailing = ''
 
-	for i = 1, string.len(Value) do
-		BitPattern = BitPattern .. self:__BinaryEncode(string.byte(string.sub(Value, i, i)))
+	for i = 1, #Value do
+		BitPattern = BitPattern .. self:__BinaryEncode(byte(sub(Value, i, i)))
 	end
 
 	-- Check the number of bytes. If it's not evenly divisible by three,
 	-- zero-pad the ending & append on the correct number of ``=``s.
-	if string.len(BitPattern) % 3 == 2 then
+	if #BitPattern % 3 == 2 then
 		Trailing = '=='
 		BitPattern = BitPattern .. '0000000000000000'
-	elseif string.len(BitPattern) % 3 == 1 then
+	elseif #BitPattern % 3 == 1 then
 		Trailing = '='
 		BitPattern = BitPattern .. '00000000'
 	end
 
-	for i = 1, string.len(BitPattern), 6 do
-		local Byte = string.sub(BitPattern, i, i+5)
+	for i = 1, #BitPattern, 6 do
+		local Byte = sub(BitPattern, i, i+5)
 		local Offset = tonumber(self:__BinaryDecode(Byte))
 		
-		Encoded = Encoded .. string.sub(self.IndexTable, Offset+1, Offset+1)
+		Encoded = Encoded .. sub(self.IndexTable, Offset+1, Offset+1)
 	end
 
-	return string.sub(Encoded, 1, -1 - string.len(Trailing)) .. Trailing
+	return sub(Encoded, 1, -1 - #Trailing) .. Trailing
 
 end
 
@@ -115,32 +121,32 @@ end
 -- @return string
 function Base64:Decode(Value)
 	
-	local Padded = Value:gsub("%s", "")
-	local Unpadded = Padded:gsub("=", "")
+	local Padded = gsub(Value, "%s", "")
+	local Unpadded = gsub(Padded, "=", "")
 	local BitPattern = ''
 	local Decoded = ''
 
-	for i = 1, string.len(Unpadded) do
-		local Char = string.sub(Value, i, i)
-		local Offset, _ = string.find(self.IndexTable, Char)
+	for i = 1, #Unpadded do
+		local Char = sub(Value, i, i)
+		local Offset, _ = find(self.IndexTable, Char)
 
 		if Offset == nil then
-			error("Invalid character '" .. Char .. "' found.")
+			error("Invalid character \"" .. Char .. "\" found.")
 		end
 
-		BitPattern = BitPattern .. string.sub(self:__BinaryEncode(Offset-1), 3)
+		BitPattern = BitPattern .. sub(self:__BinaryEncode(Offset-1), 3)
 	end
 
-	for i = 1, string.len(BitPattern), 8 do
-		local Byte = string.sub(BitPattern, i, i+7)
+	for i = 1, #BitPattern, 8 do
+		local Byte = sub(BitPattern, i, i+7)
 
-		Decoded = Decoded .. string.char(self:__BinaryDecode(Byte))
+		Decoded = Decoded .. char(self:__BinaryDecode(Byte))
 	end
 
-	local PaddingLength = Padded:len()-Unpadded:len()
+	local PaddingLength = #Padded-#Unpadded
 
 	if (PaddingLength == 1 or PaddingLength == 2) then
-		Decoded = Decoded:sub(1,-2)
+		Decoded = sub(Decoded, 1,-2)
 	end
 
 	return Decoded

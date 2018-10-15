@@ -131,7 +131,7 @@ function Tween:Play()
 		dir = typeof(self.TweenInfo.EasingDirection) == "EnumItem" and self.TweenInfo.EasingDirection.Name or self.TweenInfo.EasingDirection
 		style = typeof(self.TweenInfo.EasingStyle) == "EnumItem" and self.TweenInfo.EasingStyle.Name or self.TweenInfo.EasingStyle
 		easingFunc = Tween.Easing[dir][style]
-		if (not self.TewenInfo.RepeatCount) then
+		if (not self.TweenInfo.RepeatCount) then
 			self.TweenInfo.RepeatCount = 0
 		end
 	end
