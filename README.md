@@ -8,12 +8,7 @@ Learn how to use the framework in the video tutorial series:
 https://www.youtube.com/watch?v=0oOFgZJPIcY&list=PLk3R4TM3pnqv7doCTUHtn-wkydaA08npc
 
 # Install & Update
-Run the following code snippet in the Command Line within Roblox Studio to install or update the framework:
-```lua
-require(932606289)()
-```
-
-**Note:** Always be careful when executing code unfamiliar to you. Before running the code snippet above, feel free to inspect the [module that is being executed](https://www.roblox.com/library/932606289/AeroGameFramework-Installer), and inspect the `install.lua` file in the repository.
+Run the installer from the [AeroGameFramework plugin](https://www.roblox.com/library/1882232354/AeroGameFramework-Plugin). The installer will allow you to install and update the framework.
 
 # Structure
 AeroGameFramework is structured into three categories: Server, Client, and Shared.
