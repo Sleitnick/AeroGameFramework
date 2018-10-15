@@ -1,8 +1,10 @@
+warn("Please use the installer through the AeroGameFramework plugin")
+
+--[=[
+
 -- Aero Install
 -- Stephen Leitnick
 -- July 22, 2017
-
-
 
 local FILELIST_URL = "https://raw.githubusercontent.com/Sleitnick/AeroGameFramework/master/filelist.json"
 local VERSION_URL = "https://raw.githubusercontent.com/Sleitnick/AeroGameFramework/master/version.txt"
@@ -318,3 +320,4 @@ end
 Install()
 http.HttpEnabled = httpEnabled
 _G._INSTALLING_AEROGAMEFRAMEWORK_ = nil
+]=]
