@@ -117,6 +117,7 @@ function API:GetDataStore(name, scope)
 	return d
 end
 
+
 function API:GetGlobalDataStore()
 	return self:GetDataStore("global", "global")
 end
@@ -199,6 +200,11 @@ function API:GetOrderedDataStore(name, scope)
 		return pages
 	end
 	return d
+end
+
+
+function API:GetRequestBudgetForRequestType(requestType)
+	return realDataStoreService:GetRequestBudgetForRequestType(requestType)
 end
 
 
