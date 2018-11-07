@@ -88,7 +88,7 @@ end
 
 function Cache:FlushAll()
 	if (not self.DataStore) then return end
-	for key,_ in pairs(self.Data) do
+	for key in pairs(self.Data) do
 		self:Flush(key, true)
 	end
 	self.Flushing = false
@@ -100,10 +100,10 @@ function Cache:FlushAllConcurrent()
 	local thread = coroutine.running()
 	local numData = 0
 	local numFlushed = 0
-	for key,_ in pairs(self.Data) do
+	for key in pairs(self.Data) do
 		numData = (numData + 1)
 	end
-	for key,_ in pairs(self.Data) do
+	for key in pairs(self.Data) do
 		spawn(function()
 			self:Flush(key, true)
 			numFlushed = (numFlushed + 1)
