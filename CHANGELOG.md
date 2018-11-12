@@ -14,12 +14,28 @@ As always, you can also check the commit history for a given version as well, an
 
 | Version | Date | Description |
 | ---|---|--- |
-| [1.2.5](#1.2.5) | 2018-09-20 | <ul><li>Added `__aeroPreventStart` flag for modules that already implement a Start method.</li><li>Added `__aeroPreventInit` flag for modules that already implement an Init method.</li><li>Flagged `__aeroPreventStart` for CameraShaker module.</li></ul>
-| [1.2.4](#1.2.4) | 2018-09-20 | <ul><li>Using `coroutine` yielding/resuming where applicable</li><li>Cleaned up deprecated code in TaskScheduler</li></ul>
+| [1.2.6](#1.2.6) | 2018-11-12 | <ul><li>Expanded TableUtil library</li></ul> |
+| [1.2.5](#1.2.5) | 2018-09-20 | <ul><li>Added `__aeroPreventStart` flag for modules that already implement a Start method.</li><li>Added `__aeroPreventInit` flag for modules that already implement an Init method.</li><li>Flagged `__aeroPreventStart` for CameraShaker module.</li></ul> |
+| [1.2.4](#1.2.4) | 2018-09-20 | <ul><li>Using `coroutine` yielding/resuming where applicable</li><li>Cleaned up deprecated code in TaskScheduler</li></ul> |
 | [1.2.3](#1.2.3) | 2018-08-15 | <ul><li>Added `WrapModule` method to Server and Client main scripts.</li></ul> |
 | [1.2.2](#1.2.2) | 2018-08-15 | <ul><li>Added Failed events for DataService.</li><li>Added Failed event for DataStoreCache.</li><li>Added Failed event for SafeDataStore.</li></ul> |
 
 ### Version History Notes
+
+#### <a name="1.2.6"> Version 1.2.6
+Expanded the TableUtil library. Specifically, the following functions have been added:
+
+- TableUtil.Map(Table tbl, Function callback)
+- TableUtil.Filter(Table tbl, Function callback)
+- TableUtil.Reduce(Table tbl, Function callback [, Number initialValue])
+- TableUtil.IndexOf(Table tbl, Variant item)
+- TableUtil.Reverse(Table tbl)
+- TableUtil.Shuffle(Table tbl)
+- TableUtil.IsEmpty(Table tbl)
+- TableUtil.EncodeJSON(Table tbl)
+- TableUtil.DecodeJSON(String json)
+
+Examples have been added within the source code of the TableUtil module.
 
 #### <a name="1.2.5"> Version 1.2.5
 Added `__aeroPreventStart` and `__aeroPreventInit` flags for modules (both server and client). If the `__aeroPreventStart` flag is present for a module, then the framework will not invoke the `Start` method for that module when first loaded. Similarly, `__aeroPreventInit` will prevent the framework from invoking the `Init` method when first loaded. In summary, the two flags will prevent the default behavior of the framework calling the associated `Start` and `Init` methods. This is useful if an existing module is added to the framework that has already implemented these methods for other uses.
