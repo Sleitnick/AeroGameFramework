@@ -271,7 +271,7 @@ function DataService:Start()
 	local function FireBoundToCloseCallbacks()
 		local thread = coroutine.running()
 		local numBinded = #boundToCloseFuncs
-		if (numCaches == 0) then return end
+		if (numBinded == 0) then return end
 		local numCompleted = 0
 		local maxWait = 20
 		local start = tick()
