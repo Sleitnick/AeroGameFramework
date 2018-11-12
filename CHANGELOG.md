@@ -25,15 +25,15 @@ As always, you can also check the commit history for a given version as well, an
 #### <a name="1.2.6"> Version 1.2.6
 Expanded the TableUtil library. Specifically, the following functions have been added:
 
-- TableUtil.Map(Table tbl, Function callback)
-- TableUtil.Filter(Table tbl, Function callback)
-- TableUtil.Reduce(Table tbl, Function callback [, Number initialValue])
-- TableUtil.IndexOf(Table tbl, Variant item)
-- TableUtil.Reverse(Table tbl)
-- TableUtil.Shuffle(Table tbl)
-- TableUtil.IsEmpty(Table tbl)
-- TableUtil.EncodeJSON(Table tbl)
-- TableUtil.DecodeJSON(String json)
+- `TableUtil.Map(Table tbl, Function callback)`
+- `TableUtil.Filter(Table tbl, Function callback)`
+- `TableUtil.Reduce(Table tbl, Function callback [, Number initialValue])`
+- `TableUtil.IndexOf(Table tbl, Variant item)`
+- `TableUtil.Reverse(Table tbl)`
+- `TableUtil.Shuffle(Table tbl)`
+- `TableUtil.IsEmpty(Table tbl)`
+- `TableUtil.EncodeJSON(Table tbl)`
+- `TableUtil.DecodeJSON(String json)`
 
 Examples have been added within the source code of the TableUtil module.
 
