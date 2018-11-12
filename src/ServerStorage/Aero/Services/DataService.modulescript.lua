@@ -221,6 +221,7 @@ function DataService:FlushAllConcurrent()
 	for _,cache in pairs(customCaches) do
 		numCaches = (numCaches + 1)
 	end
+	if (numCaches == 0) then return end
 	local function IncFlushed()
 		numFlushed = (numFlushed + 1)
 		if (numFlushed == numCaches) then
@@ -270,6 +271,7 @@ function DataService:Start()
 	local function FireBoundToCloseCallbacks()
 		local thread = coroutine.running()
 		local numBinded = #boundToCloseFuncs
+		if (numBinded == 0) then return end
 		local numCompleted = 0
 		local maxWait = 20
 		local start = tick()
