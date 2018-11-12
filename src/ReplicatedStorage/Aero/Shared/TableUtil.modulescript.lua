@@ -4,10 +4,138 @@
 
 --[[
 	
-	TableUtil.Copy(tbl)
-	TableUtil.Sync(tbl, templateTbl)
-	TableUtil.Print(tbl, label, deepPrint)
-	TableUtil.FastRemove(tbl, index)
+	TableUtil.Copy(Table tbl)
+	TableUtil.Sync(Table tbl, Table templateTbl)
+	TableUtil.Print(Table tbl, String label, Boolean deepPrint)
+	TableUtil.FastRemove(Table tbl, Number index)
+	TableUtil.Map(Table tbl, Function callback)
+	TableUtil.Filter(Table tbl, Function callback)
+	TableUtil.Reduce(Table tbl, Function callback [, Number initialValue])
+	TableUtil.IndexOf(Table tbl, Variant item)
+	TableUtil.Reverse(Table tbl)
+	TableUtil.Shuffle(Table tbl)
+	TableUtil.IsEmpty(Table tbl)
+	TableUtil.EncodeJSON(Table tbl)
+	TableUtil.DecodeJSON(String json)
+
+	EXAMPLES:
+
+		Copy:
+
+			Performs a deep copy of the given table.
+
+			local tbl = {"a", "b", "c"}
+			local tblCopy = TableUtil.Copy(tbl)
+
+
+		Sync:
+
+			Synchronizes a table to a template table. If the table does not have an
+			item that exists within the template, it gets added. If the table has
+			something that the template does not have, it gets removed.
+
+			local tbl1 = {kills = 0; deaths = 0; points = 0}
+			local tbl2 = {points = 0}
+			TableUtil.Sync(tbl2, tbl1)  -- In words: "Synchronize table2 to table1"
+			print(tbl2.deaths)
+
+
+		Print:
+
+			Prints out the table to the output in an easy-to-read format. Good for
+			debugging tables. If deep printing, avoid cyclical references.
+
+			local tbl = {a = 32; b = 64; c = 128; d = {x = 0; y = 1; z = 2}}
+			TableUtil.Print(tbl, "My Table", true)
+
+
+		FastRemove:
+
+			Removes an item from an array at a given index. Only ues this if you do
+			NOT care about the order of your array. This works by simply popping the
+			last item in the array and overwriting the given index with the last
+			item. This is O(1), compared to table.remove's O(n) speed.
+
+			local tbl = {"hello", "there", "this", "is", "a", "test"}
+			TableUtil.FastRemove(tbl, 2)   -- Remove "there" in the array
+			print(table.concat(tbl, " "))  -- > hello this is a test
+
+
+		Map:
+
+			This allows you to construct a new table by calling the given function
+			on each item in the table.
+
+			local peopleData = {
+				{firstName = "Bob"; lastName = "Smith"};
+				{firstName = "John"; lastName = "Doe"};
+				{firstName = "Jane"; lastName = "Doe"};
+			}
+
+			local people = TableUtil.Map(peopleData, function(item)
+				return {Name = item.firstName .. " " .. item.lastName}
+			end)
+
+			-- 'people' is now an array that looks like: { {Name = "Bob Smith"}; ... }
+
+
+		Filter:
+
+			This allows you to create a table based on the given table and a filter
+			function. If the function returns 'true', the item remains in the new
+			table; if the function returns 'false', the item is discluded from the
+			new table.
+
+			local people = {
+				{Name = "Bob Smith"; Age = 42};
+				{Name = "John Doe"; Age = 34};
+				{Name = "Jane Doe"; Age = 37};
+			}
+
+			local peopleUnderForty = TableUtil.Filter(people, function(item)
+				return item.Age < 40
+			end)
+
+
+		Reduce:
+
+			This allows you to reduce an array to a single value. Useful for quickly
+			summing up an array.
+
+			local tbl = {40, 32, 9, 5, 44}
+			local tblSum = TableUtil.Reduce(tbl, function(accumulator, value)
+				return accumulator + value
+			end)
+			print(tblSum)  -- > 130
+
+
+		IndexOf:
+
+			Returns the index of the given item in the table. If not found, this
+			will return nil.
+
+			local tbl = {"Hello", 32, true, "abc"}
+			local abcIndex = TableUtil.IndexOf("abc")     -- > 4
+			local helloIndex = TableUtil.IndexOf("Hello") -- > 1
+			local numberIndex = TableUtil.IndexOf(64)     -- > nil
+
+
+		Reverse:
+
+			Creates a reversed version of the array. Note: This is a shallow
+			copy, so existing references will remain within the new table.
+
+			local tbl = {2, 4, 6, 8}
+			local rblReversed = TableUtil.Reverse(tbl)  -- > {8, 6, 4, 2}
+
+
+		Shuffle:
+
+			Shuffles (i.e. randomizes) an array. This uses the Fisher-Yates algorithm.
+
+			local tbl = {1, 2, 3, 4, 5, 6, 7, 8, 9}
+			TableUtil.Shuffle(tbl)
+			print(table.concat(tbl, ", "))  -- e.g. > 3, 6, 9, 2, 8, 4, 1, 7, 5
 	
 --]]
 
@@ -15,8 +143,11 @@
 
 local TableUtil = {}
 
+local http = game:GetService("HttpService")
 
-function CopyTable(t)
+
+local function CopyTable(t)
+	assert(type(t) == "table", "First argument must be a table")
 	local tCopy = {}
 	for k,v in pairs(t) do
 		if (type(v) == "table") then
@@ -29,7 +160,10 @@ function CopyTable(t)
 end
 
 
-function Sync(tbl, templateTbl)
+local function Sync(tbl, templateTbl)
+
+	assert(type(tbl) == "table", "First argument must be a table")
+	assert(type(templateTbl) == "table", "Second argument must be a table")
 	
 	-- If 'tbl' has something 'templateTbl' doesn't, then remove it from 'tbl'
 	-- If 'tbl' has something of a different type than 'templateTbl', copy from 'templateTbl'
@@ -75,16 +209,55 @@ function Sync(tbl, templateTbl)
 end
 
 
-function FastRemove(t, i)
+local function FastRemove(t, i)
 	local n = #t
 	t[i] = t[n]
 	t[n] = nil
 end
 
 
-function Print(tbl, label, deepPrint)
+local function Map(t, f)
+	assert(type(t) == "table", "First argument must be a table")
+	assert(type(f) == "function", "Second argument must be an array")
+	local newT = {}
+	for k,v in pairs(t) do
+		newT[k] = f(v, k, t)
+	end
+	return newT
+end
+
+
+local function Filter(t, f)
+	assert(type(t) == "table", "First argument must be a table")
+	assert(type(f) == "function", "Second argument must be an array")
+	local newT = {}
+	for k,v in pairs(t) do
+		if (f(v, k, t)) then
+			newT[k] = v
+		end
+	end
+	return newT
+end
+
+
+local function Reduce(t, f, init)
+	assert(type(t) == "table", "First argument must be a table")
+	assert(type(f) == "function", "Second argument must be an array")
+	assert(init == nil or type(init) == "number", "Third argument must be a number or nil")
+	local result = (init or 0)
+	for k,v in pairs(t) do
+		result = f(result, v, k, t)
+	end
+	return result
+end
+
+
+local function Print(tbl, label, deepPrint)
+
+	assert(type(tbl) == "table", "First argument must be a table")
+	assert(label == nil or type(label) == "string", "Second argument must be a string or nil")
 	
-	label = (type(label) == "string" and label or "TABLE")
+	label = (label or "TABLE")
 	
 	local strTbl = {}
 	local indent = " - "
@@ -137,10 +310,63 @@ function Print(tbl, label, deepPrint)
 end
 
 
+local function IndexOf(tbl, item)
+	for i = 1,#tbl do
+		if (tbl[i] == item) then
+			return i
+		end
+	end
+	return nil
+end
+
+
+local function Reverse(tbl)
+	local tblRev = {}
+	local n = #tbl
+	for i = 1,n do
+		tblRev[i] = tbl[n - i + 1]
+	end
+	return tblRev
+end
+
+
+local function Shuffle(tbl)
+	assert(type(tbl) == "table", "First argument must be a table")
+	for i = #tbl, 1, -1 do
+		local j = math.random(i)
+		tbl[i], tbl[j] = tbl[j], tbl[i]
+	end
+end
+
+
+local function IsEmpty(tbl)
+	return (next(tbl) == nil)
+end
+
+
+local function EncodeJSON(tbl)
+	return http:JSONEncode(tbl)
+end
+
+
+local function DecodeJSON(str)
+	return http:JSONDecode(str)
+end
+
+
 TableUtil.Copy = CopyTable
 TableUtil.Sync = Sync
 TableUtil.FastRemove = FastRemove
 TableUtil.Print = Print
+TableUtil.Map = Map
+TableUtil.Filter = Filter
+TableUtil.Reduce = Reduce
+TableUtil.IndexOf = IndexOf
+TableUtil.Reverse = Reverse
+TableUtil.Shuffle = Shuffle
+TableUtil.IsEmpty = IsEmpty
+TableUtil.EncodeJSON = EncodeJSON
+TableUtil.DecodeJSON = DecodeJSON
 
 
 return TableUtil
