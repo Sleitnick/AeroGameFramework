@@ -240,7 +240,7 @@ function DataService:FlushAllConcurrent()
 		end)
 	end
 	globalCache:FlushAll()
-	coroutine.yield()
+	if (numCaches > 0) then coroutine.yield() end
 end
 
 
@@ -282,7 +282,7 @@ function DataService:Start()
 				end
 			end)()
 		end
-		coroutine.yield()
+		if (numBinded > 0) then coroutine.yield() end
 	end
 	
 	-- Flush cache:
