@@ -6,6 +6,7 @@
 	
 	gamepad = Gamepad.new(gamepadUserInputType)
 	
+	Boolean      gamepad:IsDown(key)
 	Boolean      gamepad:IsConnected()
 	InputObject  gamepad:GetState(keyCode)
 	Void         gamepad:SetMotor(motor, value)
@@ -118,6 +119,11 @@ end
 
 function Gamepad:DisconnectAll()
 	self._listeners:DisconnectAll()
+end
+
+
+function Gamepad:IsDown(key)
+	return userInput:IsGamepadButtonDown(self._gamepadInput, key)
 end
 
 
