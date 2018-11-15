@@ -71,6 +71,23 @@ function Cache:Load(key)
 	end
 end
 
+function Cache:P_Load(key)
+	if (self.DataStore) then
+		local v = nil
+		local success, value = self.DataStore:P_GetAsync(key)
+		if (success == true) then
+			v = {value, true}
+			self.Data[key] = v
+		else
+			-- if failed, 'value' will hold error message
+			v = value
+		end
+
+		return success, v
+	else
+		return false, 'nil DataStore'
+	end
+end
 
 function Cache:Flush(key, flushingAll)
 	if (not self.DataStore) then return end
@@ -124,6 +141,20 @@ function Cache:Get(key)
 	return value and value[1] or nil
 end
 
+function Cache:P_Get(key)
+	local value = self.Data[key]
+	if (value == nil) then
+		local success, value = self:P_Load(key)
+		if (success == true) then
+			value = value and value[1] or nil
+		end
+
+		return success, value
+	else
+		local v = value and value[1] or nil
+		return true, v
+	end
+end
 
 function Cache:Set(key, value)
 	local v = self.Data[key]

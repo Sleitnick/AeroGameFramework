@@ -124,6 +124,10 @@ function DataService:Get(player, key)
 	return self:GetPlayerCache(player):Get(key)
 end
 
+function DataService:P_Get(player, key)
+	return self:GetPlayerCache(player):P_Get(key)
+end
+
 
 function DataService:Remove(player, key)
 	self:GetPlayerCache(player):Remove(key)

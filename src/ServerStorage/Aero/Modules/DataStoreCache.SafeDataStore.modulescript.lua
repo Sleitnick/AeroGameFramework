@@ -51,7 +51,7 @@ function SafeDataStore.new(name, scope)
 end
 
 
-function SafeDataStore:Try(method, k, v)
+function SafeDataStore:Try(method, k, v, protected)
 	local budget = GetBudget(method)
 	if (budget == 0) then
 		-- Do something in later implementation
@@ -65,13 +65,23 @@ function SafeDataStore:Try(method, k, v)
 			value = v
 			break
 		elseif (i == MAX_ATTEMPTS) then
-			warn("DataStore " .. method .. " failed: " .. tostring(v))
+			local errMsg = "DataStore " .. method .. " failed: " .. tostring(v)
+			warn(errMsg)
 			self.Failed:Fire(method, k, tostring(v))
+
+			if (protected == true) then
+				return false, errMsg
+			end
 		else
 			wait(ATTEMPT_INTERVAL)
 		end
 	end
-	return value
+
+	if (protected == true) then
+		return true, value
+	else
+		return value
+	end
 end
 
 
@@ -82,6 +92,10 @@ end
 
 function SafeDataStore:GetAsync(key)
 	return self:Try("GetAsync", key)
+end
+
+function SafeDataStore:P_GetAsync(key)
+	return self:Try("GetAsync", key, nil, true)
 end
 
 
