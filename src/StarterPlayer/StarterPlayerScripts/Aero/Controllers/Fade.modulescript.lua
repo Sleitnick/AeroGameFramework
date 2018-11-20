@@ -244,7 +244,7 @@ function Fade:FromTo(fromTransparency, toTransparency, duration, async)
 	end
 	
 	if (async) then
-		coroutine.resume(coroutine.create(AwaitEnd))
+		coroutine.wrap(AwaitEnd)()
 	else
 		AwaitEnd()
 	end

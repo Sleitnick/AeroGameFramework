@@ -108,7 +108,7 @@ function Cache:FlushAllConcurrent()
 			self:Flush(key, true)
 			numFlushed = (numFlushed + 1)
 			if (numFlushed == numData) then
-				coroutine.resume(thread)
+				assert(coroutine.resume(thread))
 			end
 		end)
 	end

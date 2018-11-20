@@ -225,7 +225,7 @@ function DataService:FlushAllConcurrent()
 	local function IncFlushed()
 		numFlushed = (numFlushed + 1)
 		if (numFlushed == numCaches) then
-			coroutine.resume(thread)
+			assert(coroutine.resume(thread))
 		end
 	end
 	for player,cache in pairs(playerCaches) do
@@ -280,7 +280,7 @@ function DataService:Start()
 				pcall(func)
 				numCompleted = (numCompleted + 1)
 				if (numCompleted == numBinded) then
-					coroutine.resume(thread)
+					assert(coroutine.resume(thread))
 				end
 			end)()
 		end
