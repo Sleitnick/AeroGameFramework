@@ -332,7 +332,7 @@ end
 
 local function Shuffle(tbl)
 	assert(type(tbl) == "table", "First argument must be a table")
-	for i = #tbl, 1, -1 do
+	for i = #tbl, 2, -1 do
 		local j = math.random(i)
 		tbl[i], tbl[j] = tbl[j], tbl[i]
 	end
