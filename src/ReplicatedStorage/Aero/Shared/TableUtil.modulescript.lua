@@ -8,6 +8,7 @@
 	TableUtil.Sync(Table tbl, Table templateTbl)
 	TableUtil.Print(Table tbl, String label, Boolean deepPrint)
 	TableUtil.FastRemove(Table tbl, Number index)
+	TableUtil.FastRemoveFirstValue(Table tbl, Variant value)
 	TableUtil.Map(Table tbl, Function callback)
 	TableUtil.Filter(Table tbl, Function callback)
 	TableUtil.Reduce(Table tbl, Function callback [, Number initialValue])
@@ -61,6 +62,20 @@
 			print(table.concat(tbl, " "))  -- > hello this is a test
 
 
+		FastRemoveFirstValue:
+
+			Calls FastRemove on the first index that holds the given value.
+
+			local tbl = {"abc", "hello", "hi", "goodbye", "hello", "hey"}
+			local removed, atIndex = TableUtil.FastRemoveFirstValue(tbl, "hello")
+			if (removed) then
+				print("Removed at index " .. atIndex)
+				print(table.concat(tbl, " "))  -- > abc hi goodbye hello hey
+			else
+				print("Did not find value")
+			end
+
+		
 		Map:
 
 			This allows you to construct a new table by calling the given function
@@ -354,9 +369,20 @@ local function DecodeJSON(str)
 end
 
 
+local function FastRemoveFirstValue(t, v)
+	local index = IndexOf(t, v)
+	if (index) then
+		FastRemove(t, index)
+		return true, index
+	end
+	return false, nil
+end
+
+
 TableUtil.Copy = CopyTable
 TableUtil.Sync = Sync
 TableUtil.FastRemove = FastRemove
+TableUtil.FastRemoveFirstValue = FastRemoveFirstValue
 TableUtil.Print = Print
 TableUtil.Map = Map
 TableUtil.Filter = Filter
