@@ -28,6 +28,7 @@ end
 local requestTypes = {
 	GetAsync = Enum.DataStoreRequestType.GetAsync;
 	SetAsync = Enum.DataStoreRequestType.SetIncrementAsync;
+	RemoveAsync = Enum.DataStoreRequestType.SetIncrementAsync;
 	OnUpdate = Enum.DataStoreRequestType.OnUpdate;
 	IncrementAsync = Enum.DataStoreRequestType.SetIncrementAsync;
 }
