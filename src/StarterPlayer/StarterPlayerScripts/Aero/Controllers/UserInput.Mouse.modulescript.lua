@@ -9,7 +9,7 @@
 	Void      Mouse:Lock()
 	Void      Mouse:LockCenter()
 	Void      Mouse:Unlock()
-	Void	  Mouse:SetMouseIcon(iconId)
+	Void      Mouse:SetMouseIcon(iconId)
 	Void      Mouse:SetMouseIconEnabled(isEnabled)
 	Boolean   Mouse:IsMouseIconEnabled()
 	Many      Mouse:Cast(ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
