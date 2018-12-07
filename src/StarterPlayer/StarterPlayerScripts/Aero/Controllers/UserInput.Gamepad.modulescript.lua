@@ -15,6 +15,7 @@
 	Boolean      gamepad:IsMotorSupported(motor)
 	Boolean      gamepad:IsVibrationSupported()
 	Float        gamepad:GetMotorValue(motor)
+	Float        gamepad:ApplyDeadzone(value, deadzoneThreshold)
 	
 	gamepad.ButtonDown(keyCode)
 	gamepad.ButtonUp(keyCode)
@@ -33,6 +34,7 @@ local gamepadsByInputType = {}
 
 local userInput = game:GetService("UserInputService")
 local hapticService = game:GetService("HapticService")
+local abs = math.abs
 
 
 function Gamepad.new(gamepad)
@@ -165,6 +167,17 @@ end
 function Gamepad:StopAllMotors()
 	for _,motor in pairs(Enum.VibrationMotor:GetEnumItems()) do
 		self:StopMotor(motor)
+	end
+end
+
+
+function Gamepad:ApplyDeadzone(value, deadzoneThreshold)
+	if (abs(value) < deadzoneThreshold) then
+		return 0
+	elseif (value > 0) then
+		return ((value - deadzoneThreshold) / (1 - deadzoneThreshold))
+	else
+		return ((value + deadzoneThreshold) / (1 - deadzoneThreshold)) 
 	end
 end
 
