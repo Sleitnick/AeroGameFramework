@@ -10,6 +10,7 @@
 	Server:
 		
 		StoreService:HasPurchased(player, productId)
+		StoreService:GetNumberPurchased(player, productId)
 		
 		StoreService.PromptPurchaseFinished(player, receiptInfo)
 	
@@ -95,13 +96,19 @@ end
 
 
 -- Get the number of productId's purchased:
-function StoreService.Client:GetNumberPurchased(player, productId)
+function StoreService:GetNumberPurchased(player, productId)
 	local n = 0
 	local productPurchases = services.DataService:Get(player, PRODUCT_PURCHASES_KEY)
 	if (productPurchases) then
 		n = (productPurchases[tostring(productId)] or 0)
 	end
 	return n
+end
+
+
+-- Get the number of productId's purchased:
+function StoreService.Client:GetNumberPurchased(player, productId)
+	return self.Server:GetNumberPurchased(player, productId)
 end
 
 
