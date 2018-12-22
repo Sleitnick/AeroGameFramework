@@ -246,9 +246,19 @@ local function Filter(t, f)
 	assert(type(t) == "table", "First argument must be a table")
 	assert(type(f) == "function", "Second argument must be an array")
 	local newT = {}
-	for k,v in pairs(t) do
-		if (f(v, k, t)) then
-			newT[k] = v
+	if (#t > 0) then
+		local n = 0
+		for k,v in pairs(t) do
+			if (f(v, k, t)) then
+				n = (n + 1)
+				newT[n] = v
+			end
+		end
+	else
+		for k,v in pairs(t) do
+			if (f(v, k, t)) then
+				newT[k] = v
+			end
 		end
 	end
 	return newT
