@@ -248,8 +248,9 @@ local function Filter(t, f)
 	local newT = {}
 	if (#t > 0) then
 		local n = 0
-		for k,v in pairs(t) do
-			if (f(v, k, t)) then
+		for i = 1,#t do
+			local v = t[i]
+			if (f(v, i, t)) then
 				n = (n + 1)
 				newT[n] = v
 			end
