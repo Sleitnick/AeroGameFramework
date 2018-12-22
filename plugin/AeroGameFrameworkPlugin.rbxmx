@@ -2,12 +2,12 @@
 	<Meta name="ExplicitAutoJoints">false</Meta>
 	<External>null</External>
 	<External>nil</External>
-	<Item class="Folder" referent="RBX43E55036F45141319F767BB6229BD533">
+	<Item class="Folder" referent="RBX232423732ED1401AAE55A4D71EB754AE">
 		<Properties>
 			<string name="Name">AeroGameFrameworkPlugin</string>
 			<BinaryString name="Tags"></BinaryString>
 		</Properties>
-		<Item class="Script" referent="RBXD2D5C6BE04AE41939026C3805FA16286">
+		<Item class="Script" referent="RBX49EDF655FB5041F9BC37A2B4855FE49B">
 			<Properties>
 				<bool name="Disabled">false</bool>
 				<Content name="LinkedSource"><null></null></Content>
@@ -135,6 +135,7 @@ local Item
 local rootItems = {}
 
 local listeners = {}
+local listenersLife = {}
 
 
 -- Set setting, scoped for the given runtime environment:
@@ -533,11 +534,11 @@ function SetupPopup()
 		SetupInputVisibility()
 	end)
 	
-	game:GetService("Selection").SelectionChanged:Connect(function()
+	table.insert(listenersLife, game:GetService("Selection").SelectionChanged:Connect(function()
 		Item._selected = nil
 		Item._selectedObj = nil
 		SetupInputVisibility()
-	end)
+	end))
 	
 	SetupMultilineTextboxScrolling(inputMethods)
 	SetupMultilineTextboxScrolling(inputMethodsClient)
@@ -780,7 +781,7 @@ function SetupCode()
 	end
 	
 	-- Listen for selections of scripts:
-	s.SelectionChanged:Connect(function()
+	table.insert(listenersLife, s.SelectionChanged:Connect(function()
 		local lastSelectedScript = selectedScript
 		selectedScript = nil
 		for _,v in pairs(s:Get()) do
@@ -808,7 +809,7 @@ function SetupCode()
 		end
 		guiCode.ScrollingFrame.Visible = (selectedScript ~= nil)
 		guiCode.NoSelection.Visible = (selectedScript == nil)
-	end)
+	end))
 	
 	pluginGuiCode:GetPropertyChangedSignal("Enabled"):Connect(function()
 		if (pluginGuiCode.Enabled) then
@@ -991,6 +992,7 @@ end
 
 wait(0.1)
 
+
 pluginButton.Click:Connect(PluginButtonClicked)
 pluginCodeButton.Click:Connect(PluginCodeButtonClicked)
 
@@ -1012,10 +1014,20 @@ pluginGui:GetPropertyChangedSignal("Enabled"):Connect(function()
 	if (on ~= pluginGui.Enabled) then
 		PluginButtonClicked()
 	end
+end)
+
+pluginGui.AncestryChanged:Connect(function()
+	print("AeroGameFramework plugin restarting")
+	for _,c in pairs(listenersLife) do
+		c:Disconnect()
+	end
+	if (on) then
+		PluginButtonClicked()
+	end
 end)]]></ProtectedString>
 				<BinaryString name="Tags"></BinaryString>
 			</Properties>
-			<Item class="ModuleScript" referent="RBX0146F0BC1FA0438A9412506608F4E2E3">
+			<Item class="ModuleScript" referent="RBXA71A5F5213454391ABE4D7B0A922FD50">
 				<Properties>
 					<Content name="LinkedSource"><null></null></Content>
 					<string name="Name">Item</string>
@@ -1390,7 +1402,7 @@ return Item]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
-			<Item class="Script" referent="RBX2A0D57C8A518456BA843DD6DD74F6417">
+			<Item class="Script" referent="RBX121473D3DA40441789E6B85703929D99">
 				<Properties>
 					<bool name="Disabled">true</bool>
 					<Content name="LinkedSource"><null></null></Content>
@@ -1414,7 +1426,7 @@ return __MODULENAME]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
-			<Item class="Script" referent="RBXE30A2F716E9B499886D2A2A4B70AA5B5">
+			<Item class="Script" referent="RBX25A2F42C91604654959094187AD08383">
 				<Properties>
 					<bool name="Disabled">true</bool>
 					<Content name="LinkedSource"><null></null></Content>
@@ -1452,7 +1464,7 @@ return __MODULENAME]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
-			<Item class="Script" referent="RBX601D756C7DA1455EA21DA5E0AE87538E">
+			<Item class="Script" referent="RBX6467283AAAA54E50ABF75629AF795871">
 				<Properties>
 					<bool name="Disabled">true</bool>
 					<Content name="LinkedSource"><null></null></Content>
@@ -1495,7 +1507,7 @@ return __MODULENAME]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
-			<Item class="Script" referent="RBX46D0E37C279D4A03B7ED2000B75D9C8B">
+			<Item class="Script" referent="RBXF9613807D0674536B26F89662071D93F">
 				<Properties>
 					<bool name="Disabled">true</bool>
 					<Content name="LinkedSource"><null></null></Content>
@@ -1529,7 +1541,7 @@ return __MODULENAME]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
-			<Item class="ModuleScript" referent="RBX0B76C2E13EB043A39E280936C162DBA5">
+			<Item class="ModuleScript" referent="RBX75FD528F55274D63B55A428DB031EC14">
 				<Properties>
 					<Content name="LinkedSource"><null></null></Content>
 					<string name="Name">UpdateChecker</string>
@@ -1584,7 +1596,7 @@ end
 return UpdateChecker]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
-				<Item class="ModuleScript" referent="RBXCE7803CCA4044EC8BEBA018A68198939">
+				<Item class="ModuleScript" referent="RBXB827E561218C4EC9916F6F7C62028DC9">
 					<Properties>
 						<Content name="LinkedSource"><null></null></Content>
 						<string name="Name">Version</string>
@@ -1667,7 +1679,7 @@ return Version]]></ProtectedString>
 					</Properties>
 				</Item>
 			</Item>
-			<Item class="ModuleScript" referent="RBX3C878646C8114F6CBF03C32E5144F3AA">
+			<Item class="ModuleScript" referent="RBX8AC93D6A7D844E438320109FD524CF3A">
 				<Properties>
 					<Content name="LinkedSource"><null></null></Content>
 					<string name="Name">Theme</string>
@@ -1756,7 +1768,7 @@ return Theme]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
-			<Item class="ModuleScript" referent="RBX37433542C9A44604B2D164509B96D13C">
+			<Item class="ModuleScript" referent="RBX2D7CA70D1AC44B2A980AAEB145CF2864">
 				<Properties>
 					<Content name="LinkedSource"><null></null></Content>
 					<string name="Name">Lexer</string>
@@ -2025,7 +2037,7 @@ return lexer]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
 			</Item>
-			<Item class="ModuleScript" referent="RBXFC9A1276D63F4D7FA0DA574DF970B416">
+			<Item class="ModuleScript" referent="RBX0516F87BE5E444D1AE118C255825CA5F">
 				<Properties>
 					<Content name="LinkedSource"><null></null></Content>
 					<string name="Name">Installer</string>
@@ -2464,7 +2476,7 @@ end
 return Installer]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
-				<Item class="Frame" referent="RBX0A23815194D949E094F886802A0FCA51">
+				<Item class="Frame" referent="RBXC971B469A842404FA7CB2380EDE4563E">
 					<Properties>
 						<bool name="Active">false</bool>
 						<Vector2 name="AnchorPoint">
@@ -2506,7 +2518,7 @@ return Installer]]></ProtectedString>
 						<bool name="Visible">true</bool>
 						<int name="ZIndex">1</int>
 					</Properties>
-					<Item class="TextButton" referent="RBX0EBC27C6D4C54E16A6F3A31803DD6B5D">
+					<Item class="TextButton" referent="RBX063B4FF3ACEC4237B5BF1EDD87FDECF3">
 						<Properties>
 							<bool name="Active">true</bool>
 							<Vector2 name="AnchorPoint">
@@ -2565,7 +2577,7 @@ return Installer]]></ProtectedString>
 							<int name="ZIndex">1</int>
 						</Properties>
 					</Item>
-					<Item class="TextLabel" referent="RBXF8022774D5F343B38B962FA20D1473CF">
+					<Item class="TextLabel" referent="RBX603B557A4FB34C8EB2F76C98F1FA19FE">
 						<Properties>
 							<bool name="Active">false</bool>
 							<Vector2 name="AnchorPoint">
@@ -2622,7 +2634,7 @@ return Installer]]></ProtectedString>
 					</Item>
 				</Item>
 			</Item>
-			<Item class="ScreenGui" referent="RBX1DFCCE408B0E438EAA8C3459A4FF2CE8">
+			<Item class="ScreenGui" referent="RBX03ECACC4E6A14DF7B4917E13EB485F23">
 				<Properties>
 					<bool name="AutoLocalize">true</bool>
 					<int name="DisplayOrder">0</int>
@@ -2634,7 +2646,7 @@ return Installer]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 					<token name="ZIndexBehavior">1</token>
 				</Properties>
-				<Item class="Frame" referent="RBXB31586DA58C44E2B865A5AEA910EF4F0">
+				<Item class="Frame" referent="RBX1F70B9F001824AC0AEEC5405AF96B0CF">
 					<Properties>
 						<bool name="Active">false</bool>
 						<Vector2 name="AnchorPoint">
@@ -2676,7 +2688,7 @@ return Installer]]></ProtectedString>
 						<bool name="Visible">true</bool>
 						<int name="ZIndex">1</int>
 					</Properties>
-					<Item class="Frame" referent="RBX7B8422A713AB4363AD788D15DE7ABBB9">
+					<Item class="Frame" referent="RBX0F85C25C60D84915875F80B12544C3AF">
 						<Properties>
 							<bool name="Active">false</bool>
 							<Vector2 name="AnchorPoint">
@@ -2718,7 +2730,7 @@ return Installer]]></ProtectedString>
 							<bool name="Visible">true</bool>
 							<int name="ZIndex">1</int>
 						</Properties>
-						<Item class="Frame" referent="RBX3B1C02F73575495C808ADF610ED238B5">
+						<Item class="Frame" referent="RBX5467DE697E3E4A59AC63DD6926262882">
 							<Properties>
 								<bool name="Active">false</bool>
 								<Vector2 name="AnchorPoint">
@@ -2760,7 +2772,7 @@ return Installer]]></ProtectedString>
 								<bool name="Visible">false</bool>
 								<int name="ZIndex">1</int>
 							</Properties>
-							<Item class="TextLabel" referent="RBXEF391D4E2DF7480997CEA107C8823196">
+							<Item class="TextLabel" referent="RBX6421C8D4BFDE4267B2897AA5CA617B9E">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -2814,7 +2826,7 @@ return Installer]]></ProtectedString>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">1</int>
 								</Properties>
-								<Item class="UITextSizeConstraint" referent="RBX49798512316C47B895F86526DF2EB8C1">
+								<Item class="UITextSizeConstraint" referent="RBX478BDD8036074596A7DE0AC628E62823">
 									<Properties>
 										<int name="MaxTextSize">16</int>
 										<int name="MinTextSize">1</int>
@@ -2823,7 +2835,7 @@ return Installer]]></ProtectedString>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="UIPadding" referent="RBXC0643C505DFB456F8B3A651E5C9FDA29">
+							<Item class="UIPadding" referent="RBXDF77FC3ECE6B4EAF981BA8B39228B8EC">
 								<Properties>
 									<string name="Name">UIPadding</string>
 									<UDim name="PaddingBottom">
@@ -2845,7 +2857,7 @@ return Installer]]></ProtectedString>
 									<BinaryString name="Tags"></BinaryString>
 								</Properties>
 							</Item>
-							<Item class="TextButton" referent="RBX94D8E906A00C4359B2E5E471D5A6AE03">
+							<Item class="TextButton" referent="RBX882598A48B424F639EF2A986DBD6DF56">
 								<Properties>
 									<bool name="Active">true</bool>
 									<Vector2 name="AnchorPoint">
@@ -2903,7 +2915,7 @@ return Installer]]></ProtectedString>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">1</int>
 								</Properties>
-								<Item class="UISizeConstraint" referent="RBX0A19A77E26A14F32B04B00BE25E60F85">
+								<Item class="UISizeConstraint" referent="RBXEED6D6691B394915BD3FF7F9A31B9347">
 									<Properties>
 										<Vector2 name="MaxSize">
 											<X>200</X>
@@ -2919,7 +2931,7 @@ return Installer]]></ProtectedString>
 								</Item>
 							</Item>
 						</Item>
-						<Item class="Frame" referent="RBXC535912B2B5A4E71B9CDFF452382A741">
+						<Item class="Frame" referent="RBX86ABB04204DA4388B9F1071612FF67A8">
 							<Properties>
 								<bool name="Active">false</bool>
 								<Vector2 name="AnchorPoint">
@@ -2961,7 +2973,7 @@ return Installer]]></ProtectedString>
 								<bool name="Visible">false</bool>
 								<int name="ZIndex">1</int>
 							</Properties>
-							<Item class="ScrollingFrame" referent="RBX0FB6546C4D714550826E92CB142CCB7E">
+							<Item class="ScrollingFrame" referent="RBX11B351369D9E4AF99F7C33F472605E96">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -3024,7 +3036,7 @@ return Installer]]></ProtectedString>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">1</int>
 								</Properties>
-								<Item class="Frame" referent="RBX32615696E9324EA89C2F306FF4C1FE0E">
+								<Item class="Frame" referent="RBXB2CA719BA49D4BC48E37D003507CEA42">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -3067,7 +3079,7 @@ return Installer]]></ProtectedString>
 										<int name="ZIndex">1</int>
 									</Properties>
 								</Item>
-								<Item class="Frame" referent="RBXF57E9BF584194D36B2DBDD55EBBC9321">
+								<Item class="Frame" referent="RBX562ECA595C014195A7AA05C69F03DE01">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -3109,7 +3121,7 @@ return Installer]]></ProtectedString>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">2</int>
 									</Properties>
-									<Item class="UIListLayout" referent="RBX107D2E337D8A4A3DB09637C582B0B762">
+									<Item class="UIListLayout" referent="RBXF3E071A44BDF46E7BBD330A652302F6D">
 										<Properties>
 											<token name="FillDirection">1</token>
 											<token name="HorizontalAlignment">1</token>
@@ -3123,7 +3135,7 @@ return Installer]]></ProtectedString>
 											<token name="VerticalAlignment">1</token>
 										</Properties>
 									</Item>
-									<Item class="Frame" referent="RBX75DF1325ACBF4D1CA3434AA0258CD66C">
+									<Item class="Frame" referent="RBXC32C401703564BF0872D7058179B59D0">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -3165,7 +3177,7 @@ return Installer]]></ProtectedString>
 											<bool name="Visible">false</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="ImageButton" referent="RBX2BF0929BDD4246AEA86ADB776E2BD1BA">
+										<Item class="ImageButton" referent="RBX34A148EDE4364012AE6E1F6B3A48F10C">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -3241,7 +3253,7 @@ return Installer]]></ProtectedString>
 												<int name="ZIndex">1</int>
 											</Properties>
 										</Item>
-										<Item class="TextLabel" referent="RBX75E57481E62546BD955D2DB7FB6D7D81">
+										<Item class="TextLabel" referent="RBX096961013A4B4251B0235A62A65199B6">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -3297,7 +3309,7 @@ return Installer]]></ProtectedString>
 											</Properties>
 										</Item>
 									</Item>
-									<Item class="Frame" referent="RBX65AA6CDC60C743E485740AD7ED8609E8">
+									<Item class="Frame" referent="RBX1A23E0CA137044AC95FE5778452913DA">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -3339,7 +3351,7 @@ return Installer]]></ProtectedString>
 											<bool name="Visible">false</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="ImageButton" referent="RBXF2ADADEAF8F442BA841CE4451BBC617D">
+										<Item class="ImageButton" referent="RBXF5BC8B8680E34EA7B38AAE450DA3B0D4">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -3415,7 +3427,7 @@ return Installer]]></ProtectedString>
 												<int name="ZIndex">1</int>
 											</Properties>
 										</Item>
-										<Item class="TextLabel" referent="RBX0DFE6D3AD9FD4268A5019493D2E7D637">
+										<Item class="TextLabel" referent="RBX69DC22CBEE744504AFC53B4062EBF2F6">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -3470,7 +3482,7 @@ return Installer]]></ProtectedString>
 												<int name="ZIndex">1</int>
 											</Properties>
 										</Item>
-										<Item class="Frame" referent="RBXEA803C9240D24555BB3CCDA2EDA3FCD6">
+										<Item class="Frame" referent="RBX790BC39C382A49999976C1D25A43AFED">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -3514,7 +3526,7 @@ return Installer]]></ProtectedString>
 											</Properties>
 										</Item>
 									</Item>
-									<Item class="Frame" referent="RBX52442C0FE4D54917BFC8F47E7F9A14A8">
+									<Item class="Frame" referent="RBXD7AEBC39B8AB46CA86AB285B13C14E47">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -3556,7 +3568,7 @@ return Installer]]></ProtectedString>
 											<bool name="Visible">false</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="ImageButton" referent="RBX7B24E21EE33849ADBA53CD711EEDACF3">
+										<Item class="ImageButton" referent="RBXCAF4644CAEEC40409A868E6F3B3940C7">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -3632,7 +3644,7 @@ return Installer]]></ProtectedString>
 												<int name="ZIndex">1</int>
 											</Properties>
 										</Item>
-										<Item class="TextLabel" referent="RBX895A8DD9FAE24DB293F725D5C21BE295">
+										<Item class="TextLabel" referent="RBXCB17CAD8F8F34588AFA0C89B71602C44">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -3690,7 +3702,7 @@ return Installer]]></ProtectedString>
 									</Item>
 								</Item>
 							</Item>
-							<Item class="Frame" referent="RBX1B4142AD1EC042709B903B5AC6C440FE">
+							<Item class="Frame" referent="RBX748FE3FF257E4777B94A10CE7F048D42">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -3732,7 +3744,7 @@ return Installer]]></ProtectedString>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">1</int>
 								</Properties>
-								<Item class="TextLabel" referent="RBX18A08454F3904541A7C3039B7DE2D3A7">
+								<Item class="TextLabel" referent="RBX1C155E10D84C4EBAADCE17A2F9AA16D8">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -3787,7 +3799,7 @@ return Installer]]></ProtectedString>
 										<int name="ZIndex">2</int>
 									</Properties>
 								</Item>
-								<Item class="UIPadding" referent="RBXE8263B4581DF4288A3887545DE246E55">
+								<Item class="UIPadding" referent="RBXC0F0ACCCA8F4443AA0659EAC9FC087CA">
 									<Properties>
 										<string name="Name">UIPadding</string>
 										<UDim name="PaddingBottom">
@@ -3809,7 +3821,7 @@ return Installer]]></ProtectedString>
 										<BinaryString name="Tags"></BinaryString>
 									</Properties>
 								</Item>
-								<Item class="TextButton" referent="RBX840F954E881848D68273CB60912FFC87">
+								<Item class="TextButton" referent="RBX9C893E753AEC4E23AF3FD9B638F43B34">
 									<Properties>
 										<bool name="Active">true</bool>
 										<Vector2 name="AnchorPoint">
@@ -3868,7 +3880,7 @@ return Installer]]></ProtectedString>
 										<int name="ZIndex">1</int>
 									</Properties>
 								</Item>
-								<Item class="TextLabel" referent="RBX71811E3339454874996B217315E5E7BB">
+								<Item class="TextLabel" referent="RBXA70D54E7B9D6413A91E87E19CC71EC21">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -3927,7 +3939,7 @@ return Installer]]></ProtectedString>
 						</Item>
 					</Item>
 				</Item>
-				<Item class="Frame" referent="RBXC8EFE5CAF74A4D64A070E5A846CE4C39">
+				<Item class="Frame" referent="RBX95AA86549FC44DE19F1C901FC42EF38A">
 					<Properties>
 						<bool name="Active">false</bool>
 						<Vector2 name="AnchorPoint">
@@ -3969,7 +3981,7 @@ return Installer]]></ProtectedString>
 						<bool name="Visible">true</bool>
 						<int name="ZIndex">1</int>
 					</Properties>
-					<Item class="Frame" referent="RBX2783FA270A9B469C96CA3F2FCCA87ECC">
+					<Item class="Frame" referent="RBX23E062097F1B4C31AA4447804E76BBDD">
 						<Properties>
 							<bool name="Active">false</bool>
 							<Vector2 name="AnchorPoint">
@@ -4011,7 +4023,7 @@ return Installer]]></ProtectedString>
 							<bool name="Visible">true</bool>
 							<int name="ZIndex">1</int>
 						</Properties>
-						<Item class="ScrollingFrame" referent="RBXBB5ED254F4F84AA387487AB983113630">
+						<Item class="ScrollingFrame" referent="RBX0E1211DBA7484734B413491EEBCD04A8">
 							<Properties>
 								<bool name="Active">false</bool>
 								<Vector2 name="AnchorPoint">
@@ -4074,7 +4086,7 @@ return Installer]]></ProtectedString>
 								<bool name="Visible">true</bool>
 								<int name="ZIndex">1</int>
 							</Properties>
-							<Item class="Frame" referent="RBXCA3814CC680949B5A7BF69584664AC85">
+							<Item class="Frame" referent="RBX957DEEB2ABAB4291B9B94AA6CF98E8B4">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -4116,7 +4128,7 @@ return Installer]]></ProtectedString>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">2</int>
 								</Properties>
-								<Item class="Frame" referent="RBXD8D53DE5CCCA46CCA63185BD39A6460E">
+								<Item class="Frame" referent="RBXD2E7E5BEE88545A39BB453A66C3F1B80">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -4158,7 +4170,7 @@ return Installer]]></ProtectedString>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="TextLabel" referent="RBX35B0B3CAA7154F058E8626405498CE31">
+									<Item class="TextLabel" referent="RBXD574C0B37F3748CB9174C9F2D3D76820">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -4213,7 +4225,7 @@ return Installer]]></ProtectedString>
 											<int name="ZIndex">1</int>
 										</Properties>
 									</Item>
-									<Item class="Frame" referent="RBXD5C67F904200453893F98782C60FA93C">
+									<Item class="Frame" referent="RBX7E342F7549E74CD1B290A54462C92AD7">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -4255,7 +4267,7 @@ return Installer]]></ProtectedString>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="ScrollingFrame" referent="RBX9B8002A7E8B64474BE04AC4D4D959920">
+										<Item class="ScrollingFrame" referent="RBX60992098D98E4CD897F2386059FF5CEF">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -4318,7 +4330,7 @@ return Installer]]></ProtectedString>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="UIPadding" referent="RBX950D3AF21A2C46FD9954D60113D7EE83">
+											<Item class="UIPadding" referent="RBX54DD05C544744EF9B1E85B1D2E4F76DE">
 												<Properties>
 													<string name="Name">UIPadding</string>
 													<UDim name="PaddingBottom">
@@ -4340,7 +4352,7 @@ return Installer]]></ProtectedString>
 													<BinaryString name="Tags"></BinaryString>
 												</Properties>
 											</Item>
-											<Item class="TextBox" referent="RBXB677166619F647D2AC0C3945F93BFA35">
+											<Item class="TextBox" referent="RBXC68C3F324D1241D38DE0EFD73D9C2B0B">
 												<Properties>
 													<bool name="Active">true</bool>
 													<Vector2 name="AnchorPoint">
@@ -4401,7 +4413,7 @@ return Installer]]></ProtectedString>
 												</Properties>
 											</Item>
 										</Item>
-										<Item class="TextButton" referent="RBX6FA46D93BD7C4C298EDA030229D1BD93">
+										<Item class="TextButton" referent="RBXD14B7CC185C84B67A4A847B6D7612320">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -4462,7 +4474,7 @@ return Installer]]></ProtectedString>
 										</Item>
 									</Item>
 								</Item>
-								<Item class="Frame" referent="RBXB84C62AFA814473892189DB5781E384E">
+								<Item class="Frame" referent="RBX1D3C1536A33A4900A942B070D9B52312">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -4504,7 +4516,7 @@ return Installer]]></ProtectedString>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="TextLabel" referent="RBXA4FBDFA708434209A9824EADA711DCB1">
+									<Item class="TextLabel" referent="RBXE9DEE8640D5147C497E7006DF90B487D">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -4559,7 +4571,7 @@ return Installer]]></ProtectedString>
 											<int name="ZIndex">1</int>
 										</Properties>
 									</Item>
-									<Item class="Frame" referent="RBXBCDE501B33AD4FA083DF036DA370F8B3">
+									<Item class="Frame" referent="RBXC50699A7145E4927A76A2C80FD0CD334">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -4601,7 +4613,7 @@ return Installer]]></ProtectedString>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="ScrollingFrame" referent="RBX08E61DF8F0DF42D4B93F2E984CEB18C1">
+										<Item class="ScrollingFrame" referent="RBX7DD5279F36B8489EA45B5FEF3EE20B37">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -4664,7 +4676,7 @@ return Installer]]></ProtectedString>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="UIPadding" referent="RBX15CA46AB4F1A45F988C573CE802CD0C8">
+											<Item class="UIPadding" referent="RBX6FCDC52C1A224367A5983FA47AD357C1">
 												<Properties>
 													<string name="Name">UIPadding</string>
 													<UDim name="PaddingBottom">
@@ -4686,7 +4698,7 @@ return Installer]]></ProtectedString>
 													<BinaryString name="Tags"></BinaryString>
 												</Properties>
 											</Item>
-											<Item class="TextBox" referent="RBX87EB5FA9EC0F4B969802B1E55337D0D9">
+											<Item class="TextBox" referent="RBX66185167F9BB446EA4BA9A4DB679E9FB">
 												<Properties>
 													<bool name="Active">true</bool>
 													<Vector2 name="AnchorPoint">
@@ -4747,7 +4759,7 @@ return Installer]]></ProtectedString>
 												</Properties>
 											</Item>
 										</Item>
-										<Item class="TextButton" referent="RBX29AA6A7D0DB94EE6971E1E43DCEDE3E7">
+										<Item class="TextButton" referent="RBX965C22F105E14C6687F71C8F00A60A71">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -4808,7 +4820,7 @@ return Installer]]></ProtectedString>
 										</Item>
 									</Item>
 								</Item>
-								<Item class="Frame" referent="RBX3FE52660A265495C8679981A9AA1E2D1">
+								<Item class="Frame" referent="RBXDB13A2FDB4264D1F8F29270B18B2CAE8">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -4850,7 +4862,7 @@ return Installer]]></ProtectedString>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="TextButton" referent="RBX83AAA62016AD49A6AC3F84272468F73D">
+									<Item class="TextButton" referent="RBX5782B72BDD184D7F84503EDAB1C1548F">
 										<Properties>
 											<bool name="Active">true</bool>
 											<Vector2 name="AnchorPoint">
@@ -4908,7 +4920,7 @@ return Installer]]></ProtectedString>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="TextLabel" referent="RBXDFFAD3DDFB9346399766BA4E640EC775">
+										<Item class="TextLabel" referent="RBX63E7FA3348C54928BA1CE146A4AC221A">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -4963,7 +4975,7 @@ return Installer]]></ProtectedString>
 												<int name="ZIndex">1</int>
 											</Properties>
 										</Item>
-										<Item class="Frame" referent="RBX04B8CFF723534367A34CD26399D05E05">
+										<Item class="Frame" referent="RBX39E7E4DE575346D08F43F72416471330">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -5005,7 +5017,7 @@ return Installer]]></ProtectedString>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="TextButton" referent="RBX5FC3C22D16C64FF889733F4CCC71E2C7">
+											<Item class="TextButton" referent="RBX78B85D2B2B6B4056A2AA261CF6F32E42">
 												<Properties>
 													<bool name="Active">true</bool>
 													<Vector2 name="AnchorPoint">
@@ -5067,7 +5079,7 @@ return Installer]]></ProtectedString>
 										</Item>
 									</Item>
 								</Item>
-								<Item class="Frame" referent="RBX1319402639304364BF9B193D4A9B04EC">
+								<Item class="Frame" referent="RBXC55F1DD6489D472AB64E0D61F461802E">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -5109,7 +5121,7 @@ return Installer]]></ProtectedString>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="TextLabel" referent="RBX7CB233DA0468436F9D03057313258C1F">
+									<Item class="TextLabel" referent="RBX3285064215444C2EBCC3076208C9F010">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -5164,7 +5176,7 @@ return Installer]]></ProtectedString>
 											<int name="ZIndex">1</int>
 										</Properties>
 									</Item>
-									<Item class="Frame" referent="RBX5EEF84A930374E2F8BE4B9D5A5F2B071">
+									<Item class="Frame" referent="RBX7E4FABC2A3C8473CBD7F6829DC88098B">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -5206,7 +5218,7 @@ return Installer]]></ProtectedString>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="ScrollingFrame" referent="RBX3F714D77841D41928D5E1C8828C5233B">
+										<Item class="ScrollingFrame" referent="RBX50E93C2ED7A24FD5BD96DE06AE3F502E">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -5269,7 +5281,7 @@ return Installer]]></ProtectedString>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="UIPadding" referent="RBX4E61C353050841319A208C7BAAA405B8">
+											<Item class="UIPadding" referent="RBXE4F65234BF5742D4B2A17EF995217C2F">
 												<Properties>
 													<string name="Name">UIPadding</string>
 													<UDim name="PaddingBottom">
@@ -5291,7 +5303,7 @@ return Installer]]></ProtectedString>
 													<BinaryString name="Tags"></BinaryString>
 												</Properties>
 											</Item>
-											<Item class="TextBox" referent="RBX2C5367E0CDE746DB8B8D56E8A6146C50">
+											<Item class="TextBox" referent="RBX746F4FD9878749B0BE875843F4AE768B">
 												<Properties>
 													<bool name="Active">true</bool>
 													<Vector2 name="AnchorPoint">
@@ -5353,7 +5365,7 @@ SetNumber(x)]]></string>
 												</Properties>
 											</Item>
 										</Item>
-										<Item class="TextButton" referent="RBXD39D1B6A4A444275A7815E7CDA0C7314">
+										<Item class="TextButton" referent="RBX2D31D3422C664CB38DC36655948B5C43">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -5414,7 +5426,7 @@ SetNumber(x)]]></string>
 										</Item>
 									</Item>
 								</Item>
-								<Item class="Frame" referent="RBX7880C1B9683C4990832A3686B8F48DA5">
+								<Item class="Frame" referent="RBX4A7DF93075F2411A8112A871E9A45D2C">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -5456,7 +5468,7 @@ SetNumber(x)]]></string>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="TextLabel" referent="RBXEB9B9E7AD14C46599711AB271899718C">
+									<Item class="TextLabel" referent="RBX7D3045411BBF4E6187668990D4844C01">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -5511,7 +5523,7 @@ SetNumber(x)]]></string>
 											<int name="ZIndex">1</int>
 										</Properties>
 									</Item>
-									<Item class="Frame" referent="RBXACC37E23B22446D2B3146F1FAEECBC92">
+									<Item class="Frame" referent="RBXDC01C5E0D4B44FE0982ACF84C8B93D55">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -5553,7 +5565,7 @@ SetNumber(x)]]></string>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="ScrollingFrame" referent="RBXF5F33E8057374EB19B863D325E8C6119">
+										<Item class="ScrollingFrame" referent="RBXD4FE08CE9724426C9F66BEF08E31D44D">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -5616,7 +5628,7 @@ SetNumber(x)]]></string>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="UIPadding" referent="RBX12A814E8D5A245F4B83EB106FB9847D3">
+											<Item class="UIPadding" referent="RBX57A0F53EF8054665A7DAC3736A464A71">
 												<Properties>
 													<string name="Name">UIPadding</string>
 													<UDim name="PaddingBottom">
@@ -5638,7 +5650,7 @@ SetNumber(x)]]></string>
 													<BinaryString name="Tags"></BinaryString>
 												</Properties>
 											</Item>
-											<Item class="TextBox" referent="RBX8AF8A63F42234ADF8FB89D52223A7D57">
+											<Item class="TextBox" referent="RBX2B9BF8AF25F740CC80D9D039DF93380B">
 												<Properties>
 													<bool name="Active">true</bool>
 													<Vector2 name="AnchorPoint">
@@ -5700,7 +5712,7 @@ SetNumber(x)]]></string>
 												</Properties>
 											</Item>
 										</Item>
-										<Item class="TextButton" referent="RBX63BC908E6FD745E3AB1F9C4E691581F4">
+										<Item class="TextButton" referent="RBXECDFD18795D144308D8D6004BFB80D8F">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -5761,7 +5773,7 @@ SetNumber(x)]]></string>
 										</Item>
 									</Item>
 								</Item>
-								<Item class="Frame" referent="RBX94BC6B744F9A42469D5FDDEE0104C4AD">
+								<Item class="Frame" referent="RBXF6EA8BCE1CC041F7B9BE75F0FE0E7472">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -5803,7 +5815,7 @@ SetNumber(x)]]></string>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="TextLabel" referent="RBXD79EAA04F93F4807B9199F1FC404277F">
+									<Item class="TextLabel" referent="RBXE579D2AB74F14DBBB1D434A5E90F9E0A">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -5858,7 +5870,7 @@ SetNumber(x)]]></string>
 											<int name="ZIndex">1</int>
 										</Properties>
 									</Item>
-									<Item class="Frame" referent="RBX89594FC954F74DEA9F494117E44F65F9">
+									<Item class="Frame" referent="RBX11FA32AE8632473FA12F250E6487A495">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -5900,7 +5912,7 @@ SetNumber(x)]]></string>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="ScrollingFrame" referent="RBXEF629BFC34E7479DB343426E923C6A09">
+										<Item class="ScrollingFrame" referent="RBXF0ED7507D48344D0AC6FC1766C787006">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -5963,7 +5975,7 @@ SetNumber(x)]]></string>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="UIPadding" referent="RBX90CFC689A5E84036AC1A06FA84F43679">
+											<Item class="UIPadding" referent="RBXD231DF6E5FD8475CA8A90FF17BE0DA6A">
 												<Properties>
 													<string name="Name">UIPadding</string>
 													<UDim name="PaddingBottom">
@@ -5985,7 +5997,7 @@ SetNumber(x)]]></string>
 													<BinaryString name="Tags"></BinaryString>
 												</Properties>
 											</Item>
-											<Item class="TextBox" referent="RBX7EE9DA55A5C5480FAD6186F367C1B5F3">
+											<Item class="TextBox" referent="RBX22AC31E624B14AFFB141AD5E86E7FFCC">
 												<Properties>
 													<bool name="Active">true</bool>
 													<Vector2 name="AnchorPoint">
@@ -6047,7 +6059,7 @@ SetNumber(x)]]></string>
 												</Properties>
 											</Item>
 										</Item>
-										<Item class="TextButton" referent="RBXF8D4040BF7064EA7B9D99D5016F5E7B7">
+										<Item class="TextButton" referent="RBX72C3A369FDC642D6AC026576B7EA0008">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -6108,7 +6120,7 @@ SetNumber(x)]]></string>
 										</Item>
 									</Item>
 								</Item>
-								<Item class="Frame" referent="RBXFDFDFE2077B84AEEB9B0A5BBB1E8030D">
+								<Item class="Frame" referent="RBXB8F3CB612B9545ADAED4A2BA6AE4895E">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -6150,7 +6162,7 @@ SetNumber(x)]]></string>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="TextLabel" referent="RBX588FE7DAE46940E980BFBB141AF0B5F6">
+									<Item class="TextLabel" referent="RBXF357C9C8C2FF4B1AB918B86E84B5A69F">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -6205,7 +6217,7 @@ SetNumber(x)]]></string>
 											<int name="ZIndex">1</int>
 										</Properties>
 									</Item>
-									<Item class="Frame" referent="RBXB21C5956E8DD4CDC8F517EFDA54866B5">
+									<Item class="Frame" referent="RBX2A07911436A340BFADD6B11F5A6408FD">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -6247,7 +6259,7 @@ SetNumber(x)]]></string>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="TextBox" referent="RBX9E5A05A9EA8A44C7BBC44EE3C6F4E02F">
+										<Item class="TextBox" referent="RBX7315E0E614934B928CEBB7A47E4D1688">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -6307,7 +6319,7 @@ SetNumber(x)]]></string>
 												<int name="ZIndex">1</int>
 											</Properties>
 										</Item>
-										<Item class="TextButton" referent="RBX4B75CC7647ED47BDA8A990FCCA23DF34">
+										<Item class="TextButton" referent="RBXF62876468EE74474A5BED1E9EDAD85B6">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -6368,7 +6380,7 @@ SetNumber(x)]]></string>
 										</Item>
 									</Item>
 								</Item>
-								<Item class="TextButton" referent="RBX6C5359100B574736A332C14A325D5B82">
+								<Item class="TextButton" referent="RBX8953E78156264E70B63D17C49535E72C">
 									<Properties>
 										<bool name="Active">true</bool>
 										<Vector2 name="AnchorPoint">
@@ -6427,7 +6439,7 @@ SetNumber(x)]]></string>
 										<int name="ZIndex">1</int>
 									</Properties>
 								</Item>
-								<Item class="UIListLayout" referent="RBXE54EBBD810464833B5D47BB41A2DAE2D">
+								<Item class="UIListLayout" referent="RBX1031FCD7FC4D451FAC2022CFFEB53DBE">
 									<Properties>
 										<token name="FillDirection">1</token>
 										<token name="HorizontalAlignment">0</token>
@@ -6441,7 +6453,7 @@ SetNumber(x)]]></string>
 										<token name="VerticalAlignment">1</token>
 									</Properties>
 								</Item>
-								<Item class="UIPadding" referent="RBX8FF6D62CCBFC411384AC6A8941711C40">
+								<Item class="UIPadding" referent="RBX66BE2E7D66D74C6898C029E1F25382F1">
 									<Properties>
 										<string name="Name">UIPadding</string>
 										<UDim name="PaddingBottom">
@@ -6464,7 +6476,7 @@ SetNumber(x)]]></string>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="Frame" referent="RBXBCE0C0620CE348B3A5A870E617761110">
+							<Item class="Frame" referent="RBX86394F75BE0542669DD8967A597D40FD">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -6510,7 +6522,7 @@ SetNumber(x)]]></string>
 						</Item>
 					</Item>
 				</Item>
-				<Item class="Frame" referent="RBXA816328BFE64461AABB0427E8A0196E5">
+				<Item class="Frame" referent="RBX6E3A2EA6F4C440A7BE97DC474777B62B">
 					<Properties>
 						<bool name="Active">false</bool>
 						<Vector2 name="AnchorPoint">
@@ -6552,7 +6564,7 @@ SetNumber(x)]]></string>
 						<bool name="Visible">true</bool>
 						<int name="ZIndex">1</int>
 					</Properties>
-					<Item class="Frame" referent="RBX40255A25FB194FB3A6831BD11D051651">
+					<Item class="Frame" referent="RBX0681830B675942FAAFDF141F8FCF8675">
 						<Properties>
 							<bool name="Active">false</bool>
 							<Vector2 name="AnchorPoint">
@@ -6594,7 +6606,7 @@ SetNumber(x)]]></string>
 							<bool name="Visible">true</bool>
 							<int name="ZIndex">1</int>
 						</Properties>
-						<Item class="ScrollingFrame" referent="RBXCDD95C48699349089874997223415EC1">
+						<Item class="ScrollingFrame" referent="RBX59E189DEEEB44BC08D01B02FFD868594">
 							<Properties>
 								<bool name="Active">false</bool>
 								<Vector2 name="AnchorPoint">
@@ -6657,7 +6669,7 @@ SetNumber(x)]]></string>
 								<bool name="Visible">false</bool>
 								<int name="ZIndex">1</int>
 							</Properties>
-							<Item class="Frame" referent="RBX694E93CC6DA7483D8BB9238C267D0A8F">
+							<Item class="Frame" referent="RBX889C38FE949F48E4A56EF00384CEE71D">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -6699,7 +6711,7 @@ SetNumber(x)]]></string>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">2</int>
 								</Properties>
-								<Item class="UIPadding" referent="RBX0D25D2CA941D4B40B464DBB91DF03911">
+								<Item class="UIPadding" referent="RBX3F917F90E1844075AC7EBAF4E4402C5E">
 									<Properties>
 										<string name="Name">UIPadding</string>
 										<UDim name="PaddingBottom">
@@ -6721,7 +6733,7 @@ SetNumber(x)]]></string>
 										<BinaryString name="Tags"></BinaryString>
 									</Properties>
 								</Item>
-								<Item class="Frame" referent="RBX0DD4A0D5ABBF41EC9AE019FC4EDAC0E8">
+								<Item class="Frame" referent="RBX0315360BADDF4887A66F1FAAD3F26738">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -6765,7 +6777,7 @@ SetNumber(x)]]></string>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="Frame" referent="RBX12F98B65D714455CB24CA178601A2CF1">
+							<Item class="Frame" referent="RBX126A538E5ADE4B5C906B8683347E1DB7">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -6809,7 +6821,7 @@ SetNumber(x)]]></string>
 								</Properties>
 							</Item>
 						</Item>
-						<Item class="Frame" referent="RBXE4B7508836C543EB978B5D634B340BEA">
+						<Item class="Frame" referent="RBX522C9012331247D3B059D705496A58EE">
 							<Properties>
 								<bool name="Active">false</bool>
 								<Vector2 name="AnchorPoint">
@@ -6851,7 +6863,7 @@ SetNumber(x)]]></string>
 								<bool name="Visible">true</bool>
 								<int name="ZIndex">1</int>
 							</Properties>
-							<Item class="UIPadding" referent="RBX5CF930B11A09403D97A382C41A34207F">
+							<Item class="UIPadding" referent="RBX26F91F2E227546FEB9924EB728636F18">
 								<Properties>
 									<string name="Name">UIPadding</string>
 									<UDim name="PaddingBottom">
@@ -6873,7 +6885,7 @@ SetNumber(x)]]></string>
 									<BinaryString name="Tags"></BinaryString>
 								</Properties>
 							</Item>
-							<Item class="TextLabel" referent="RBXE106B8EBB9F4482D9BF78798923E6E85">
+							<Item class="TextLabel" referent="RBX73BEE4F2C8BE4959AAB6AA107A8F1881">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -6931,7 +6943,7 @@ SetNumber(x)]]></string>
 						</Item>
 					</Item>
 				</Item>
-				<Item class="Frame" referent="RBXDD07E035DD5144929910176DBE31333D">
+				<Item class="Frame" referent="RBX94BFDC3B89F24B218D91C04AD1B67B6C">
 					<Properties>
 						<bool name="Active">false</bool>
 						<Vector2 name="AnchorPoint">
@@ -6973,7 +6985,7 @@ SetNumber(x)]]></string>
 						<bool name="Visible">true</bool>
 						<int name="ZIndex">1</int>
 					</Properties>
-					<Item class="Frame" referent="RBX8C2F3D40E2FF4B4FA0A6485F5B6D4F14">
+					<Item class="Frame" referent="RBX9110B1BF28AD42A2A1EEE1DC28BD6F2D">
 						<Properties>
 							<bool name="Active">false</bool>
 							<Vector2 name="AnchorPoint">
@@ -7015,7 +7027,7 @@ SetNumber(x)]]></string>
 							<bool name="Visible">true</bool>
 							<int name="ZIndex">1</int>
 						</Properties>
-						<Item class="ScrollingFrame" referent="RBXD5947F44744D4483BCE63A68739C1B24">
+						<Item class="ScrollingFrame" referent="RBX335C3ADDF5BE44B5926F216B68785C97">
 							<Properties>
 								<bool name="Active">false</bool>
 								<Vector2 name="AnchorPoint">
@@ -7078,7 +7090,7 @@ SetNumber(x)]]></string>
 								<bool name="Visible">true</bool>
 								<int name="ZIndex">1</int>
 							</Properties>
-							<Item class="Frame" referent="RBX949B549344C8495DA9E198E782A6F21C">
+							<Item class="Frame" referent="RBX7C70F4647E66439B8EF9F447E5BBD5A7">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
@@ -7120,7 +7132,7 @@ SetNumber(x)]]></string>
 									<bool name="Visible">true</bool>
 									<int name="ZIndex">2</int>
 								</Properties>
-								<Item class="UIPadding" referent="RBX6738D99B9621486F89687234D3ED0D1F">
+								<Item class="UIPadding" referent="RBX1A355F391369444C8CCD9F0075D63CC1">
 									<Properties>
 										<string name="Name">UIPadding</string>
 										<UDim name="PaddingBottom">
@@ -7142,7 +7154,7 @@ SetNumber(x)]]></string>
 										<BinaryString name="Tags"></BinaryString>
 									</Properties>
 								</Item>
-								<Item class="Frame" referent="RBX6B6E04F235004FF99A8D7028198AA20B">
+								<Item class="Frame" referent="RBXD1005CDED7734DF790EEA49952B4B80A">
 									<Properties>
 										<bool name="Active">false</bool>
 										<Vector2 name="AnchorPoint">
@@ -7184,7 +7196,7 @@ SetNumber(x)]]></string>
 										<bool name="Visible">true</bool>
 										<int name="ZIndex">1</int>
 									</Properties>
-									<Item class="Frame" referent="RBXEA8E2E03D0314A3BAED963A2D82C16F7">
+									<Item class="Frame" referent="RBX522DAC93967A4244B7AEA1F223B44990">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -7226,7 +7238,7 @@ SetNumber(x)]]></string>
 											<bool name="Visible">false</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="TextLabel" referent="RBX31D675D021064714A9B57782D51F0810">
+										<Item class="TextLabel" referent="RBX7D5934F94DB245D78B655C8F5D57EE76">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -7280,7 +7292,7 @@ SetNumber(x)]]></string>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="UITextSizeConstraint" referent="RBXADB91F5510D244DD90A59B32D6D2811F">
+											<Item class="UITextSizeConstraint" referent="RBX8F88DE1095F744D18DDAA013C6F0B8EB">
 												<Properties>
 													<int name="MaxTextSize">32</int>
 													<int name="MinTextSize">1</int>
@@ -7289,7 +7301,7 @@ SetNumber(x)]]></string>
 												</Properties>
 											</Item>
 										</Item>
-										<Item class="TextButton" referent="RBXC96BC83408E74BC3956D4E1CB20B9993">
+										<Item class="TextButton" referent="RBXC72B57A4D212452092ACF31BBB86028C">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -7349,7 +7361,7 @@ SetNumber(x)]]></string>
 											</Properties>
 										</Item>
 									</Item>
-									<Item class="Frame" referent="RBXCE45F2F2DCF34B29B59A496CC5F112A3">
+									<Item class="Frame" referent="RBX55B0247D18D447C7B91115DD1A2385C8">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -7391,7 +7403,7 @@ SetNumber(x)]]></string>
 											<bool name="Visible">false</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="TextLabel" referent="RBX110CF19DEA0249708EE28C1A86D15BB8">
+										<Item class="TextLabel" referent="RBX665F0D0F62A549FFAD6EC81F4529724B">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -7445,7 +7457,7 @@ SetNumber(x)]]></string>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="UITextSizeConstraint" referent="RBXEE8B886561194C2BADCE7CA66CFC0B2C">
+											<Item class="UITextSizeConstraint" referent="RBX4708B9DE212A4554BA1357C2429D75CC">
 												<Properties>
 													<int name="MaxTextSize">32</int>
 													<int name="MinTextSize">1</int>
@@ -7454,7 +7466,7 @@ SetNumber(x)]]></string>
 												</Properties>
 											</Item>
 										</Item>
-										<Item class="TextLabel" referent="RBXA394FADFC0EE4F1EB4067BAD02CA75D8">
+										<Item class="TextLabel" referent="RBX4E778BBCA9CF41FDA826A3AAFA7F696C">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -7508,7 +7520,7 @@ SetNumber(x)]]></string>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="UITextSizeConstraint" referent="RBX7FF1A80DFCFD4C0C96533AE991072D25">
+											<Item class="UITextSizeConstraint" referent="RBX9E3E7D5DA93B4C3E8AAB6704E16768EE">
 												<Properties>
 													<int name="MaxTextSize">22</int>
 													<int name="MinTextSize">1</int>
@@ -7517,7 +7529,7 @@ SetNumber(x)]]></string>
 												</Properties>
 											</Item>
 										</Item>
-										<Item class="Frame" referent="RBXA2200D55125F46A98BB921F3B8CBDE15">
+										<Item class="Frame" referent="RBX8C6D8A530B0D4BFCB16374470B2A15D5">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -7559,7 +7571,7 @@ SetNumber(x)]]></string>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="Frame" referent="RBX25E4F6FD930C4AF6B537339F9B698F0D">
+											<Item class="Frame" referent="RBX5AF3856393124C818226AAC65F847419">
 												<Properties>
 													<bool name="Active">false</bool>
 													<Vector2 name="AnchorPoint">
@@ -7602,7 +7614,7 @@ SetNumber(x)]]></string>
 													<int name="ZIndex">1</int>
 												</Properties>
 											</Item>
-											<Item class="UISizeConstraint" referent="RBX3A4B018FF8E543B7AE6E222656F3C2F5">
+											<Item class="UISizeConstraint" referent="RBX6EE7CD0219924E55B10674875E62B892">
 												<Properties>
 													<Vector2 name="MaxSize">
 														<X>500</X>
@@ -7617,7 +7629,7 @@ SetNumber(x)]]></string>
 												</Properties>
 											</Item>
 										</Item>
-										<Item class="TextLabel" referent="RBX234B24EC701547E38C806FAE15B52D5A">
+										<Item class="TextLabel" referent="RBXF175A845A9D34761AACFD12646221DE8">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -7671,7 +7683,7 @@ SetNumber(x)]]></string>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="UITextSizeConstraint" referent="RBXBC468C76ED7E4835A476200D09552904">
+											<Item class="UITextSizeConstraint" referent="RBXF91D0FEF8CA54BC2A647693DF8F6BAB0">
 												<Properties>
 													<int name="MaxTextSize">22</int>
 													<int name="MinTextSize">1</int>
@@ -7681,7 +7693,7 @@ SetNumber(x)]]></string>
 											</Item>
 										</Item>
 									</Item>
-									<Item class="Frame" referent="RBXACA6DD55322047109CDAC95BB3577107">
+									<Item class="Frame" referent="RBXCC8DEFE378E040889331CCEC6CEEDCCD">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -7723,7 +7735,7 @@ SetNumber(x)]]></string>
 											<bool name="Visible">false</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="TextLabel" referent="RBXDE16854BE0F54298B3D77C3B5541515E">
+										<Item class="TextLabel" referent="RBXCF4AFCE092E64094912C659CB754FFCF">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -7777,7 +7789,7 @@ SetNumber(x)]]></string>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="UITextSizeConstraint" referent="RBX3FBD1517AD10467ABA56ACA91289C33B">
+											<Item class="UITextSizeConstraint" referent="RBX60831BCA889C4B04BB5EE7A61912A6EF">
 												<Properties>
 													<int name="MaxTextSize">32</int>
 													<int name="MinTextSize">1</int>
@@ -7786,7 +7798,7 @@ SetNumber(x)]]></string>
 												</Properties>
 											</Item>
 										</Item>
-										<Item class="TextButton" referent="RBX5068870952DA4AFE9FECF8FECF721AC0">
+										<Item class="TextButton" referent="RBXC2EAF49E8E6E41E0B7B36954353C9258">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -7845,7 +7857,7 @@ SetNumber(x)]]></string>
 												<int name="ZIndex">1</int>
 											</Properties>
 										</Item>
-										<Item class="TextLabel" referent="RBXA3B6C710ECC1447CB8604D3691A7B26E">
+										<Item class="TextLabel" referent="RBX9B77382028084EDF806B66F55230125D">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -7899,7 +7911,7 @@ SetNumber(x)]]></string>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="UITextSizeConstraint" referent="RBX12D4E2755247444DA36959F0F40AFAB0">
+											<Item class="UITextSizeConstraint" referent="RBX9A72320D179547D892EF20AD1F28D43F">
 												<Properties>
 													<int name="MaxTextSize">22</int>
 													<int name="MinTextSize">1</int>
@@ -7908,7 +7920,7 @@ SetNumber(x)]]></string>
 												</Properties>
 											</Item>
 										</Item>
-										<Item class="Frame" referent="RBXC87A63CBFBD84E3FA4530A54520656F1">
+										<Item class="Frame" referent="RBX5D32AFBFF9DD4E09A5E06BC86A77E35C">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -7950,7 +7962,7 @@ SetNumber(x)]]></string>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="ScrollingFrame" referent="RBX9DC8E6B4A0604A45969E3318DA5980C9">
+											<Item class="ScrollingFrame" referent="RBX8D9F5FB291014EBD854C8DC0EB807E4A">
 												<Properties>
 													<bool name="Active">false</bool>
 													<Vector2 name="AnchorPoint">
@@ -8013,7 +8025,7 @@ SetNumber(x)]]></string>
 													<bool name="Visible">true</bool>
 													<int name="ZIndex">1</int>
 												</Properties>
-												<Item class="Frame" referent="RBX11111F9568FE4C64B1CFCCBEC2147DED">
+												<Item class="Frame" referent="RBX9731C04FC5B0469F97D4992C21637B10">
 													<Properties>
 														<bool name="Active">false</bool>
 														<Vector2 name="AnchorPoint">
@@ -8056,7 +8068,7 @@ SetNumber(x)]]></string>
 														<int name="ZIndex">1</int>
 													</Properties>
 												</Item>
-												<Item class="Frame" referent="RBXF0C0ED2BF28D41EA9B44B1617AE5CD1D">
+												<Item class="Frame" referent="RBX88A12D3B5FE74973B907223BBD001029">
 													<Properties>
 														<bool name="Active">false</bool>
 														<Vector2 name="AnchorPoint">
@@ -8098,7 +8110,7 @@ SetNumber(x)]]></string>
 														<bool name="Visible">true</bool>
 														<int name="ZIndex">2</int>
 													</Properties>
-													<Item class="UIListLayout" referent="RBX0E2A96148B57405CAA0A9C07A30C1B10">
+													<Item class="UIListLayout" referent="RBX127D7389D04245299CB18A985B34C00D">
 														<Properties>
 															<token name="FillDirection">1</token>
 															<token name="HorizontalAlignment">1</token>
@@ -8112,7 +8124,7 @@ SetNumber(x)]]></string>
 															<token name="VerticalAlignment">1</token>
 														</Properties>
 													</Item>
-													<Item class="Frame" referent="RBXD9DCAFD66D6A410BB06A82349F129E34">
+													<Item class="Frame" referent="RBXBF0573943A924411B11BB041C69151DA">
 														<Properties>
 															<bool name="Active">false</bool>
 															<Vector2 name="AnchorPoint">
@@ -8154,7 +8166,7 @@ SetNumber(x)]]></string>
 															<bool name="Visible">true</bool>
 															<int name="ZIndex">1</int>
 														</Properties>
-														<Item class="TextButton" referent="RBX3FE1781E476A4684AB57159BB51B374C">
+														<Item class="TextButton" referent="RBX8FB9C029A76D42D2B0F4756364556D24">
 															<Properties>
 																<bool name="Active">true</bool>
 																<Vector2 name="AnchorPoint">
@@ -8213,7 +8225,7 @@ SetNumber(x)]]></string>
 																<int name="ZIndex">1</int>
 															</Properties>
 														</Item>
-														<Item class="TextLabel" referent="RBX88103756203347478BE35CC61F1916DA">
+														<Item class="TextLabel" referent="RBX0E0B5993A61B43899B936F184FA079E8">
 															<Properties>
 																<bool name="Active">false</bool>
 																<Vector2 name="AnchorPoint">
@@ -8273,7 +8285,7 @@ SetNumber(x)]]></string>
 											</Item>
 										</Item>
 									</Item>
-									<Item class="Frame" referent="RBX599D5E77DBE74DD6A67559841327C7AB">
+									<Item class="Frame" referent="RBXFB61C70A3CBD431AAA6AE64D9CB48EC8">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -8315,7 +8327,7 @@ SetNumber(x)]]></string>
 											<bool name="Visible">false</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="TextLabel" referent="RBX8E111749C93A4B409EC97F3698CCBB58">
+										<Item class="TextLabel" referent="RBX032ECEE8D767479A81FDDB25B3B39EA2">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -8369,7 +8381,7 @@ SetNumber(x)]]></string>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="UITextSizeConstraint" referent="RBX2A3E6FA7CF664EA6A448EAD47ED1754E">
+											<Item class="UITextSizeConstraint" referent="RBX11924804D87243ED8539BE4D41C7B024">
 												<Properties>
 													<int name="MaxTextSize">32</int>
 													<int name="MinTextSize">1</int>
@@ -8378,7 +8390,7 @@ SetNumber(x)]]></string>
 												</Properties>
 											</Item>
 										</Item>
-										<Item class="TextButton" referent="RBXD994A18F5B0444F6821FA6A4913F0CA4">
+										<Item class="TextButton" referent="RBX75AD63C8DA814A29AE5EF14281C92BAD">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -8437,7 +8449,7 @@ SetNumber(x)]]></string>
 												<int name="ZIndex">1</int>
 											</Properties>
 										</Item>
-										<Item class="TextLabel" referent="RBXEAE029666CE640EA9F821A2476360CF6">
+										<Item class="TextLabel" referent="RBXC69753E32435435DAB90FF1A300BB362">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -8491,7 +8503,7 @@ SetNumber(x)]]></string>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="UITextSizeConstraint" referent="RBX5E3F36C3E4174F1FA6A83D18DF6B96FF">
+											<Item class="UITextSizeConstraint" referent="RBX6619CCEFDD1648CE926595A233563EC4">
 												<Properties>
 													<int name="MaxTextSize">22</int>
 													<int name="MinTextSize">1</int>
@@ -8501,7 +8513,7 @@ SetNumber(x)]]></string>
 											</Item>
 										</Item>
 									</Item>
-									<Item class="Frame" referent="RBXEA2C0734633B4E36A1EF47010394A6D9">
+									<Item class="Frame" referent="RBX334B0C607F164AD59763E6A75E0258C6">
 										<Properties>
 											<bool name="Active">false</bool>
 											<Vector2 name="AnchorPoint">
@@ -8543,7 +8555,7 @@ SetNumber(x)]]></string>
 											<bool name="Visible">true</bool>
 											<int name="ZIndex">1</int>
 										</Properties>
-										<Item class="TextLabel" referent="RBX8B8A2666574B487DA395295BA4BE190A">
+										<Item class="TextLabel" referent="RBXF64C87C695534444BF804C9252741C52">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -8597,7 +8609,7 @@ SetNumber(x)]]></string>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="UITextSizeConstraint" referent="RBX47688E7BA1FA401B87DE73211EB84AD1">
+											<Item class="UITextSizeConstraint" referent="RBX7ACB88A2FBE643658C8227C26FB865E4">
 												<Properties>
 													<int name="MaxTextSize">32</int>
 													<int name="MinTextSize">1</int>
@@ -8606,7 +8618,7 @@ SetNumber(x)]]></string>
 												</Properties>
 											</Item>
 										</Item>
-										<Item class="TextButton" referent="RBXBC1657F122944E148E378378A3420B2E">
+										<Item class="TextButton" referent="RBXCE8922CFEEA046D99FBA7E663236240C">
 											<Properties>
 												<bool name="Active">true</bool>
 												<Vector2 name="AnchorPoint">
@@ -8665,7 +8677,7 @@ SetNumber(x)]]></string>
 												<int name="ZIndex">1</int>
 											</Properties>
 										</Item>
-										<Item class="TextLabel" referent="RBXD2B3996B9C7949BDB2BB079E05E83971">
+										<Item class="TextLabel" referent="RBXE7B515DB1B0C4207BBB131862EE713EE">
 											<Properties>
 												<bool name="Active">false</bool>
 												<Vector2 name="AnchorPoint">
@@ -8719,7 +8731,7 @@ SetNumber(x)]]></string>
 												<bool name="Visible">true</bool>
 												<int name="ZIndex">1</int>
 											</Properties>
-											<Item class="UITextSizeConstraint" referent="RBXADCB4AD22D974FCAA867AB415ED1383A">
+											<Item class="UITextSizeConstraint" referent="RBXCBC1FCFC67B747E4B46B41ABE84AC236">
 												<Properties>
 													<int name="MaxTextSize">22</int>
 													<int name="MinTextSize">1</int>
@@ -8731,7 +8743,7 @@ SetNumber(x)]]></string>
 									</Item>
 								</Item>
 							</Item>
-							<Item class="Frame" referent="RBX52F62555B983497FBDBCAEEDEDA5D8C8">
+							<Item class="Frame" referent="RBXD8C61238998642029406CEAD71A7A00F">
 								<Properties>
 									<bool name="Active">false</bool>
 									<Vector2 name="AnchorPoint">
