@@ -12,12 +12,15 @@ local AeroServer = {
 
 local mt = {__index = AeroServer}
 
-local servicesFolder = game:GetService("ServerStorage"):WaitForChild("Aero"):WaitForChild("Services")
-local modulesFolder = game:GetService("ServerStorage"):WaitForChild("Aero"):WaitForChild("Modules")
-local sharedFolder = game:GetService("ReplicatedStorage"):WaitForChild("Aero"):WaitForChild("Shared")
+local servicesFolder = game:GetService("ServerStorage").Aero.Services
+local modulesFolder = game:GetService("ServerStorage").Aero.Modules
+local sharedFolder = game:GetService("ReplicatedStorage").Aero.Shared
+local internalFolder = game:GetService("ReplicatedStorage").Aero.Internal
 
 local remoteServices = Instance.new("Folder")
 remoteServices.Name = "AeroRemoteServices"
+
+local FastSpawn = require(internalFolder.FastSpawn)
 
 
 function AeroServer:RegisterEvent(eventName)
@@ -90,7 +93,7 @@ function AeroServer:WrapModule(tbl)
 		tbl:Init()
 	end
 	if (type(tbl.Start) == "function" and not tbl.__aeroPreventStart) then
-		coroutine.wrap(tbl.Start)(tbl)
+		FastSpawn(tbl.Start, tbl)
 	end
 end
 
@@ -155,7 +158,7 @@ function StartService(service)
 
 	-- Start services on separate threads:
 	if (type(service.Start) == "function") then
-		coroutine.wrap(service.Start)(service)
+		FastSpawn(service.Start, service)
 	end
 
 end

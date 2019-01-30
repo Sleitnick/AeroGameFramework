@@ -17,6 +17,9 @@ local mt = {__index = Aero}
 local controllersFolder = script.Parent:WaitForChild("Controllers")
 local modulesFolder = script.Parent:WaitForChild("Modules")
 local sharedFolder = game:GetService("ReplicatedStorage"):WaitForChild("Aero"):WaitForChild("Shared")
+local internalFolder = game:GetService("ReplicatedStorage").Aero:WaitForChild("Internal")
+
+local FastSpawn = require(internalFolder:WaitForChild("FastSpawn"))
 
 
 function Aero:RegisterEvent(eventName)
@@ -49,7 +52,7 @@ function Aero:WrapModule(tbl)
 		tbl:Init()
 	end
 	if (type(tbl.Start) == "function" and not tbl.__aeroPreventStart) then
-		coroutine.wrap(tbl.Start)(tbl)
+		FastSpawn(tbl.Start, tbl)
 	end
 end
 
@@ -118,12 +121,10 @@ end
 
 
 function StartController(controller)
-
 	-- Start controllers on separate threads:
 	if (type(controller.Start) == "function") then
-		coroutine.wrap(controller.Start)(controller)
+		FastSpawn(controller.Start, controller)
 	end
-
 end
 
 
