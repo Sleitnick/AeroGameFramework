@@ -3,7 +3,7 @@
     "paths": [
         "ReplicatedFirst/AeroLoad.localscript.lua", 
         "ServerScriptService/Aero/AeroServer.script.lua", 
-        "ServerStorage/Aero/Modules/Data.modulescript.lua",
+        "ReplicatedStorage/Aero/Shared/Date.modulescript.lua", 
         "ReplicatedStorage/Aero/Shared/Event.modulescript.lua", 
         "ReplicatedStorage/Aero/Shared/Base64.modulescript.lua", 
         "ReplicatedStorage/Aero/Shared/TableUtil.modulescript.lua", 
