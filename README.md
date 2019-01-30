@@ -295,7 +295,7 @@ end
 
 function MyController:Init()
   -- Reference the other controller:
-  someController = self.Modules.SomeController
+  someController = self.Controllers.SomeController
 end
 
 return MyController
