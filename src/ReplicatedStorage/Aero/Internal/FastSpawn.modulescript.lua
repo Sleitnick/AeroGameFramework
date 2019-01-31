@@ -2,7 +2,7 @@
 	
 	MIT License
 	
-	Copyright (c) 2014 Quenty
+	Copyright (c) 2018 Validark
 	
 	Permission is hereby granted, free of charge, to any person obtaining
 	a copy of this software and associated documentation files (the "Software"),
@@ -24,26 +24,27 @@
 	--]]
 	
 -- FastSpawn
--- Quenty
--- December 23, 2017
--- Original source: https://github.com/Quenty/NevermoreEngine/blob/version2/Modules/Utility/fastSpawn.lua
+-- Validark
+-- Original source: https://github.com/RoStrap/Helper/blob/master/FastSpawn.lua
 
-
---- An expensive way to spawn a function. However, unlike spawn(), it executes on the same frame, and
+-- An expensive way to spawn a function. However, unlike spawn(), it executes on the same frame, and
 -- unlike coroutines, does not obscure errors
--- @module fastSpawn
 
-return function(func, ...)
+local Instance_new = Instance.new
 
-	assert(type(func) == "function")
-
-	local args = {...}
-	local bindable = Instance.new("BindableEvent")
-	bindable.Event:Connect(function()
-		func(unpack(args))
-	end)
-
-	bindable:Fire()
-	bindable:Destroy()
-
+local function FastSpawn(Function, ...)
+	local BindableEvent = Instance_new("BindableEvent")
+	if ... ~= nil then
+		local Arguments = {...}
+		BindableEvent.Event:Connect(function()
+			Function(unpack(Arguments))
+		end)
+	else
+		BindableEvent:Connect(Function)
+	end
+	
+	BindableEvent:Fire()
+	BindableEvent:Destroy()
 end
+
+return FastSpawn
