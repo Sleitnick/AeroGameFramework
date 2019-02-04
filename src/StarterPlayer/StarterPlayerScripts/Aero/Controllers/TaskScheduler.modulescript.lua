@@ -11,7 +11,7 @@
 	
 	local scheduler = TaskScheduler:CreateScheduler(targetedMinimumFPS)
 	
-	scheduler:QueueTask(funtion)
+	scheduler:QueueTask(function)
 	scheduler:Pause()
 	scheduler:Resume()
 	scheduler:Destroy()
