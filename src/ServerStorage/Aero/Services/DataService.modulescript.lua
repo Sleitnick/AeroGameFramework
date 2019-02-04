@@ -269,6 +269,9 @@ function DataService:Start()
 	self.GameClosing = false
 	
 	local function FireBoundToCloseCallbacks()
+
+		--[[ CONCURRENCY DISABLED DUE TO BINDTOCLOSE YIELDING BUG
+
 		local thread = coroutine.running()
 		local numBinded = #boundToCloseFuncs
 		if (numBinded == 0) then return end
@@ -285,6 +288,29 @@ function DataService:Start()
 			end)()
 		end
 		coroutine.yield()
+
+		]]
+
+		-- Temporary patch using BindableEvent instead of coroutines:
+		local numBinded = #boundToCloseFuncs
+		if (numBinded == 0) then return end
+		local bindable = Instance.new("BindableEvent")
+		local numCompleted = 0
+		for _,func in pairs(boundToCloseFuncs) do
+			spawn(function()
+				local success, err = pcall(func)
+				if (not success) then
+					warn("BindToClose function errored: " .. tostring(err))
+				end
+				numCompleted = (numCompleted + 1)
+				if (numCompleted == numBinded) then
+					bindable:Fire()
+				end
+			end)
+		end
+		bindable.Event:Wait()
+		bindable:Destroy()
+
 	end
 	
 	-- Flush cache:
@@ -301,7 +327,8 @@ function DataService:Start()
 	local function GameClosing()
 		self.GameClosing = true
 		FireBoundToCloseCallbacks()
-		self:FlushAllConcurrent()
+		--self:FlushAllConcurrent()
+		self:FlushAll()
 	end
 	
 	game:GetService("Players").PlayerRemoving:Connect(PlayerRemoving)
