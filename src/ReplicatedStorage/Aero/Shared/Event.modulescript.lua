@@ -23,34 +23,28 @@
 	-----------------------------------------------------------------------------
 
 	NOTE ON MEMORY LEAK PREVENTION:
-		Invoking 'Destroy' on an event will call 'DisconnectAll' and will prevent
-		further connections of functions. Use this if the event object is no
-		longer being used. Failure to call 'Destroy' when the event is no longer
-		in use could result in memory leaks due to connections still being
-		referenced. Trying to connect a function to a destroyed event will throw
-		an error.
+		If an event is no longer being used, be sure to invoke the 'Destroy' method
+		to ensure that all events are properly released. Failure to do so could
+		result in memory leaks due to connections still being referenced.
+
+	WHY NOT BINDABLE EVENTS:
+		This module passes by reference, whereas BindableEvents pass by value.
+		In other words, BindableEvents will create a copy of whatever is passed
+		rather than the original value itself. This becomes difficult when dealing
+		with tables, where passing by reference is usually most ideal.
 	
 --]]
 
 
 
-local CO_WRAP    = coroutine.wrap
-local CO_RUNNING = coroutine.running
-local CO_YIELD   = coroutine.yield
-local CO_RESUME  = coroutine.resume
-local BLANK_FUNC = function() end
-local ASSERT     = assert
+local ASSERT  = assert
+local SELECT  = select
+local UNPACK  = unpack
+local TYPE    = type
 
 
 local Event = {}
 Event.__index = Event
-
-local Connection = {}
-Connection.__index = Connection
-
-
-------------------------------------------------------------------
--- Event
 
 
 function Event.new()
@@ -59,6 +53,7 @@ function Event.new()
 		_connections = {};
 		_destroyed = false;
 		_firing = false;
+		_bindable = Instance.new("BindableEvent");
 	}, Event)
 	
 	return self
@@ -67,104 +62,39 @@ end
 
 
 function Event:Fire(...)
-	self._firing = true
 	local connections = self._connections
-	for i = 1,#connections do
-		CO_WRAP(connections[i]._func)(...)
-	end
-	self._firing = false
+	self._args = {...}
+	self._numArgs = SELECT("#", ...)
+	self._bindable:Fire()
 end
 
 
 function Event:Wait()
-	local thread = CO_RUNNING()
-	local connection
-	connection = self:Connect(function(...)
-		connection:Disconnect()
-		ASSERT(CO_RESUME(thread, ...))
-	end)
-	return CO_YIELD()
+	self._bindable.Event:Wait()
+	return UNPACK(self._args, 1, self._numArgs)
 end
 
 
 function Event:Connect(func)
-	assert(not self._destroyed, "Cannot connect to destroyed event")
-	assert(type(func) == "function", "Argument must be function")
-	local connection = Connection.new(func, self)
-	table.insert(self._connections, connection)
-	return connection
+	ASSERT(not self._destroyed, "Cannot connect to destroyed event")
+	ASSERT(TYPE(func) == "function", "Argument must be function")
+	return self._bindable.Event:Connect(function()
+		func(UNPACK(self._args, 1, self._numArgs))
+	end)
 end
 
 
 function Event:DisconnectAll()
-	local function DisconnectAll()
-		for _,c in pairs(self._connections) do
-			c.IsConnected = false
-		end
-		self._connections = {}
-	end
-	if (self._firing) then
-		for _,c in pairs(self._connections) do
-			c._func = BLANK_FUNC
-		end
-		spawn(DisconnectAll)
-	else
-		DisconnectAll()
-	end
-end
-
-
-function Event:Disconnect(connection)
-	local function Disconnect()
-		local connections = self._connections
-		local numConnections = #connections
-		for i = 1,numConnections do
-			local c = connections[i]
-			if (c == connection) then
-				connections[i] = connections[numConnections]
-				connections[numConnections] = nil
-				break
-			end
-		end
-	end
-	if (self._firing) then		
-		connection._func = BLANK_FUNC
-		spawn(Disconnect)
-	else
-		Disconnect()
-	end
+	self._bindable:Destroy()
+	self._bindable = Instance.new("BindableEvent")
 end
 
 
 function Event:Destroy()
 	if (self._destroyed) then return end
 	self._destroyed = true
-	self:DisconnectAll()
+	self._bindable:Destroy()
 end
-
-
-------------------------------------------------------------------
--- Connection
-
-
-function Connection.new(func, event)
-	local self = setmetatable({
-		Connected = true;
-		_func = func;
-		_event = event;
-	}, Connection)
-	return self
-end
-
-
-function Connection:Disconnect()
-	if (not self.Connected) then return end
-	self.Connected = false
-	self._event:Disconnect(self)
-end
-
-
-------------------------------------------------------------------
 
 
 return Event
