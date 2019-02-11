@@ -52,7 +52,7 @@
 
 		FastRemove:
 
-			Removes an item from an array at a given index. Only ues this if you do
+			Removes an item from an array at a given index. Only use this if you do
 			NOT care about the order of your array. This works by simply popping the
 			last item in the array and overwriting the given index with the last
 			item. This is O(1), compared to table.remove's O(n) speed.
