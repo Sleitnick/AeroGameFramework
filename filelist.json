@@ -97,10 +97,6 @@
                 "name": "Modules", 
                 "children": [
                   {
-                    "type": "file", 
-                    "name": "Data.lua"
-                  }, 
-                  {
                     "type": "directory", 
                     "name": "DataStoreCache", 
                     "children": [
