@@ -101,22 +101,22 @@
                     "name": "DataStoreCache", 
                     "children": [
                       {
-                        "type": "file", 
-                        "name": "init.lua"
-                      }, 
-                      {
                         "type": "directory", 
                         "name": "SafeDataStore", 
                         "children": [
                           {
                             "type": "file", 
-                            "name": "init.lua"
+                            "name": "MockDataStoreService.lua"
                           }, 
                           {
                             "type": "file", 
-                            "name": "MockDataStoreService.lua"
+                            "name": "init.lua"
                           }
                         ]
+                      }, 
+                      {
+                        "type": "file", 
+                        "name": "init.lua"
                       }
                     ]
                   }
@@ -178,10 +178,6 @@
                           }, 
                           {
                             "type": "file", 
-                            "name": "init.lua"
-                          }, 
-                          {
-                            "type": "file", 
                             "name": "Keyboard.lua"
                           }, 
                           {
@@ -191,6 +187,10 @@
                           {
                             "type": "file", 
                             "name": "Mouse.lua"
+                          }, 
+                          {
+                            "type": "file", 
+                            "name": "init.lua"
                           }
                         ]
                       }
@@ -228,11 +228,11 @@
                         "children": [
                           {
                             "type": "file", 
-                            "name": "init.lua"
+                            "name": "SmoothDamp.lua"
                           }, 
                           {
                             "type": "file", 
-                            "name": "SmoothDamp.lua"
+                            "name": "init.lua"
                           }
                         ]
                       }, 
