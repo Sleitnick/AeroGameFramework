@@ -14,6 +14,7 @@ As always, you can also check the commit history for a given version as well, an
 
 | Version | Date | Description |
 | ---|---|--- |
+| [1.3.0](#1.3.0) | 2019-12-19 | <ul><li>Restructured source directory and installer to be compatible with Rojo</li></ul> |
 | [1.2.6](#1.2.6) | 2018-11-12 | <ul><li>Expanded TableUtil library</li></ul> |
 | [1.2.5](#1.2.5) | 2018-09-20 | <ul><li>Added `__aeroPreventStart` flag for modules that already implement a Start method.</li><li>Added `__aeroPreventInit` flag for modules that already implement an Init method.</li><li>Flagged `__aeroPreventStart` for CameraShaker module.</li></ul> |
 | [1.2.4](#1.2.4) | 2018-09-20 | <ul><li>Using `coroutine` yielding/resuming where applicable</li><li>Cleaned up deprecated code in TaskScheduler</li></ul> |
@@ -21,6 +22,9 @@ As always, you can also check the commit history for a given version as well, an
 | [1.2.2](#1.2.2) | 2018-08-15 | <ul><li>Added Failed events for DataService.</li><li>Added Failed event for DataStoreCache.</li><li>Added Failed event for SafeDataStore.</li></ul> |
 
 ### Version History Notes
+
+#### <a name="1.3.0"> Version 1.3.0
+Restructured source directory and installer to be compatible with Rojo. For compatibility, please be sure to update the plugin as well. The older versions of the plugin are not compatible with the new directory structure, and thus will fail to install or update the framework.
 
 #### <a name="1.2.6"> Version 1.2.6
 Expanded the TableUtil library. Specifically, the following functions have been added:

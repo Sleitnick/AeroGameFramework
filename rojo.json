@@ -1,0 +1,26 @@
+{
+  "name": "AeroGameFramework",
+  "servePort": 8000,
+  "partitions": {
+    "Aero": {
+      "path": "src/ReplicatedFirst/Aero",
+      "target": "ReplicatedFirst.Aero"
+    },
+    "Aero (2)": {
+      "path": "src/ReplicatedStorage/Aero",
+      "target": "ReplicatedStorage.Aero"
+    },
+    "Aero (3)": {
+      "path": "src/ServerScriptService/Aero",
+      "target": "ServerScriptService.Aero"
+    },
+    "Aero (4)": {
+      "path": "src/ServerStorage/Aero",
+      "target": "ServerStorage.Aero"
+    },
+    "Aero (5)": {
+      "path": "src/StarterPlayer/StarterPlayerScripts/Aero",
+      "target": "StarterPlayer.StarterPlayerScripts.Aero"
+    }
+  }
+}

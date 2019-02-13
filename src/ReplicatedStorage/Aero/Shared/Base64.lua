@@ -44,7 +44,7 @@ function Base64.new()
 	
 	return self
 	
-end 
+end
 
 --- Converts an integer to binary
 -- @private

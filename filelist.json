@@ -1,34 +1,267 @@
 {
-    "url": "https://raw.githubusercontent.com/Sleitnick/AeroGameFramework/master/src/", 
-    "paths": [
-        "ReplicatedFirst/AeroLoad.localscript.lua", 
-        "ServerScriptService/Aero/AeroServer.script.lua", 
-        "ReplicatedStorage/Aero/Shared/Date.modulescript.lua", 
-        "ReplicatedStorage/Aero/Shared/Event.modulescript.lua", 
-        "ReplicatedStorage/Aero/Shared/Base64.modulescript.lua", 
-        "ReplicatedStorage/Aero/Shared/TableUtil.modulescript.lua", 
-        "ServerStorage/Aero/Services/DataService.modulescript.lua", 
-        "ServerStorage/Aero/Services/StoreService.modulescript.lua", 
-        "ReplicatedStorage/Aero/Internal/FastSpawn.modulescript.lua", 
-        "ServerStorage/Aero/Modules/DataStoreCache.modulescript.lua", 
-        "ReplicatedStorage/Aero/Shared/ListenerList.modulescript.lua", 
-        "StarterPlayer/StarterPlayerScripts/Aero/AeroClient.localscript.lua", 
-        "StarterPlayer/StarterPlayerScripts/Aero/Modules/PID.modulescript.lua", 
-        "StarterPlayer/StarterPlayerScripts/Aero/Modules/Tween.modulescript.lua", 
-        "StarterPlayer/StarterPlayerScripts/Aero/Modules/Smooth.modulescript.lua", 
-        "ServerStorage/Aero/Modules/DataStoreCache.SafeDataStore.modulescript.lua", 
-        "StarterPlayer/StarterPlayerScripts/Aero/Controllers/Fade.modulescript.lua", 
-        "StarterPlayer/StarterPlayerScripts/Aero/Modules/CameraShaker.modulescript.lua", 
-        "StarterPlayer/StarterPlayerScripts/Aero/Modules/Tween.Easing.modulescript.lua", 
-        "StarterPlayer/StarterPlayerScripts/Aero/Controllers/UserInput.modulescript.lua", 
-        "StarterPlayer/StarterPlayerScripts/Aero/Controllers/TaskScheduler.modulescript.lua", 
-        "StarterPlayer/StarterPlayerScripts/Aero/Modules/Smooth.SmoothDamp.modulescript.lua", 
-        "StarterPlayer/StarterPlayerScripts/Aero/Controllers/UserInput.Mouse.modulescript.lua", 
-        "StarterPlayer/StarterPlayerScripts/Aero/Controllers/UserInput.Mobile.modulescript.lua", 
-        "StarterPlayer/StarterPlayerScripts/Aero/Controllers/UserInput.Gamepad.modulescript.lua", 
-        "StarterPlayer/StarterPlayerScripts/Aero/Controllers/UserInput.Keyboard.modulescript.lua", 
-        "ServerStorage/Aero/Modules/DataStoreCache.SafeDataStore.MockDataStoreService.modulescript.lua", 
-        "StarterPlayer/StarterPlayerScripts/Aero/Modules/CameraShaker.CameraShakePresets.modulescript.lua", 
-        "StarterPlayer/StarterPlayerScripts/Aero/Modules/CameraShaker.CameraShakeInstance.modulescript.lua"
+  "url": "https://raw.githubusercontent.com/Sleitnick/AeroGameFramework/master/", 
+  "paths": {
+    "type": "directory", 
+    "name": "src", 
+    "children": [
+      {
+        "type": "directory", 
+        "name": "ReplicatedFirst", 
+        "children": [
+          {
+            "type": "directory", 
+            "name": "Aero", 
+            "children": [
+              {
+                "type": "file", 
+                "name": "AeroLoad.client.lua"
+              }
+            ]
+          }
+        ]
+      }, 
+      {
+        "type": "directory", 
+        "name": "ReplicatedStorage", 
+        "children": [
+          {
+            "type": "directory", 
+            "name": "Aero", 
+            "children": [
+              {
+                "type": "directory", 
+                "name": "Internal", 
+                "children": [
+                  {
+                    "type": "file", 
+                    "name": "FastSpawn.lua"
+                  }
+                ]
+              }, 
+              {
+                "type": "directory", 
+                "name": "Shared", 
+                "children": [
+                  {
+                    "type": "file", 
+                    "name": "Base64.lua"
+                  }, 
+                  {
+                    "type": "file", 
+                    "name": "Date.lua"
+                  }, 
+                  {
+                    "type": "file", 
+                    "name": "Event.lua"
+                  }, 
+                  {
+                    "type": "file", 
+                    "name": "ListenerList.lua"
+                  }, 
+                  {
+                    "type": "file", 
+                    "name": "TableUtil.lua"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }, 
+      {
+        "type": "directory", 
+        "name": "ServerScriptService", 
+        "children": [
+          {
+            "type": "directory", 
+            "name": "Aero", 
+            "children": [
+              {
+                "type": "file", 
+                "name": "AeroServer.server.lua"
+              }
+            ]
+          }
+        ]
+      }, 
+      {
+        "type": "directory", 
+        "name": "ServerStorage", 
+        "children": [
+          {
+            "type": "directory", 
+            "name": "Aero", 
+            "children": [
+              {
+                "type": "directory", 
+                "name": "Modules", 
+                "children": [
+                  {
+                    "type": "file", 
+                    "name": "Data.lua"
+                  }, 
+                  {
+                    "type": "directory", 
+                    "name": "DataStoreCache", 
+                    "children": [
+                      {
+                        "type": "file", 
+                        "name": "init.lua"
+                      }, 
+                      {
+                        "type": "directory", 
+                        "name": "SafeDataStore", 
+                        "children": [
+                          {
+                            "type": "file", 
+                            "name": "init.lua"
+                          }, 
+                          {
+                            "type": "file", 
+                            "name": "MockDataStoreService.lua"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }, 
+              {
+                "type": "directory", 
+                "name": "Services", 
+                "children": [
+                  {
+                    "type": "file", 
+                    "name": "DataService.lua"
+                  }, 
+                  {
+                    "type": "file", 
+                    "name": "StoreService.lua"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }, 
+      {
+        "type": "directory", 
+        "name": "StarterPlayer", 
+        "children": [
+          {
+            "type": "directory", 
+            "name": "StarterPlayerScripts", 
+            "children": [
+              {
+                "type": "directory", 
+                "name": "Aero", 
+                "children": [
+                  {
+                    "type": "file", 
+                    "name": "AeroClient.client.lua"
+                  }, 
+                  {
+                    "type": "directory", 
+                    "name": "Controllers", 
+                    "children": [
+                      {
+                        "type": "file", 
+                        "name": "Fade.lua"
+                      }, 
+                      {
+                        "type": "file", 
+                        "name": "TaskScheduler.lua"
+                      }, 
+                      {
+                        "type": "directory", 
+                        "name": "UserInput", 
+                        "children": [
+                          {
+                            "type": "file", 
+                            "name": "Gamepad.lua"
+                          }, 
+                          {
+                            "type": "file", 
+                            "name": "init.lua"
+                          }, 
+                          {
+                            "type": "file", 
+                            "name": "Keyboard.lua"
+                          }, 
+                          {
+                            "type": "file", 
+                            "name": "Mobile.lua"
+                          }, 
+                          {
+                            "type": "file", 
+                            "name": "Mouse.lua"
+                          }
+                        ]
+                      }
+                    ]
+                  }, 
+                  {
+                    "type": "directory", 
+                    "name": "Modules", 
+                    "children": [
+                      {
+                        "type": "directory", 
+                        "name": "CameraShaker", 
+                        "children": [
+                          {
+                            "type": "file", 
+                            "name": "CameraShakeInstance.lua"
+                          }, 
+                          {
+                            "type": "file", 
+                            "name": "CameraShakePresets.lua"
+                          }, 
+                          {
+                            "type": "file", 
+                            "name": "init.lua"
+                          }
+                        ]
+                      }, 
+                      {
+                        "type": "file", 
+                        "name": "PID.lua"
+                      }, 
+                      {
+                        "type": "directory", 
+                        "name": "Smooth", 
+                        "children": [
+                          {
+                            "type": "file", 
+                            "name": "init.lua"
+                          }, 
+                          {
+                            "type": "file", 
+                            "name": "SmoothDamp.lua"
+                          }
+                        ]
+                      }, 
+                      {
+                        "type": "directory", 
+                        "name": "Tween", 
+                        "children": [
+                          {
+                            "type": "file", 
+                            "name": "Easing.lua"
+                          }, 
+                          {
+                            "type": "file", 
+                            "name": "init.lua"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
     ]
+  }
 }
