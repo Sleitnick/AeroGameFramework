@@ -3,8 +3,8 @@
 # Author: Stephen Leitnick
 # Date:   February 12, 2019
 
-import json
-import subprocess
+from json import dump
+from subprocess import check_output
 
 FILELIST_NAME = "filelist.json"
 FILELIST_MIN_NAME = "filelist.min.json"
@@ -14,8 +14,9 @@ FETCH_PREFIX = "https://raw.githubusercontent.com/Sleitnick/AeroGameFramework/ma
 
 def write_json_to_file(filename, json_obj, indent):
 	with open(filename, "w") as f:
-		json.dump(json_obj, f, indent=FILELIST_INDENT if indent else None)
+		dump(json_obj, f, indent=FILELIST_INDENT if indent else None)
 
+# Find dictionary with the same name within the given array:
 def find(ar, name):
 	a = [x for x in ar if x["name"] == name]
 	if len(a) > 0:
@@ -28,8 +29,8 @@ if __name__ == "__main__":
 	print("Building file list...")
 
 	paths_data = []
-	query = subprocess.check_output(["git", "ls-tree", "--name-only", "-r", "master", "src"])
-	paths = query.split("\n")
+	all_files = check_output(["git", "ls-tree", "--name-only", "-r", "master", "src"])
+	paths = all_files.split("\n")
 	for path in paths:
 		path_array = path.split("/")
 		current = paths_data
@@ -47,12 +48,12 @@ if __name__ == "__main__":
 			if item["type"] == "directory":
 				current = item["children"]
 	
-	data = {
+	filelist_data = {
 		"url": FETCH_PREFIX,
 		"paths": paths_data[0]
 	}
 
-	write_json_to_file(FILELIST_NAME, data, True)
-	write_json_to_file(FILELIST_MIN_NAME, data, False)
+	write_json_to_file(FILELIST_NAME, filelist_data, True)
+	write_json_to_file(FILELIST_MIN_NAME, filelist_data, False)
 
 	print("File list built")
