@@ -14,8 +14,8 @@ local Aero = {
 
 local mt = {__index = Aero}
 
-local controllersFolder = script.Parent:WaitForChild("Controllers")
-local modulesFolder = script.Parent:WaitForChild("Modules")
+local controllersFolder = script.Parent.Parent:WaitForChild("Controllers")
+local modulesFolder = script.Parent.Parent:WaitForChild("Modules")
 local sharedFolder = game:GetService("ReplicatedStorage"):WaitForChild("Aero"):WaitForChild("Shared")
 local internalFolder = game:GetService("ReplicatedStorage").Aero:WaitForChild("Internal")
 
