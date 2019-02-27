@@ -77,8 +77,14 @@
             "name": "Aero", 
             "children": [
               {
-                "type": "file", 
-                "name": "AeroServer.server.lua"
+                "type": "directory", 
+                "name": "Internal", 
+                "children": [
+                  {
+                    "type": "file", 
+                    "name": "AeroServer.server.lua"
+                  }
+                ]
               }
             ]
           }
@@ -153,10 +159,6 @@
                 "name": "Aero", 
                 "children": [
                   {
-                    "type": "file", 
-                    "name": "AeroClient.client.lua"
-                  }, 
-                  {
                     "type": "directory", 
                     "name": "Controllers", 
                     "children": [
@@ -193,6 +195,16 @@
                             "name": "init.lua"
                           }
                         ]
+                      }
+                    ]
+                  }, 
+                  {
+                    "type": "directory", 
+                    "name": "Internal", 
+                    "children": [
+                      {
+                        "type": "file", 
+                        "name": "AeroClient.client.lua"
                       }
                     ]
                   }, 
