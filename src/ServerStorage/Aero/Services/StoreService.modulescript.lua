@@ -9,6 +9,7 @@
 	
 	Server:
 		
+		StoreService:OwnsGamePass(player, gamePassId)
 		StoreService:HasPurchased(player, productId)
 		
 		StoreService.PromptPurchaseFinished(player, receiptInfo)
@@ -86,6 +87,11 @@ function ProcessReceipt(receiptInfo)
 	return Enum.ProductPurchaseDecision.PurchaseGranted
 	
 end
+
+
+function StoreService:OwnsGamePass(player, gamePassId)
+	return game:GetService("MarketplaceService"):UserOwnsGamePassAsync(player.UserId, gamePassId);
+end;
 
 
 function StoreService:HasPurchased(player, productId)
