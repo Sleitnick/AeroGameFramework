@@ -2,332 +2,345 @@
 -- Crazyman32
 -- June 21, 2017
 
--- Source: https://github.com/EmmanuelOga/easing
+-- Source: https://github.com/RoStrap/Interpolation/blob/master/EasingFunctions.lua
 
-local sin = math.sin
-local cos = math.cos
-local pi = math.pi
-local abs = math.abs
-local asin  = math.asin
+--[[
+	Disclaimer for Robert Penner's Easing Equations license:
 
-local function linear(t, b, c, d)
+	TERMS OF USE - EASING EQUATIONS
+
+	Open source under the BSD License.
+
+	Copyright © 2001 Robert Penner
+	All rights reserved.
+
+	Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+	* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+	* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+	* Neither the name of the author nor the names of contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+	IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+	OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+]]
+
+-- For all easing functions:
+-- t = elapsed time
+-- b = beginning value
+-- c = change in value same as: ending - beginning
+-- d = duration (total time)
+
+-- Where applicable
+-- a = amplitude
+-- p = period
+
+local sin, cos, asin = math.sin, math.cos, math.asin
+
+local function Linear(t, b, c, d)
 	return c * t / d + b
 end
 
-local function inQuad(t, b, c, d)
+local function Smooth(t, b, c, d)
+	t = t / d
+	return c * t * t * (3 - 2 * t) + b
+end
+
+local function Smoother(t, b, c, d)
+	t = t / d
+	return c * t * t * t * (t * (6 * t - 15) + 10) + b
+end
+
+-- Arceusinator's Easing Functions
+local function RevBack(t, b, c, d)
+	t = 1 - t / d
+	return c * (1 - (sin(t * 1.5707963267948965579989817342720925807952880859375) + (sin(t * 3.14159265358979311599796346854418516159057617187) * (cos(t * 3.14159265358979311599796346854418516159057617187) + 1) * 0.5))) + b
+end
+
+local function RidiculousWiggle(t, b, c, d)
+	t = t / d
+	return c * sin(sin(t * 3.14159265358979311599796346854418516159057617187) * 1.5707963267948965579989817342720925807952880859375) + b
+end
+
+-- YellowTide's Easing Functions
+local function Spring(t, b, c, d)
+	t = t / d
+	return (1 + (-2.72 ^ (-6.9 * t) * cos(-20.1061929829746759423869661986827850341796875 * t))) * c + b
+end
+
+local function SoftSpring(t, b, c, d)
+	t = t / d
+	return (1 + (-2.72 ^ (-7.5 * t) * cos(-10.05309649148733797119348309934139251708984375 * t))) * c + b
+end
+-- End of YellowTide's functions
+
+local function InQuad(t, b, c, d)
 	t = t / d
 	return c * t * t + b
 end
 
-local function outQuad(t, b, c, d)
+local function OutQuad(t, b, c, d)
 	t = t / d
 	return -c * t * (t - 2) + b
 end
 
-local function inOutQuad(t, b, c, d)
+local function InOutQuad(t, b, c, d)
 	t = t / d * 2
-	if t < 1 then
-		return c / 2 * t * t + b
+	return t < 1 and c * 0.5 * t * t + b or -c * 0.5 * ((t - 1) * (t - 3) - 1) + b
+end
+
+local function OutInQuad(t, b, c, d)
+	if t < d * 0.5 then
+		t = 2 * t / d
+		return -0.5 * c * t * (t - 2) + b
 	else
-		return -c / 2 * ((t - 1) * (t - 3) - 1) + b
+		t, c = ((t * 2) - d) / d, 0.5 * c
+		return c * t * t + b + c
 	end
 end
 
-local function outInQuad(t, b, c, d)
-	if t < d / 2 then
-		return outQuad (t * 2, b, c / 2, d)
-	else
-		return inQuad((t * 2) - d, b + c / 2, c / 2, d)
-	end
-end
-
-local function inCubic (t, b, c, d)
+local function InCubic(t, b, c, d)
 	t = t / d
 	return c * t * t * t + b
 end
 
-local function outCubic(t, b, c, d)
+local function OutCubic(t, b, c, d)
 	t = t / d - 1
 	return c * (t * t * t + 1) + b
 end
 
-local function inOutCubic(t, b, c, d)
+local function InOutCubic(t, b, c, d)
 	t = t / d * 2
 	if t < 1 then
-		return c / 2 * t * t * t + b
+		return c * 0.5 * t * t * t + b
 	else
 		t = t - 2
-		return c / 2 * (t * t * t + 2) + b
+		return c * 0.5 * (t * t * t + 2) + b
 	end
 end
 
-local function outInCubic(t, b, c, d)
-	if t < d / 2 then
-		return outCubic(t * 2, b, c / 2, d)
+local function OutInCubic(t, b, c, d)
+	if t < d * 0.5 then
+		t = t * 2 / d - 1
+		return c * 0.5 * (t * t * t + 1) + b
 	else
-		return inCubic((t * 2) - d, b + c / 2, c / 2, d)
+		t, c = ((t * 2) - d) / d, c * 0.5
+		return c * t * t * t + b + c
 	end
 end
 
-local function inQuart(t, b, c, d)
+local function InQuart(t, b, c, d)
 	t = t / d
 	return c * t * t * t * t + b
 end
 
-local function outQuart(t, b, c, d)
+local function OutQuart(t, b, c, d)
 	t = t / d - 1
 	return -c * (t * t * t * t - 1) + b
 end
 
-local function inOutQuart(t, b, c, d)
+local function InOutQuart(t, b, c, d)
 	t = t / d * 2
 	if t < 1 then
-		return c / 2 * t * t * t * t + b
+		return c * 0.5 * t * t * t * t + b
 	else
 		t = t - 2
-		return -c / 2 * (t * t * t * t - 2) + b
+		return -c * 0.5 * (t * t * t * t - 2) + b
 	end
 end
 
-local function outInQuart(t, b, c, d)
-	if t < d / 2 then
-		return outQuart(t * 2, b, c / 2, d)
+local function OutInQuart(t, b, c, d)
+	if t < d * 0.5 then
+		t, c = t * 2 / d - 1, c * 0.5
+		return -c * (t * t * t * t - 1) + b
 	else
-		return inQuart((t * 2) - d, b + c / 2, c / 2, d)
+		t, c = ((t * 2) - d) / d, c * 0.5
+		return c * t * t * t * t + b + c
 	end
 end
 
-local function inQuint(t, b, c, d)
+local function InQuint(t, b, c, d)
 	t = t / d
 	return c * t * t * t * t * t + b
 end
 
-local function outQuint(t, b, c, d)
+local function OutQuint(t, b, c, d)
 	t = t / d - 1
 	return c * (t * t * t * t * t + 1) + b
 end
 
-local function inOutQuint(t, b, c, d)
+local function InOutQuint(t, b, c, d)
 	t = t / d * 2
 	if t < 1 then
-		return c / 2 * t * t * t * t * t + b
+		return c * 0.5 * t * t * t * t * t + b
 	else
 		t = t - 2
-		return c / 2 * (t * t * t * t * t + 2) + b
+		return c * 0.5 * (t * t * t * t * t + 2) + b
 	end
 end
 
-local function outInQuint(t, b, c, d)
-	if t < d / 2 then
-		return outQuint(t * 2, b, c / 2, d)
+local function OutInQuint(t, b, c, d)
+	if t < d * 0.5 then
+		t = t * 2 / d - 1
+		return c * 0.5 * (t * t * t * t * t + 1) + b
 	else
-		return inQuint((t * 2) - d, b + c / 2, c / 2, d)
+		t, c = ((t * 2) - d) / d, c * 0.5
+		return c * t * t * t * t * t + b + c
 	end
 end
 
-local function inSine(t, b, c, d)
-	return -c * cos(t / d * (pi / 2)) + c + b
+local function InSine(t, b, c, d)
+	return -c * cos(t / d * 1.5707963267948965579989817342720925807952880859375) + c + b
 end
 
-local function outSine(t, b, c, d)
-	return c * sin(t / d * (pi / 2)) + b
+local function OutSine(t, b, c, d)
+	return c * sin(t / d * 1.5707963267948965579989817342720925807952880859375) + b
 end
 
-local function inOutSine(t, b, c, d)
-	return -c / 2 * (cos(pi * t / d) - 1) + b
+local function InOutSine(t, b, c, d)
+	return -c * 0.5 * (cos(3.14159265358979311599796346854418516159057617187 * t / d) - 1) + b
 end
 
-local function outInSine(t, b, c, d)
-	if t < d / 2 then
-		return outSine(t * 2, b, c / 2, d)
+local function OutInSine(t, b, c, d)
+	c = c * 0.5
+	return t < d * 0.5 and c * sin(t * 2 / d * 1.5707963267948965579989817342720925807952880859375) + b or -c * cos(((t * 2) - d) / d * 1.5707963267948965579989817342720925807952880859375) + 2 * c + b
+end
+
+local function InExpo(t, b, c, d)
+	return t == 0 and b or c * 2 ^ (10 * (t / d - 1)) + b - c * 0.001
+end
+
+local function OutExpo(t, b, c, d)
+	return t == d and b + c or c * 1.001 * (1 - 2 ^ (-10 * t / d)) + b
+end
+
+local function InOutExpo(t, b, c, d)
+	t = t / d * 2
+	return t == 0 and b or t == 2 and b + c or t < 1 and c * 0.5 * 2 ^ (10 * (t - 1)) + b - c * 0.0005 or c * 0.5 * 1.0005 * (2 - 2 ^ (-10 * (t - 1))) + b
+end
+
+local function OutInExpo(t, b, c, d)
+	c = c * 0.5
+	return t < d * 0.5 and (t * 2 == d and b + c or c * 1.001 * (1 - 2 ^ (-20 * t / d)) + b) or t * 2 - d == 0 and b + c or c * 2 ^ (10 * ((t * 2 - d) / d - 1)) + b + c - c * 0.001
+end
+
+local function InCirc(t, b, c, d)
+	t = t / d
+	return -c * ((1 - t * t) ^ 0.5 - 1) + b
+end
+
+local function OutCirc(t, b, c, d)
+	t = t / d - 1
+	return c * (1 - t * t) ^ 0.5 + b
+end
+
+local function InOutCirc(t, b, c, d)
+	t = t / d * 2
+	if t < 1 then
+		return -c * 0.5 * ((1 - t * t) ^ 0.5 - 1) + b
 	else
-		return inSine((t * 2) -d, b + c / 2, c / 2, d)
+		t = t - 2
+		return c * 0.5 * ((1 - t * t) ^ 0.5 + 1) + b
 	end
 end
 
-local function inExpo(t, b, c, d)
+local function OutInCirc(t, b, c, d)
+	c = c * 0.5
+	if t < d * 0.5 then
+		t = t * 2 / d - 1
+		return c * (1 - t * t) ^ 0.5 + b
+	else
+		t = (t * 2 - d) / d
+		return -c * ((1 - t * t) ^ 0.5 - 1) + b + c
+	end
+end
+
+local function InElastic(t, b, c, d, a, p)
+	t = t / d - 1
+	p = p or d * 0.3
+	return t == -1 and b or t == 0 and b + c or (not a or a < (c >= 0 and c or 0 - c)) and -(c * 2 ^ (10 * t) * sin((t * d - p * 0.25) * 6.28318530717958623199592693708837032318115234375 / p)) + b or -(a * 2 ^ (10 * t) * sin((t * d - p / 6.28318530717958623199592693708837032318115234375 * asin(c / a)) * 6.28318530717958623199592693708837032318115234375 / p)) + b
+end
+
+local function OutElastic(t, b, c, d, a, p)
+	t = t / d
+	p = p or d * 0.3
+	return t == 0 and b or t == 1 and b + c or (not a or a < (c >= 0 and c or 0 - c)) and c * 2 ^ (-10 * t) * sin((t * d - p * 0.25) * 6.28318530717958623199592693708837032318115234375 / p) + c + b or a * 2 ^ (-10 * t) * sin((t * d - p / 6.28318530717958623199592693708837032318115234375 * asin(c / a)) * 6.28318530717958623199592693708837032318115234375 / p) + c + b
+end
+
+local function InOutElastic(t, b, c, d, a, p)
 	if t == 0 then
 		return b
-	else
-		return c * 2 ^ (10 * (t / d - 1)) + b - c * 0.001
 	end
-end
 
-local function outExpo(t, b, c, d)
-	if t == d then
+	t = t / d * 2 - 1
+
+	if t == 1 then
 		return b + c
-	else
-		return c * 1.001 * (-2 ^ (-10 * t / d) + 1) + b
 	end
-end
 
-local function inOutExpo(t, b, c, d)
-	if t == 0 then return b end
-	if t == d then return b + c end
-	t = t / d * 2
-	if t < 1 then
-		return c / 2 * 2 ^ (10 * (t - 1)) + b - c * 0.0005
-	else
-		t = t - 1
-		return c / 2 * 1.0005 * (-2 ^ (-10 * t) + 2) + b
-	end
-end
-
-local function outInExpo(t, b, c, d)
-	if t < d / 2 then
-		return outExpo(t * 2, b, c / 2, d)
-	else
-		return inExpo((t * 2) - d, b + c / 2, c / 2, d)
-	end
-end
-
-local function inCirc(t, b, c, d)
-	t = t / d
-	return(-c * ((1 - t * t) ^ 0.5 - 1) + b)
-end
-
-local function outCirc(t, b, c, d)
-	t = t / d - 1
-	return(c * (1 - t * t) ^ 0.5 + b)
-end
-
-local function inOutCirc(t, b, c, d)
-	t = t / d * 2
-	if t < 1 then
-		return -c / 2 * ((1 - t * t) ^ 0.5 - 1) + b
-	else
-		t = t - 2
-		return c / 2 * ((1 - t * t) ^ 0.5 + 1) + b
-	end
-end
-
-local function outInCirc(t, b, c, d)
-	if t < d / 2 then
-		return outCirc(t * 2, b, c / 2, d)
-	else
-		return inCirc((t * 2) - d, b + c / 2, c / 2, d)
-	end
-end
-
-local function inElastic(t, b, c, d, a, p)
-	if t == 0 then return b end
-
-	t = t / d
-
-	if t == 1  then return b + c end
-
-	if not p then p = d * 0.3 end
+	p = p or d * 0.45
+	a = a or 0
 
 	local s
 
-	if not a or a < abs(c) then
+	if not a or a < (c >= 0 and c or 0 - c) then
 		a = c
-		s = p / 4
+		s = p * 0.25
 	else
-		s = p / (2 * pi) * asin(c/a)
-	end
-
-	t = t - 1
-
-	return -(a * 2 ^ (10 * t) * sin((t * d - s) * (2 * pi) / p)) + b
-end
-
--- a: amplitud
--- p: period
-local function outElastic(t, b, c, d, a, p)
-	if t == 0 then return b end
-
-	t = t / d
-
-	if t == 1 then return b + c end
-
-	if not p then p = d * 0.3 end
-
-	local s
-
-	if not a or a < abs(c) then
-		a = c
-		s = p / 4
-	else
-		s = p / (2 * pi) * asin(c/a)
-	end
-
-	return a * 2 ^ (-10 * t) * sin((t * d - s) * (2 * pi) / p) + c + b
-end
-
--- p = period
--- a = amplitud
-local function inOutElastic(t, b, c, d, a, p)
-	if t == 0 then return b end
-
-	t = t / d * 2
-
-	if t == 2 then return b + c end
-
-	if not p then p = d * (0.3 * 1.5) end
-	if not a then a = 0 end
-
-	local s
-
-	if not a or a < abs(c) then
-		a = c
-		s = p / 4
-	else
-		s = p / (2 * pi) * asin(c / a)
+		s = p / 6.28318530717958623199592693708837032318115234375 * asin(c / a)
 	end
 
 	if t < 1 then
-		t = t - 1
-		return -0.5 * (a * 2 ^ (10 * t) * sin((t * d - s) * (2 * pi) / p)) + b
+		return -0.5 * a * 2 ^ (10 * t) * sin((t * d - s) * 6.28318530717958623199592693708837032318115234375 / p) + b
 	else
-		t = t - 1
-		return a * 2 ^ (-10 * t) * sin((t * d - s) * (2 * pi) / p ) * 0.5 + c + b
+		return a * 2 ^ (-10 * t) * sin((t * d - s) * 6.28318530717958623199592693708837032318115234375 / p ) * 0.5 + c + b
 	end
 end
 
--- a: amplitud
--- p: period
-local function outInElastic(t, b, c, d, a, p)
-	if t < d / 2 then
-		return outElastic(t * 2, b, c / 2, d, a, p)
+local function OutInElastic(t, b, c, d, a, p)
+	if t < d * 0.5 then
+		return OutElastic(t * 2, b, c * 0.5, d, a, p)
 	else
-		return inElastic((t * 2) - d, b + c / 2, c / 2, d, a, p)
+		return InElastic(t * 2 - d, b + c * 0.5, c * 0.5, d, a, p)
 	end
 end
 
-local function inBack(t, b, c, d, s)
-	if not s then s = 1.70158 end
+local function InBack(t, b, c, d, s)
+	s = s or 1.70158
 	t = t / d
 	return c * t * t * ((s + 1) * t - s) + b
 end
 
-local function outBack(t, b, c, d, s)
-	if not s then s = 1.70158 end
+local function OutBack(t, b, c, d, s)
+	s = s or 1.70158
 	t = t / d - 1
 	return c * (t * t * ((s + 1) * t + s) + 1) + b
 end
 
-local function inOutBack(t, b, c, d, s)
-	if not s then s = 1.70158 end
-	s = s * 1.525
+local function InOutBack(t, b, c, d, s)
+	s = (s or 1.70158) * 1.525
 	t = t / d * 2
 	if t < 1 then
-		return c / 2 * (t * t * ((s + 1) * t - s)) + b
+		return c * 0.5 * (t * t * ((s + 1) * t - s)) + b
 	else
 		t = t - 2
-		return c / 2 * (t * t * ((s + 1) * t + s) + 2) + b
+		return c * 0.5 * (t * t * ((s + 1) * t + s) + 2) + b
 	end
 end
 
-local function outInBack(t, b, c, d, s)
-	if t < d / 2 then
-		return outBack(t * 2, b, c / 2, d, s)
+local function OutInBack(t, b, c, d, s)
+	c = c * 0.5
+	s = s or 1.70158
+	if t < d * 0.5 then
+		t = (t * 2) / d - 1
+		return c * (t * t * ((s + 1) * t + s) + 1) + b
 	else
-		return inBack((t * 2) - d, b + c / 2, c / 2, d, s)
+		t = ((t * 2) - d) / d
+		return c * t * t * ((s + 1) * t - s) + b + c
 	end
 end
 
-local function outBounce(t, b, c, d)
+local function OutBounce(t, b, c, d)
 	t = t / d
 	if t < 1 / 2.75 then
 		return c * (7.5625 * t * t) + b
@@ -343,76 +356,104 @@ local function outBounce(t, b, c, d)
 	end
 end
 
-local function inBounce(t, b, c, d)
-	return c - outBounce(d - t, 0, c, d) + b
+local function InBounce(t, b, c, d)
+	return c - OutBounce(d - t, 0, c, d) + b
 end
 
-local function inOutBounce(t, b, c, d)
-	if t < d / 2 then
-		return inBounce(t * 2, 0, c, d) * 0.5 + b
+local function InOutBounce(t, b, c, d)
+	if t < d * 0.5 then
+		return InBounce(t * 2, 0, c, d) * 0.5 + b
 	else
-		return outBounce(t * 2 - d, 0, c, d) * 0.5 + c * .5 + b
+		return OutBounce(t * 2 - d, 0, c, d) * 0.5 + c * 0.5 + b
 	end
 end
 
-local function outInBounce(t, b, c, d)
-	if t < d / 2 then
-		return outBounce(t * 2, b, c / 2, d)
+local function OutInBounce(t, b, c, d)
+	if t < d * 0.5 then
+		return OutBounce(t * 2, b, c * 0.5, d)
 	else
-		return inBounce((t * 2) - d, b + c / 2, c / 2, d)
+		return InBounce(t * 2 - d, b + c * 0.5, c * 0.5, d)
 	end
 end
 
 return {
 	[Enum.EasingDirection.In.Name] = {
-		[Enum.EasingStyle.Linear.Name] = linear;
-		[Enum.EasingStyle.Sine.Name] = inSine;
-		[Enum.EasingStyle.Back.Name] = inBack;
-		[Enum.EasingStyle.Quad.Name] = inQuad;
-		[Enum.EasingStyle.Quart.Name] = inQuart;
-		[Enum.EasingStyle.Quint.Name] = inQuint;
-		[Enum.EasingStyle.Bounce.Name] = inBounce;
-		[Enum.EasingStyle.Elastic.Name] = inElastic;
-		Expo = inExpo;
-		Cubic = inCubic;
-		Circ = inCirc;
+		[Enum.EasingStyle.Linear.Name] = Linear;
+		[Enum.EasingStyle.Sine.Name] = InSine;
+		[Enum.EasingStyle.Back.Name] = InBack;
+		[Enum.EasingStyle.Quad.Name] = InQuad;
+		[Enum.EasingStyle.Quart.Name] = InQuart;
+		[Enum.EasingStyle.Quint.Name] = InQuint;
+		[Enum.EasingStyle.Bounce.Name] = InBounce;
+		[Enum.EasingStyle.Elastic.Name] = InElastic;
+		Smooth = Smooth;
+		Smoother = Smoother;
+		RevBack = RevBack;
+		RidiculousWiggle = RidiculousWiggle;
+		Spring = Spring;
+		SoftSpring = SoftSpring;
+		Expo = InExpo;
+		Cubic = InCubic;
+		Circ = InCirc;
 	};
+
 	[Enum.EasingDirection.Out.Name] = {
-		[Enum.EasingStyle.Linear.Name] = linear;
-		[Enum.EasingStyle.Sine.Name] = outSine;
-		[Enum.EasingStyle.Back.Name] = outBack;
-		[Enum.EasingStyle.Quad.Name] = outQuad;
-		[Enum.EasingStyle.Quart.Name] = outQuart;
-		[Enum.EasingStyle.Quint.Name] = outQuint;
-		[Enum.EasingStyle.Bounce.Name] = outBounce;
-		[Enum.EasingStyle.Elastic.Name] = outElastic;
-		Expo = outExpo;
-		Cubic = outCubic;
-		Circ = outCirc;
+		[Enum.EasingStyle.Linear.Name] = Linear;
+		[Enum.EasingStyle.Sine.Name] = OutSine;
+		[Enum.EasingStyle.Back.Name] = OutBack;
+		[Enum.EasingStyle.Quad.Name] = OutQuad;
+		[Enum.EasingStyle.Quart.Name] = OutQuart;
+		[Enum.EasingStyle.Quint.Name] = OutQuint;
+		[Enum.EasingStyle.Bounce.Name] = OutBounce;
+		[Enum.EasingStyle.Elastic.Name] = OutElastic;
+		Smooth = Smooth;
+		Smoother = Smoother;
+		RevBack = RevBack;
+		RidiculousWiggle = RidiculousWiggle;
+		Spring = Spring;
+		SoftSpring = SoftSpring;
+		Expo = OutExpo;
+		Cubic = OutCubic;
+		Circ = OutCirc;
 	};
+
 	[Enum.EasingDirection.InOut.Name] = {
-		[Enum.EasingStyle.Linear.Name] = linear;
-		[Enum.EasingStyle.Sine.Name] = inOutSine;
-		[Enum.EasingStyle.Back.Name] = inOutBack;
-		[Enum.EasingStyle.Quad.Name] = inOutQuad;
-		[Enum.EasingStyle.Quart.Name] = inOutQuart;
-		[Enum.EasingStyle.Quint.Name] = inOutQuint;
-		[Enum.EasingStyle.Bounce.Name] = inOutBounce;
-		[Enum.EasingStyle.Elastic.Name] = inOutElastic;
-		Expo = inOutExpo;
-		Cubic = inOutCubic;
-		Circ = inOutCirc;
+		[Enum.EasingStyle.Linear.Name] = Linear;
+		[Enum.EasingStyle.Sine.Name] = InOutSine;
+		[Enum.EasingStyle.Back.Name] = InOutBack;
+		[Enum.EasingStyle.Quad.Name] = InOutQuad;
+		[Enum.EasingStyle.Quart.Name] = InOutQuart;
+		[Enum.EasingStyle.Quint.Name] = InOutQuint;
+		[Enum.EasingStyle.Bounce.Name] = InOutBounce;
+		[Enum.EasingStyle.Elastic.Name] = InOutElastic;
+		Smooth = Smooth;
+		Smoother = Smoother;
+		RevBack = RevBack;
+		RidiculousWiggle = RidiculousWiggle;
+		Spring = Spring;
+		SoftSpring = SoftSpring;
+		Expo = InOutExpo;
+		Cubic = InOutCubic;
+		Circ = InOutCirc;
 	};
+
 	OutIn = {
-		[Enum.EasingStyle.Sine.Name] = outInSine;
-		[Enum.EasingStyle.Back.Name] = outInBack;
-		[Enum.EasingStyle.Quad.Name] = outInQuad;
-		[Enum.EasingStyle.Quart.Name] = outInQuart;
-		[Enum.EasingStyle.Quint.Name] = outInQuint;
-		[Enum.EasingStyle.Bounce.Name] = outInBounce;
-		[Enum.EasingStyle.Elastic.Name] = outInElastic;
-		Expo = outInExpo;
-		Cubic = outInCubic;
-		Circ = outInCirc;
+		[Enum.EasingStyle.Linear.Name] = Linear;
+		[Enum.EasingStyle.Sine.Name] = OutInSine;
+		[Enum.EasingStyle.Back.Name] = OutInBack;
+		[Enum.EasingStyle.Quad.Name] = OutInQuad;
+		[Enum.EasingStyle.Quart.Name] = OutInQuart;
+		[Enum.EasingStyle.Quint.Name] = OutInQuint;
+		[Enum.EasingStyle.Bounce.Name] = OutInBounce;
+		[Enum.EasingStyle.Elastic.Name] = OutInElastic;
+		Smooth = Smooth;
+		Smoother = Smoother;
+		RevBack = RevBack;
+		RidiculousWiggle = RidiculousWiggle;
+		Spring = Spring;
+		SoftSpring = SoftSpring;
+		Expo = OutInExpo;
+		Cubic = OutInCubic;
+		Circ = OutInCirc;
 	};
 }
