@@ -10,6 +10,7 @@
 	Server:
 		
 		StoreService:HasPurchased(player, productId)
+		StoreService:OwnsGamePass(player, gamePassId)
 		StoreService:GetNumberPurchased(player, productId)
 		
 		StoreService.PromptPurchaseFinished(player, receiptInfo)
@@ -18,6 +19,7 @@
 	Client:
 		
 		StoreService:HasPurchased(productId)
+		StoreService:OwnsGamePass(gamePassId)
 		StoreService:GetNumberPurchased(productId)
 	
 		StoreService.PromptPurchaseFinished(receiptInfo)
@@ -39,7 +41,7 @@ local dataStoreScope = "PlayerReceipts"
 local services
 
 
-function IncrementPurchase(player, productId)
+local function IncrementPurchase(player, productId)
 	productId = tostring(productId)
 	local productPurchases = services.DataService:Get(player, PRODUCT_PURCHASES_KEY)
 	if (not productPurchases) then
@@ -52,7 +54,7 @@ function IncrementPurchase(player, productId)
 end
 
 
-function ProcessReceipt(receiptInfo)
+local function ProcessReceipt(receiptInfo)
 	
 	--[[
 		ReceiptInfo:
@@ -95,6 +97,14 @@ function StoreService:HasPurchased(player, productId)
 end
 
 
+function StoreService:OwnsGamePass(player, gamePassId)
+	local success, owns = pcall(function()
+		return marketplaceService:UserOwnsGamePassAsync(player.UserId, gamePassId)
+	end)
+	return (success and owns or false)
+end
+
+
 -- Get the number of productId's purchased:
 function StoreService:GetNumberPurchased(player, productId)
 	local n = 0
@@ -109,6 +119,11 @@ end
 -- Get the number of productId's purchased:
 function StoreService.Client:GetNumberPurchased(player, productId)
 	return self.Server:GetNumberPurchased(player, productId)
+end
+
+
+function StoreService.Client:OwnsGamePass(player, gamePassId)
+	return self.Server:OwnsGamePass(player, gamePassId)
 end
 
 
