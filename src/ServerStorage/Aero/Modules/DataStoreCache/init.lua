@@ -38,6 +38,7 @@ function Cache.new(name, scope)
 		Data = {};
 		DataStore = (name and SafeDataStore.new(name, scope) or nil);
 		Flushing = false;
+		Lock = false; -- Don't allow flushing if 'true'
 	}, Cache)
 
 	self.Failed = self.Shared.Event.new()
@@ -73,7 +74,7 @@ end
 
 
 function Cache:Flush(key, flushingAll)
-	if (not self.DataStore) then return end
+	if (self.Lock or not self.DataStore) then return end
 	self.Flushing = true
 	local value = self.Data[key]
 	if (value ~= nil and value[1] ~= nil and (value[2] == false or type(value[1]) == "table")) then
@@ -87,7 +88,7 @@ end
 
 
 function Cache:FlushAll()
-	if (not self.DataStore) then return end
+	if (self.Lock or not self.DataStore) then return end
 	for key in pairs(self.Data) do
 		self:Flush(key, true)
 	end
@@ -96,11 +97,11 @@ end
 
 
 function Cache:FlushAllConcurrent()
-	if (not self.DataStore) then return end
+	if (self.Lock or not self.DataStore) then return end
 	local thread = coroutine.running()
 	local numData = 0
 	local numFlushed = 0
-	for key in pairs(self.Data) do
+	for _ in pairs(self.Data) do
 		numData = (numData + 1)
 	end
 	for key in pairs(self.Data) do

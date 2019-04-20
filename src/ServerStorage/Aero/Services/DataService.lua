@@ -202,10 +202,21 @@ end
 
 
 function DataService:FlushAll()
-	for player,cache in pairs(playerCaches) do
-		cache:FlushAll()
+	-- Collect caches so they can be safely accessed. Because this is a synchronous process,
+	-- a cache might be removed from the cache tables during the process, thus causing errors
+	-- if simply looping through the original tables.
+	local caches = {}
+	for _,cache in pairs(playerCaches) do
+		caches[#caches + 1] = cache
+		cache.Lock = true
 	end
 	for _,cache in pairs(customCaches) do
+		caches[#caches + 1] = cache
+		cache.Lock = true
+	end
+	-- Flush each cache individually:
+	for _,cache in pairs(caches) do
+		cache.Lock = false
 		cache:FlushAll()
 	end
 	globalCache:FlushAll()
@@ -219,7 +230,7 @@ function DataService:FlushAllConcurrent()
 	for _ in pairs(playerCaches) do
 		numCaches = (numCaches + 1)
 	end
-	for _,cache in pairs(customCaches) do
+	for _ in pairs(customCaches) do
 		numCaches = (numCaches + 1)
 	end
 	if (numCaches == 0) then return end
@@ -229,12 +240,12 @@ function DataService:FlushAllConcurrent()
 			assert(coroutine.resume(thread))
 		end
 	end
-	for player,cache in pairs(playerCaches) do
+	for _,cache in pairs(playerCaches) do
 		spawn(function()
 			cache:FlushAllConcurrent()
 			IncFlushed()
 		end)
-	end	
+	end
 	for _,cache in pairs(customCaches) do
 		spawn(function()
 			cache:FlushAll()
