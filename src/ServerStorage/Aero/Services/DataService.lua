@@ -5,6 +5,7 @@
 --[[
 	
 	Server:
+
 		PLAYER DATA METHODS:
 	
 			DataService:Set(player, key, value)
@@ -15,6 +16,7 @@
 			DataService:FlushKey(player, key)
 			DataService:FlushAll()
 			DataService:FlushAllConcurrent()
+
 		GLOBAL DATA METHODS:
 				
 			DataService:SetGlobal(key, value)
@@ -23,6 +25,7 @@
 			DataService:OnUpdateGlobal(key, callback)
 			DataService:FlushGlobal(key)
 			DataService:FlushAllGlobal()
+
 		CUSTOM DATA METHODS:
 		
 			DataService:SetCustom(name, scope, key, value)
@@ -33,8 +36,11 @@
 			DataService:FlushAllCustom(name, scope, key)
 		
 		GAME CLOSING CALLBACK:
+
 			DataService:BindToClose(callbackFunction)
+
 		EVENTS:
+
 			DataService.PlayerFailed(player, method, key, errorMessage)
 			DataService.GlobalFailed(method, key, errorMessage)
 			DataService.CustomFailed(name, scope, method, key, errorMessage)
@@ -121,7 +127,7 @@ end
 
 
 function DataService:OnUpdate(player, key, callback)
-	self:GetPlayerCache(player):OnUpdate(key, callback)
+	return self:GetPlayerCache(player):OnUpdate(key, callback)
 end
 
 
