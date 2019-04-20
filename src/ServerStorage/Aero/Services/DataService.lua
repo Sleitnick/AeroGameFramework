@@ -5,18 +5,16 @@
 --[[
 	
 	Server:
-
 		PLAYER DATA METHODS:
 	
 			DataService:Set(player, key, value)
 			DataService:Get(player, key)
 			DataService:Remove(player, key)
+			DataService:OnUpdate(player, key, callback)
 			DataService:Flush(player)
 			DataService:FlushKey(player, key)
 			DataService:FlushAll()
 			DataService:FlushAllConcurrent()
-
-
 		GLOBAL DATA METHODS:
 				
 			DataService:SetGlobal(key, value)
@@ -25,8 +23,6 @@
 			DataService:OnUpdateGlobal(key, callback)
 			DataService:FlushGlobal(key)
 			DataService:FlushAllGlobal()
-
-
 		CUSTOM DATA METHODS:
 		
 			DataService:SetCustom(name, scope, key, value)
@@ -36,14 +32,9 @@
 			DataService:FlushCustom(name, scope, key)
 			DataService:FlushAllCustom(name, scope, key)
 		
-
 		GAME CLOSING CALLBACK:
-
 			DataService:BindToClose(callbackFunction)
-
-
 		EVENTS:
-
 			DataService.PlayerFailed(player, method, key, errorMessage)
 			DataService.GlobalFailed(method, key, errorMessage)
 			DataService.CustomFailed(name, scope, method, key, errorMessage)
@@ -52,7 +43,6 @@
 	Client:
 	
 		DataService:Get(key)
-
 		DataService.Failed(method, key, errorMessage)
 	
 --]]
@@ -127,6 +117,11 @@ end
 
 function DataService:Remove(player, key)
 	self:GetPlayerCache(player):Remove(key)
+end
+
+
+function DataService:OnUpdate(player, key, callback)
+	self:GetPlayerCache(player):OnUpdate(key, callback)
 end
 
 
@@ -271,7 +266,6 @@ function DataService:Start()
 	local function FireBoundToCloseCallbacks()
 
 		--[[ CONCURRENCY DISABLED DUE TO BINDTOCLOSE YIELDING BUG
-
 		local thread = coroutine.running()
 		local numBinded = #boundToCloseFuncs
 		if (numBinded == 0) then return end
@@ -288,7 +282,6 @@ function DataService:Start()
 			end)()
 		end
 		coroutine.yield()
-
 		]]
 
 		-- Temporary patch using BindableEvent instead of coroutines:
