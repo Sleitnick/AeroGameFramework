@@ -1,0 +1,11 @@
+.header {
+	width: 100%;
+	background: #599dd4;
+	box-shadow: 0 0 3px 3px #cfcfcf; 
+	.header-content {
+		color: white;
+		width: $content-width;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}

@@ -1,0 +1,22 @@
+$content-width: 1000px;
+
+@import url(https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700,700i);
+@import "~bootstrap/scss/bootstrap";
+@import "header";
+
+body {
+	font-family: "PT Sans", sans-serif;
+	background-color: #f8f8f8;
+}
+
+.content {
+	width: $content-width;
+	margin-left: auto;
+	margin-right: auto;
+	h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+		color: #486379;
+	}
+	p {
+		color: #5c5c5c;
+	}
+}

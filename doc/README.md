@@ -3,6 +3,8 @@
 #### DOCUMENTATION IS UNDER DEVELOPMENT
 These documentation files will replace the current documentation shown in the root directory README file. The goal is to document all features of the framework while still being easy to consume for new users.
 
+These markdown files will soon be replaced with the [official documentation site](https://sleitnick.github.io/AeroGameFramework/).
+
 ------------------------------
 
 Please refer to the files within this directory for a more in-depth documentation of the framework.

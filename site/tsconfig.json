@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"outDir": "../docs",
+		"sourceMap": true,
+		"module": "commonjs",
+		"lib": ["dom", "es2015"],
+		"target": "es5",
+		"jsx": "react",
+		"allowJs": true,
+		"noImplicitThis": true,
+		"noUnusedLocals": true
+	}
+}
