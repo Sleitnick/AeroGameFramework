@@ -60,7 +60,8 @@ export default class GettingStarted extends React.Component {
 
 				<hr/>
 
-				<h3>Visual Studio Code Structure</h3>
+				<h3>Visual Studio Code</h3>
+				<p><i>This section is under development</i></p>
 
 			</div>
 		);
