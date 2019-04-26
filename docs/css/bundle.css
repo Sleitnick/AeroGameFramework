@@ -7052,7 +7052,7 @@ nav .nav-link-item {
     background-color: #599dd4;
     color: white; }
 
-@media (max-width: 575.98px) {
+@media (max-width: 767.98px) {
   nav .nav-link-item {
     text-align: center; }
     nav .nav-link-item.active-nav {
@@ -7072,4 +7072,8 @@ body {
     color: #5c5c5c; }
   .content table code {
     color: inherit; }
+
+@media (max-width: 767.98px) {
+  iframe {
+    width: 100%; } }
 

@@ -25,3 +25,9 @@ body {
 		color: inherit;
 	}
 }
+
+@include media-breakpoint-down(sm) {
+	iframe {
+		width: 100%;
+	}
+}

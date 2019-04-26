@@ -20,10 +20,10 @@ export default class Index extends React.Component {
 					<div className="content">
 						<div className="container-fluid">
 							<div className="row">
-								<div className="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+								<div className="col-lg-2 col-md-2 col-sm-12">
 									<Nav/>
 								</div>
-								<div className="col-8">
+								<div className="col-lg-8 col-md-8 col-sm-12">
 									<Switch>
 										<Route exact path="/" render={() => <Redirect to="/home"/>}/>
 										<Route exact path="/home" component={Home}/>

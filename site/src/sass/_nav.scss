@@ -19,7 +19,7 @@ nav {
 	}
 }
 
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
 	nav {
 		.nav-link-item {
 			text-align: center;
