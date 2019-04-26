@@ -1,5 +1,10 @@
 import * as React from "react";
+import { HashRouter as Router, Route, Redirect, Switch } from "react-router-dom";
 import Header from "./Header";
+import Nav from "./Nav";
+import Home from "./pages/Home";
+import GettingStarted from "./pages/GettingStarted";
+import NotFound from "./pages/NotFound";
 
 export default class Index extends React.Component {
 
@@ -9,24 +14,26 @@ export default class Index extends React.Component {
 
 	public render() {
 		return (
-			<div>
-				<Header/>
-				<div className="content">
-					<h3>About</h3>
-					<p>
-						AeroGameFramework is a Roblox game framework that makes development easy and
-						fun. The framework is designed to simplify the communication between modules
-						and seamlessly bridge the gap between the server and client. Never again will
-						you have to touch RemoteFunctions or RemoteEvents.
-					</p>
-					<hr/>
-					<h3>Documentation</h3>
-					<p>
-						This site is under development. Documentation is coming soon.
-						Please visit the <a href="https://github.com/Sleitnick/AeroGameFramework" target="_blank">GitHub repository</a> for more information.
-					</p>
+			<Router>
+				<div>
+					<Header/>
+					<div className="content">
+						<div className="row">
+							<div className="col-2">
+								<Nav/>
+							</div>
+							<div className="col-7">
+								<Switch>
+									<Route exact path="/" render={() => <Redirect to="/home"/>}/>
+									<Route exact path="/home" component={Home}/>
+									<Route exact path="/gettingstarted" component={GettingStarted}/>
+									<Route component={NotFound}/>
+								</Switch>
+							</div>
+						</div>
+					</div>
 				</div>
-			</div>
+			</Router>
 		);
 	}
 

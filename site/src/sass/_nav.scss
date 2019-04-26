@@ -1,0 +1,20 @@
+nav {
+	.nav-link-item {
+		text-decoration: none;
+		transition: 0.25s ease;
+		color: $agf-dark-blue;
+		padding: 4px;
+		&.active-nav {
+			//color: white;
+			//background-color: $agf-blue;
+			border-left: 4px solid $agf-blue;
+			color: $agf-blue;
+			background-color: white;
+			box-shadow: 2px 2px 2px 0 #e6e6e6;
+		}
+		&:hover {
+			background-color: $agf-blue;
+			color: white;
+		}
+	}
+}
