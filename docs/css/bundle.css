@@ -7024,12 +7024,19 @@ a.text-dark:hover, a.text-dark:focus {
 .header {
   width: 100%;
   background: #599dd4;
-  box-shadow: 0 0 3px 3px #cfcfcf; }
+  box-shadow: 0 0 3px 3px #0000002e;
+  position: fixed;
+  top: 0;
+  height: 60px;
+  z-index: 10; }
   .header .header-content {
-    color: white;
-    width: 1000px;
-    margin-left: auto;
-    margin-right: auto; }
+    padding-left: 20px; }
+    .header .header-content h1 {
+      line-height: 60px;
+      margin-bottom: 0; }
+      .header .header-content h1 a {
+        text-decoration: none;
+        color: white; }
 
 nav .nav-link-item {
   text-decoration: none;
@@ -7045,16 +7052,24 @@ nav .nav-link-item {
     background-color: #599dd4;
     color: white; }
 
+@media (max-width: 575.98px) {
+  nav .nav-link-item {
+    text-align: center; }
+    nav .nav-link-item.active-nav {
+      border-left: none;
+      background-color: #599dd4;
+      color: white; } }
+
 body {
   font-family: "PT Sans", sans-serif;
   background-color: #f8f8f8; }
 
 .content {
-  width: 1000px;
-  margin-left: auto;
-  margin-right: auto; }
+  margin-top: 70px; }
   .content h1, .content h2, .content h3, .content h4, .content h5, .content h6, .content .h1, .content .h2, .content .h3, .content .h4, .content .h5, .content .h6 {
     color: #486379; }
   .content p {
     color: #5c5c5c; }
+  .content table code {
+    color: inherit; }
 

@@ -1,11 +1,20 @@
 .header {
 	width: 100%;
 	background: $agf-blue;
-	box-shadow: 0 0 3px 3px #cfcfcf; 
+	box-shadow: 0 0 3px 3px #0000002e;
+	position: fixed;
+	top: 0;
+	height: $header-height;
+	z-index: 10;
 	.header-content {
-		color: white;
-		width: $content-width;
-		margin-left: auto;
-		margin-right: auto;
+		padding-left: 20px;
+		h1 {
+			line-height: $header-height;
+			margin-bottom: 0;
+			a {
+				text-decoration: none;
+				color: white;
+			}
+		}
 	}
 }

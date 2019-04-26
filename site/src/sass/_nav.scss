@@ -18,3 +18,16 @@ nav {
 		}
 	}
 }
+
+@include media-breakpoint-down(xs) {
+	nav {
+		.nav-link-item {
+			text-align: center;
+			&.active-nav {
+				border-left: none;
+				background-color: $agf-blue;
+				color: white;
+			}
+		}
+	}
+}

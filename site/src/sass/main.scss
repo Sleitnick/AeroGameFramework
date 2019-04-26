@@ -1,4 +1,4 @@
-$content-width: 1000px;
+$header-height: 60px;
 $agf-blue: #599dd4;
 $agf-dark-blue: #486379;
 $text-color: #5c5c5c;
@@ -14,13 +14,14 @@ body {
 }
 
 .content {
-	width: $content-width;
-	margin-left: auto;
-	margin-right: auto;
+	margin-top: $header-height + 10px;
 	h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 		color: $agf-dark-blue;
 	}
 	p {
 		color: $text-color;
+	}
+	table code {
+		color: inherit;
 	}
 }

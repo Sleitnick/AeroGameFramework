@@ -12,6 +12,7 @@ export default class Nav extends React.Component {
 			<nav className="nav flex-column">
 				<NavLink className="nav-link-item" activeClassName="active-nav" to="/home">Home</NavLink>
 				<NavLink className="nav-link-item" activeClassName="active-nav" to="/gettingstarted">Getting Started</NavLink>
+				<hr className="w-100 d-block d-sm-none"/>
 			</nav>
 		);
 	}

@@ -18,17 +18,19 @@ export default class Index extends React.Component {
 				<div>
 					<Header/>
 					<div className="content">
-						<div className="row">
-							<div className="col-2">
-								<Nav/>
-							</div>
-							<div className="col-7">
-								<Switch>
-									<Route exact path="/" render={() => <Redirect to="/home"/>}/>
-									<Route exact path="/home" component={Home}/>
-									<Route exact path="/gettingstarted" component={GettingStarted}/>
-									<Route component={NotFound}/>
-								</Switch>
+						<div className="container-fluid">
+							<div className="row">
+								<div className="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+									<Nav/>
+								</div>
+								<div className="col-8">
+									<Switch>
+										<Route exact path="/" render={() => <Redirect to="/home"/>}/>
+										<Route exact path="/home" component={Home}/>
+										<Route exact path="/gettingstarted" component={GettingStarted}/>
+										<Route component={NotFound}/>
+									</Switch>
+								</div>
 							</div>
 						</div>
 					</div>
