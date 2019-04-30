@@ -17,7 +17,7 @@ export default class VSCode extends React.Component {
 					For the best development experience, it is highly recommended to
 					use <a href="https://code.visualstudio.com/" target="_blank">Visual Studio Code</a> for
 					writing code within the framework. AeroGameFramework includes a VS Code extension,
-					and ties in with other useful extensions as well (such as Rojo and Luacheck).
+					and ties in with other useful applications as well (such as Rojo and Luacheck).
 				</p>
 
 				<hr/>
