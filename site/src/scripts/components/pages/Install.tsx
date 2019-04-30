@@ -19,7 +19,7 @@ export default class GettingStarted extends React.Component {
 					Download the <a href="https://www.roblox.com/library/1882232354/AeroGameFramework-Plugin" target="_blank">AeroGameFramework</a> plugin
 					for Roblox Studio. Once installed, open up a game, enable HTTP requests, and then run the installer from the plugin. The installer
 					can be run again at any point to fetch new updates. For any update, you will be prompted per file whether or not to apply the new
-					update.
+					update. If desired, remember to disable HTTP requests after the installation or update has completed.
 				</p>
 				<iframe width="560" height="315" src="https://www.youtube.com/embed/xSgTzMpMIpA" frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
 
@@ -57,11 +57,6 @@ export default class GettingStarted extends React.Component {
 					<b>Note:</b> If developing within Visual Studio Code, these folders should be left untouched within Roblox Studio
 					to prevent any unexpected data loss due to Rojo syncing.
 				</p>
-
-				<hr/>
-
-				<h3>Visual Studio Code</h3>
-				<p><i>This section is under development</i></p>
 
 			</div>
 		);

@@ -10,6 +10,7 @@ export default class Home extends React.Component {
 		return (
 			<div>
 				<h1>Home</h1>
+				<hr/>
 				<h3>About</h3>
 				<p>
 					AeroGameFramework is a Roblox game framework that makes development easy and

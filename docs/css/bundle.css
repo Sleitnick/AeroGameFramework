@@ -1,4 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700,700i);
+@charset "UTF-8";
 /*!
  * Bootstrap v4.3.1 (https://getbootstrap.com/)
  * Copyright 2011-2019 The Bootstrap Authors
@@ -7062,6 +7063,7 @@ nav .nav-link-item {
 
 body {
   font-family: "PT Sans", sans-serif;
+  font-size: 1.1rem;
   background-color: #f8f8f8; }
 
 .content {
@@ -7072,6 +7074,30 @@ body {
     color: #5c5c5c; }
   .content table code {
     color: inherit; }
+
+ul li, ol li {
+  padding-top: 2px;
+  padding-bottom: 2px; }
+
+.dir-tree li {
+  padding: 0;
+  padding-left: 18px; }
+  .dir-tree li::before {
+    content: "— ";
+    color: gray; }
+
+a[target=_blank]::after {
+  content: "\f35d";
+  font-family: "Font Awesome 5 Free";
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  display: inline-block;
+  font-weight: 900;
+  -webkit-font-smoothing: antialiased;
+  margin-left: 5px;
+  font-size: 0.65rem;
+  vertical-align: super; }
 
 @media (max-width: 767.98px) {
   iframe {

@@ -3,7 +3,12 @@ import { HashRouter as Router, Route, Redirect, Switch } from "react-router-dom"
 import Header from "./Header";
 import Nav from "./Nav";
 import Home from "./pages/Home";
-import GettingStarted from "./pages/GettingStarted";
+import Install from "./pages/Install";
+import VSCode from "./pages/VSCode";
+import Services from "./pages/Services";
+import Controllers from "./pages/Controllers";
+import Modules from "./pages/Modules";
+import ExecutionModel from "./pages/ExecutionModel";
 import NotFound from "./pages/NotFound";
 
 export default class Index extends React.Component {
@@ -27,7 +32,12 @@ export default class Index extends React.Component {
 									<Switch>
 										<Route exact path="/" render={() => <Redirect to="/home"/>}/>
 										<Route exact path="/home" component={Home}/>
-										<Route exact path="/gettingstarted" component={GettingStarted}/>
+										<Route exact path="/install" component={Install}/>
+										<Route exact path="/vscode" component={VSCode}/>
+										<Route exact path="/services" component={Services}/>
+										<Route exact path="/controllers" component={Controllers}/>
+										<Route exact path="/modules" component={Modules}/>
+										<Route exact path="/executionmodel" component={ExecutionModel}/>
 										<Route component={NotFound}/>
 									</Switch>
 								</div>

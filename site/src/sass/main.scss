@@ -10,6 +10,7 @@ $text-color: #5c5c5c;
 
 body {
 	font-family: "PT Sans", sans-serif;
+	font-size: 1.1rem;
 	background-color: #f8f8f8;
 }
 
@@ -24,6 +25,38 @@ body {
 	table code {
 		color: inherit;
 	}
+}
+
+ul, ol {
+	li {
+		padding-top: 2px;
+		padding-bottom: 2px;
+	}
+}
+
+.dir-tree {
+	li {
+		padding: 0;
+		padding-left: 18px;
+		&::before {
+			content: "— ";
+			color: rgb(128, 128, 128);
+		}
+	}
+}
+
+a[target=_blank]::after {
+	content: "\f35d";
+	font-family: "Font Awesome 5 Free";
+	font-style: normal;
+	font-variant: normal;
+	text-rendering: auto;
+	display: inline-block;
+	font-weight: 900;
+	-webkit-font-smoothing: antialiased;
+	margin-left: 5px;
+	font-size: 0.65rem;
+	vertical-align: super;
 }
 
 @include media-breakpoint-down(sm) {
