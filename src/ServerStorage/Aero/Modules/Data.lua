@@ -212,7 +212,7 @@ end
 
 function Data:Increment(key, increment)
 	assert(not self._destroyed, "Data already destroyed")
-	local value = self:Get(key, 0)
+	local success, value = self:Get(key, 0)
 	assert(type(value) == "number", "Cannot increment a non-number value")
 	assert(type(increment) == "number", "Increment must be a number")
 	value = (value + increment)
