@@ -93,7 +93,7 @@ function Data.new(name, scope)
 	-- Get cached 'data' object if available:
 	local ds = dataStoreService:GetDataStore(name, scope)
 	local self = dataPool[ds]
-	if (self) then return self end
+	if (self and not self._destroyed) then return self end
 
 	-- Create new 'data' object:
 	self = setmetatable({
