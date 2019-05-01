@@ -39,7 +39,7 @@ export default class Services extends React.Component {
 					A service in its simplest form looks like this:
 				`}
 				</Markdown>
-				<CodeBlock src="/lua/service_01.lua"/>
+				<CodeBlock src="lua/service_01.lua"/>
 
 				<br/>
 				<h5>Injected Properties:</h5>
@@ -148,9 +148,9 @@ export default class Services extends React.Component {
 					
 				`}
 				</Markdown>
-				<CodeBlock src="/lua/service_02.lua"/>
+				<CodeBlock src="lua/service_02.lua"/>
 				<Markdown>Other services can also invoke your custom method:</Markdown>
-				<CodeBlock src="/lua/service_03.lua"/>
+				<CodeBlock src="lua/service_03.lua"/>
 
 				<Markdown>
 				{`
@@ -163,7 +163,7 @@ export default class Services extends React.Component {
 					methods should _never_ be used within an \`Init\` method.
 				`}
 				</Markdown>
-				<CodeBlock src="/lua/service_04.lua"/>
+				<CodeBlock src="lua/service_04.lua"/>
 
 				<Markdown>
 				{`
@@ -176,7 +176,7 @@ export default class Services extends React.Component {
 					given table.
 				`}
 				</Markdown>
-				<CodeBlock src="/lua/service_05.lua"/>
+				<CodeBlock src="lua/service_05.lua"/>
 				<Markdown>
 				{`
 					This can be usefuli if you are requiring other non-framework modules in which you want to expose the framework.
@@ -192,7 +192,7 @@ export default class Services extends React.Component {
 					To expose a method to the client, write a function attached to the client table:
 				`}
 				</Markdown>
-				<CodeBlock src="/lua/service_06.lua"/>
+				<CodeBlock src="lua/service_06.lua"/>
 				<Markdown>
 				{`
 					Note that the \`player\` argument must _always_ be the first argument for client methods. Any other arguments
@@ -204,7 +204,7 @@ export default class Services extends React.Component {
 					\`FireClientEvent\` and \`FireAllClientsEvent\` to fire the event:
 				`}
 				</Markdown>
-				<CodeBlock src="/lua/service_07.lua"/>
+				<CodeBlock src="lua/service_07.lua"/>
 				<br/>
 				<Markdown>
 				{`
@@ -214,7 +214,7 @@ export default class Services extends React.Component {
 					service table. Therefore, the \`Server\` property has been injected into the \`Client\` table:
 				`}
 				</Markdown>
-				<CodeBlock src="/lua/service_08.lua"/>
+				<CodeBlock src="lua/service_08.lua"/>
 
 				<Markdown>
 				{`
@@ -225,13 +225,13 @@ export default class Services extends React.Component {
 					##### Invoking another service:
 				`}
 				</Markdown>
-				<CodeBlock src="/lua/service_09.lua"/>
+				<CodeBlock src="lua/service_09.lua"/>
 				<br/>
 				<Markdown>##### Using a Module:</Markdown>
-				<CodeBlock src="/lua/service_10.lua"/>
+				<CodeBlock src="lua/service_10.lua"/>
 				<br/>
 				<Markdown>##### Using a Shared module:</Markdown>
-				<CodeBlock src="/lua/service_11.lua"/>
+				<CodeBlock src="lua/service_11.lua"/>
 
 			</div>
 		);
