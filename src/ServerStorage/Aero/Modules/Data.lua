@@ -93,7 +93,7 @@ function Data.new(name, scope)
 	-- Get cached 'data' object if available:
 	local ds = dataStoreService:GetDataStore(name, scope)
 	local self = dataPool[ds]
-	if (self) then return self end
+	if (self and not self._destroyed) then return self end
 
 	-- Create new 'data' object:
 	self = setmetatable({
@@ -212,7 +212,7 @@ end
 
 function Data:Increment(key, increment)
 	assert(not self._destroyed, "Data already destroyed")
-	local value = self:Get(key, 0)
+	local success, value = self:Get(key, 0)
 	assert(type(value) == "number", "Cannot increment a non-number value")
 	assert(type(increment) == "number", "Increment must be a number")
 	value = (value + increment)
