@@ -28,7 +28,7 @@ export default class Services extends React.Component {
 				{`
 					# Services
 
-					A service is a singleton initiated at runtime on the server. Serices should serve specific purposes. For instance,
+					A service is a singleton initiated at runtime on the server. Services should serve specific purposes. For instance,
 					the provided DataService allows simplified data management. You might also create a WeaponService, which might
 					be used for holding and figuring out weapon information for the players.
 
