@@ -10,7 +10,7 @@ export default class GettingStarted extends React.Component {
 		return (
 			<div>
 
-				<h1>Getting Started</h1>
+				<h1>Install</h1>
 
 				<hr/>
 
