@@ -5,8 +5,11 @@ $text-color: #5c5c5c;
 
 @import url(https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700,700i);
 @import "~bootstrap/scss/bootstrap";
+@import "~prismjs/themes/prism.css";
+@import "~prismjs/plugins/line-numbers/prism-line-numbers.css";
 @import "header";
 @import "nav";
+@import "markdown";
 
 body {
 	font-family: "PT Sans", sans-serif;
@@ -18,6 +21,9 @@ body {
 	margin-top: $header-height + 10px;
 	h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 		color: $agf-dark-blue;
+		code {
+			color: $agf-dark-blue;
+		}
 	}
 	p {
 		color: $text-color;

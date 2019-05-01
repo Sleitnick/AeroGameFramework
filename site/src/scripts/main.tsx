@@ -5,6 +5,8 @@ import Index from "./components/Index";
 import "bootstrap";
 import "../sass/main.scss";
 import "../imgs/logo_32.png";
+import "prismjs/components/prism-lua.min";
+import "prismjs/plugins/line-numbers/prism-line-numbers.min";
 
 const appComponent = document.getElementById("app");
 

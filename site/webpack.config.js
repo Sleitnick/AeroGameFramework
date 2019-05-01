@@ -68,6 +68,15 @@ module.exports = (env, argv) => {
 							name: "imgs/[name].[ext]"
 						}
 					}
+				},
+				{
+					test: /\.lua$/,
+					use: {
+						loader: "file-loader",
+						options: {
+							name: "lua/[name].[ext]"
+						}
+					}
 				}
 			]
 		},
