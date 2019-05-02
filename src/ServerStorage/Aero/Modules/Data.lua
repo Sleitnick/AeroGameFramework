@@ -189,8 +189,8 @@ function Data:Get(key, defaultVal)
 	if (value == nil) then
 		success, value = self:_load(key)
 		if (success and value == nil and defaultVal ~= nil) then
-			value = defaultVal
-			self:Set(key, defaultVal)
+			value = typeof(defaultVal) ~= "table" and defaultVal or self.Shared.TableUtil.Copy(defaultVal)
+			self:Set(key, value)
 		end
 	end
 	return success, value
