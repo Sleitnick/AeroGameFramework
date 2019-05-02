@@ -179,7 +179,7 @@ export default class Services extends React.Component {
 				<CodeBlock src="lua/service_05.lua"/>
 				<Markdown>
 				{`
-					This can be usefuli if you are requiring other non-framework modules in which you want to expose the framework.
+					This can be useful if you are requiring other non-framework modules in which you want to expose the framework.
 
 					---------------------
 
