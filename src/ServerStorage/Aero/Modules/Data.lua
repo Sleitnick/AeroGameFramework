@@ -315,7 +315,9 @@ function Data:Get(key, defaultVal)
 	return self:_load(key):Then(function(value)
 		if (value == nil and defaultVal ~= nil) then
 			value = (typeof(defaultVal) ~= "table" and defaultVal or tableUtil.Copy(defaultVal))
-			return self:Set(key, value)
+			return self:Set(key, value):Then(function()
+				return value
+			end)
 		else
 			return value
 		end
