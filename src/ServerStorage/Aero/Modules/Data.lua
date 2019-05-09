@@ -24,24 +24,106 @@
 		data.DestroyOnLeave     [Defaults to 'true'; if linked to a player, 'Destroy()' will automatically be invoked when the player leaves; see static field PlayerLeftSaveInterval]
 
 	METHODS:
-		success, value          data:Get(key [, defaultValue])                 [Gets/loads the value from the key; optional default value]
-		success                 data:Set(key, value)                           [Sets the value to the given key]
-		success                 data:Delete(key)                               [Deletes the value to the given key; NOTE: immediate DataStore call]
-		success, value          data:Increment(key, incrementValue)            [Increments the value at the given key by 'incrementValue']
-		number                  data:GetRequestBudget(dataStoreRequestType)    [Gets the current RequestBudget for the given dataStoreRequestType]
-		success, connection     data:OnUpdate(key, callback)                   [Listens for value changes for a given key]
-		success                 data:Save(key)                                 [Saves the current cached value for the given key; NOTE: immediate DataStore call]
-		allSuccess              data:SaveAll(stopIfError, errCallback)         [Saves all cached values one-by-one; NOTE: immediate DataStore call]
-		void                    data:SaveAllConcurrent(errCallback)            [Saves all cached values at the same time; NOTE: immediate DataStore call]
-		void                    data:Destroy([saveAll])                        [Destroys the current Data object; optional 'saveAll' flag (default is 'false')]
+		Promise<Value>       data:Get(String key [, Any defaultValue])
+		Promise<Void>        data:Set(String key, String value)
+		Promise<Void>        data:Delete(String key)
+		Promise<Value>       data:Increment(String key, Number incrementValue)
+		Promise<Connection>  data:OnUpdate(String key, Function callback)
+		Promise<Void>        data:Save(String key)
+		Promise<Void>        data:SaveAll()
+		Promise<Void>        data:Destroy([Boolean saveAll])
+		Number               data:GetRequestBudget(DataStoreRequestType requestType)
+
+	METHOD DESCRIPTIONS:
+		Get
+			Gets/loads the value from the key. The optional 'defaultValue' can be used
+			if the retrieved value from the DataStore is nil. This method will only
+			call the DataStore if it has not yet done so and gotten a non-nil value. If
+			a call has already been made for the given key, the value will be cached
+			and the cached value will be returned.
+
+		Set
+			Sets the value to the given key in the local cache. This does NOT set the
+			value in the DataStore. Call 'Save' or 'SaveAll' to explicitly save to the
+			DataStore. Otherwise, the key will automatically save during the auto-save
+			period, when the player leaves, or when the server shuts down.
+
+			If you try to set a value to a key that has not yet been cached, it will
+			first try to call the DataStore to ensure it is working. If DataStores
+			are down, this call will fail, ensuring that you don't start overriding
+			values during DataStore downtime.
+
+		Delete
+			This deletes the value from the cache AND the DataStore. This is the same
+			as calling 'data:Set("key", nil)' but is preferred for its explicit naming.
+
+		Increment
+			This increments a value on a given key. If the current value doesn't exist,
+			then it will assume a starting value of 0. This will fail if the increment
+			or the existing value is not a number.
+
+		OnUpdate
+			This registers a function to listen for changes on a key at the DataStore
+			level, NOT the cache level. Thus, using 'data:Set()' won't trigger a bound
+			function on OnUpdate. In other words, this function can be used to tell
+			when a key has been saved onto the DataStore.
+
+		Save
+			Saves a cached key to the DataStore. The key must currently have a cached
+			value, otherwise this request will fail.
+
+		SaveAll
+			Saves all currently cached keys to the DataStore.
+
+		Destroy
+			Destroys the data object instance. If 'saveAll' is set to 'true', this will
+			also call 'SaveAll' before removing any of the data.
+
+		GetRequestBudget
+			This is exactly the same as the DataStoreService's GetRequestBudget. Read
+			the documentation on the Roblox Developer site:
+			https://developer.roblox.com/api-reference/function/DataStoreService/GetRequestBudgetForRequestType
+	
+
+	EXAMPLES:
+
+		data = Data.ForPlayer(somePlayer)
+
+		-- Using 'Await' to get money:
+		local success, money = data:Get("money", 0):Await()
+		if (success) then
+			print("Money", money)
+		else
+			warn("Failed to get money", money)
+		end
+
+		-- Using 'Then' to get money:
+		data:Get("money", 0):Then(function(money)
+			print("Money", money)
+		end, function(err)
+			warn("Failed to get money", err)
+		end)
+
+		-- Setting money:
+		data:Set("money", 25):Await()
+
+		-- Saving:
+		data:Save("money"):Then(function()
+			print("Successfully saved money")
+		end):Catch(function(err)
+			warn("Failed to save money", err)
+		end):Finally(function()
+			-- Cleanup stuff
+		end)
+
+			
 
 
-	For in-depth info:
+	For in-depth info on DataStores:
 
 		https://devforum.roblox.com/t/details-on-datastoreservice-for-advanced-developers/175804
 
 --]]
-
 
 
 
@@ -66,10 +148,12 @@ Data.IsUsingMockService = false
 
 local dataPool = {}
 local assert = assert
+local tableUtil
+local Promise
 
 
-local function AssertKey(key)
-	assert(type(key) == "string" and #key <= KEY_MAX_LEN, KEY_MAX_LEN_ERR)
+local function CheckKey(key)
+	return (type(key) == "string" and #key <= KEY_MAX_LEN)
 end
 
 
@@ -136,30 +220,67 @@ end
 
 
 function Data:_load(key)
-	return pcall(function()
-		return self._ds:GetAsync(key)
-	end)
+	return Promise.new(function(resolve, reject)
+		local success, value = pcall(function()
+			return self._ds:GetAsync(key)
+		end)
+		if (success) then
+			self._cache[key] = value
+			resolve(value)
+		else
+			reject(value)
+		end
+	end, true)
+end
+
+
+function Data:_loadIfNotCached(key)
+	if (self._cache[key] ~= nil) then
+		return Promise.Resolve(self._cache[key])
+	end
+	return self:_load(key)
 end
 
 
 function Data:_save(key, value)
-	return pcall(function()
-		return self._ds:SetAsync(key, value)
-	end)
+	return Promise.new(function(resolve, reject)
+		local success, err = pcall(function()
+			return self._ds:SetAsync(key, value)
+		end)
+		if (success) then
+			resolve()
+		else
+			reject(err)
+		end
+	end, true)
 end
 
 
 function Data:_delete(key)
-	return pcall(function()
-		return self._ds:RemoveAsync(key)
-	end)
+	return Promise.new(function(resolve, reject)
+		local success, err = pcall(function()
+			return self._ds:RemoveAsync(key)
+		end)
+		if (success) then
+			resolve()
+		else
+			reject(err)
+		end
+	end, true)
 end
 
 
 function Data:_update(key, transformFunc)
-	return pcall(function()
-		return self._ds:UpdateAsync(key, transformFunc)
-	end)
+	return Promise.new(function(resolve, reject)
+		local success, value = pcall(function()
+			return self._ds:UpdateAsync(key, transformFunc)
+		end)
+		if (success) then
+			resolve(value)
+		else
+			reject(value)
+		end
+	end, true)
 end
 
 
@@ -182,41 +303,61 @@ end
 
 
 function Data:Get(key, defaultVal)
-	assert(not self._destroyed, "Data already destroyed")
-	AssertKey(key)
-	local success = true
-	local value = self._cache[key]
-	if (value == nil) then
-		success, value = self:_load(key)
-		if (success and value == nil and defaultVal ~= nil) then
-			value = typeof(defaultVal) ~= "table" and defaultVal or self.Shared.TableUtil.Copy(defaultVal)
-			self:Set(key, value)
-		end
+	if (self._destroyed) then
+		return Promise.Reject("Data already destroyed")
 	end
-	return success, value
+	if (not CheckKey(key)) then
+		return Promise.Reject(KEY_MAX_LEN_ERR)
+	end
+	if (self._cache[key] ~= nil) then
+		return Promise.Resolve(self._cache[key])
+	end
+	return self:_load(key):Then(function(value)
+		if (value == nil and defaultVal ~= nil) then
+			value = (typeof(defaultVal) ~= "table" and defaultVal or tableUtil.Copy(defaultVal))
+			return self:Set(key, value)
+		else
+			return value
+		end
+	end)
 end
 
 
 function Data:Set(key, value)
-	assert(not self._destroyed, "Data already destroyed")
-	AssertKey(key)
-	if (value == nil) then
-		self._cache[key] = nil
-		return self:_delete(key)
-	else
-		self._cache[key] = value
-		return true
+	if (self._destroyed) then
+		return Promise.Reject("Data already destroyed")
 	end
+	if (not CheckKey(key)) then
+		return Promise.Reject(KEY_MAX_LEN_ERR)
+	end
+	return self:_loadIfNotCached(key):Then(function()
+		if (value == nil) then
+			self._cache[key] = nil
+			return self:_delete(key)
+		else
+			self._cache[key] = value
+		end
+	end)
 end
 
 
 function Data:Increment(key, increment)
-	assert(not self._destroyed, "Data already destroyed")
-	local success, value = self:Get(key, 0)
-	assert(type(value) == "number", "Cannot increment a non-number value")
-	assert(type(increment) == "number", "Increment must be a number")
-	value = (value + increment)
-	return self:Set(key, value), value
+	if (self._destroyed) then
+		return Promise.Reject("Data already destroyed")
+	end
+	if (type(increment) ~= "number") then
+		return Promise.Reject("Increment must be a number")
+	end
+	return self:Get(key, 0):Then(function(value)
+		if (type(value) ~= "number") then
+			error("Cannot increment a non-number value")
+			return
+		end
+		value = (value + increment)
+		return self:Set(key, value):Then(function()
+			return value
+		end)
+	end)
 end
 
 
@@ -226,88 +367,84 @@ end
 
 
 function Data:OnUpdate(key, callback)
-	assert(not self._destroyed, "Data already destroyed")
-	AssertKey(key)
-	assert(type(callback) == "function", "Callback must be a function")
-	return pcall(function()
-		return self._ds:OnUpdate(key, callback)
+	if (self._destroyed) then
+		return Promise.Reject("Data already destroyed")
+	end
+	if (not CheckKey(key)) then
+		return Promise.Reject(KEY_MAX_LEN_ERR)
+	end
+	if (type(callback) ~= "function") then
+		return Promise.Reject("Callback must be a function")
+	end
+	return Promise.new(function(resolve, reject)
+		local success, err = pcall(function()
+			return self._ds:OnUpdate(key, callback)
+		end)
+		if (success) then
+			resolve()
+		else
+			reject(err)
+		end
 	end)
 end
 
 
 function Data:Save(key)
-	assert(not self._destroyed, "Data already destroyed")
-	AssertKey(key)
+	if (self._destroyed) then
+		return Promise.Reject("Data already destroyed")
+	end
+	if (not CheckKey(key)) then
+		return Promise.Reject(KEY_MAX_LEN_ERR)
+	end
 	local cachedVal = self._cache[key]
-	assert(cachedVal ~= nil, "Cannot save key that has not already been loaded via Data:Get(key)")
+	if (cachedVal == nil) then
+		return Promise.Reject("Cannot save key that has not already been loaded via Data:Get(key)")
+	end
 	return self:_save(key, cachedVal)
 end
 
 
-function Data:SaveAll(stopIfError, errCallback)
-	assert(not self._destroyed, "Data already destroyed")
-	assert(type(errCallback) == "function" or errCallback == nil, "ErrorCallback must be a function (or nil)")
-	local allSucceeded = false
+function Data:SaveAll()
+	if (self._destroyed) then
+		return Promise.Reject("Data already destroyed")
+	end
+	local promises = {}
 	for key in pairs(self._cache) do
-		local success,err = self:Save(key)
-		if (not success) then
-			allSucceeded = false
-			if (errCallback) then
-				errCallback(err)
-			end
-			if (stopIfError) then
-				break
-			end
-		end
+		promises[#promises + 1] = self:Save(key)
 	end
-	return allSucceeded
-end
-
-
-function Data:SaveAllConcurrent(errCallback)
-	assert(not self._destroyed, "Data already destroyed")
-	assert(type(errCallback) == "function" or errCallback == nil, "ErrorCallback must be a function (or nil)")
-	local be = Instance.new("BindableEvent")
-	--local thread = coroutine.running()
-	local remaining = 0
-	for key in pairs(self._cache) do
-		remaining = (remaining + 1)
-		spawn(function()
-			local success,err = self:Save(key)
-			if ((not success) and errCallback) then
-				errCallback(err)
-			end
-			remaining = (remaining - 1)
-			if (remaining <= 0) then
-				--assert(coroutine.resume(thread))
-				be:Fire()
-			end
-		end)
-	end
-	if (remaining > 0) then
-		--coroutine.yield()
-		be.Event:Wait()
-		be:Destroy()
-	end
+	return Promise.All(promises)
 end
 
 
 function Data:Update(key, transformFunc)
-	assert(not self._destroyed, "Data already destroyed")
-	AssertKey(key)
-	assert(type(transformFunc) == "function", "TransformFunction must be a function")
+	if (self._destroyed) then
+		return Promise.Reject("Data already destroyed")
+	end
+	if (not CheckKey(key)) then
+		return Promise.Reject(KEY_MAX_LEN_ERR)
+	end
+	if (type(transformFunc) ~= "function") then
+		return Promise.Reject("TransformFunction must be a function")
+	end
 	return self:_update(key, transformFunc)
 end
 
 
 function Data:Destroy(save)
-	assert(not self._destroyed, "Data already destroyed")
-	self._destroyed = true
-	if (save) then
-		self:SaveAll(false, nil)
+	if (self._destroyed) then
+		return Promise.Reject("Data already destroyed")
 	end
-	self._cache = {}
-	dataPool[self._ds] = nil
+	self._destroyed = true
+	local savePromise
+	if (save) then
+		savePromise = self:SaveAll(false, nil)
+	else
+		savePromise = Promise.Resolve()
+	end
+	return savePromise:Then(function()
+		self._cache = {}
+		dataPool[self._ds] = nil
+	end)
 end
 
 
@@ -328,6 +465,7 @@ end
 function Data:Start()
 
 	local gameClosing = false
+	local autoSaving = false
 
 	if (game.GameId == 0) then
 		Data.IsUsingMockService = true
@@ -353,12 +491,26 @@ function Data:Start()
 	end
 
 	local function AutoSaveAllData()
+		if (autoSaving) then return end
+		autoSaving = true
+		local promises = {}
 		for _,data in pairs(dataPool) do
 			if (data.CanAutoSave) then
 				--local budget = dataStoreService:GetRequestBudgetForRequestType(Enum.DataStoreRequestType.SetIncrementAsync)
 				--local keys = data:_countKeysInCache()
-				data:SaveAllConcurrent()
+				local saveAllPromise = data:SaveAll()
+				if (not gameClosing) then
+					saveAllPromise:Await()
+				else
+					promises[#promises + 1] = saveAllPromise
+				end
 			end
+		end
+		if (#promises == 0) then
+			autoSaving = false
+		else
+			Promise.All(promises):Await()
+			autoSaving = false
 		end
 	end
 
@@ -384,8 +536,9 @@ function Data:Start()
 
 	-- Auto-save cycle:
 	spawn(function()
-		while (not gameClosing) do
+		while (true) do
 			wait(self.AutoSaveInterval)
+			if (gameClosing) then break end
 			AutoSaveAllData()
 		end
 	end)
@@ -394,7 +547,8 @@ end
 
 
 function Data:Init()
-
+	Promise = self.Shared.Promise
+	tableUtil = self.Shared.TableUtil
 end
 
 

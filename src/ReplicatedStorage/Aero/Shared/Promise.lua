@@ -17,6 +17,9 @@
 
 	promise:Then(handler)
 	promise:Catch(handler)
+	promise:Finally(handler)
+	
+	promise:GetStatus()
 
 --]]
 
@@ -160,6 +163,7 @@ function Promise.new(callback, forceSpawn)
 		-- Queues representing functions we should invoke when we update!
 		_queuedResolve = {};
 		_queuedReject = {};
+		_queuedFinally = {};
 	}
 
 	setmetatable(self, Promise)
@@ -268,14 +272,10 @@ end
 	Is the given object a Promise instance?
 ]]
 function Promise.Is(object)
-	if (type(object) ~= "table") then
-		return false
-	end
-
-	return object[PromiseMarker] == true
+	return (type(object) == "table" and object[PromiseMarker] == true)
 end
 
-function Promise.prototype:getStatus()
+function Promise.prototype:GetStatus()
 	return self._status
 end
 
@@ -321,6 +321,18 @@ end
 ]]
 function Promise.prototype:Catch(failureCallback)
 	return self:Then(nil, failureCallback)
+end
+
+--[[
+	Used to handle the end of a promise, whether it succeeded or failed.
+]]
+function Promise.prototype:Finally(finallyCallback)
+	if (self._status == Promise.Status.Started) then
+		table.insert(self._queuedFinally, finallyCallback)
+	else
+		spawn(finallyCallback)
+	end
+	return self
 end
 
 --[[
@@ -409,8 +421,11 @@ function Promise.prototype:_resolve(...)
 	self._valuesLength, self._values = pack(...)
 
 	-- We assume that these callbacks will not throw errors.
-	for _, callback in ipairs(self._queuedResolve) do
+	for _, callback in pairs(self._queuedResolve) do
 		callback(...)
+	end
+	for _, callback in pairs(self._queuedFinally) do
+		spawn(callback)
 	end
 end
 
@@ -425,7 +440,7 @@ function Promise.prototype:_reject(...)
 	-- If there are any rejection handlers, call those!
 	if (not isEmpty(self._queuedReject)) then
 		-- We assume that these callbacks will not throw errors.
-		for _, callback in ipairs(self._queuedReject) do
+		for _, callback in pairs(self._queuedReject) do
 			callback(...)
 		end
 	else
@@ -450,6 +465,9 @@ function Promise.prototype:_reject(...)
 			)
 			warn(message)
 		end)
+	end
+	for _, callback in pairs(self._queuedFinally) do
+		spawn(callback)
 	end
 end
 
