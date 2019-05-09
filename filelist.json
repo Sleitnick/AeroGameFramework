@@ -60,6 +60,10 @@
                   }, 
                   {
                     "type": "file", 
+                    "name": "Promise.lua"
+                  }, 
+                  {
+                    "type": "file", 
                     "name": "TableUtil.lua"
                   }
                 ]
