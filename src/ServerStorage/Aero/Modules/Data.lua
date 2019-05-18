@@ -491,6 +491,30 @@ function Data:Start()
 			end
 		end
 	end
+	
+	local function FireBoundToCloseCallbacks()
+		local numBinded = #self._onCloseHandlers
+		if (numBinded == 0) then return end
+		local Bindable = Instance.new("BindableEvent")
+		local numCompleted = 0
+		
+		for _,func in pairs(self.onCloseHandlers) do
+			spawn(function()
+				local success, err = pcall(func)
+				if (not success) then
+					warn("BindToClose function errored: " .. tostring(err))
+				end
+				
+				numCompleted = (numCompleted + 1)
+				if (numCompleted == numBinded) then
+					Bindable:Fire()
+				end
+			end)
+		end
+			
+		Bindable.Event:Wait()
+		Bindable:Destroy()
+	end
 
 	local function AutoSaveAllData()
 		if (autoSaving) then return end
@@ -523,6 +547,7 @@ function Data:Start()
 		-- Auto-save all data before server closes:
 		game:BindToClose(function()
 			gameClosing = true
+			FireBoundToCloseCallbacks()
 			AutoSaveAllData()
 		end)
 	end
