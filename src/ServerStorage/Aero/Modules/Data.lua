@@ -498,7 +498,7 @@ function Data:Start()
 		local Bindable = Instance.new("BindableEvent")
 		local numCompleted = 0
 		
-		for _,func in pairs(self.onCloseHandlers) do
+		for _,func in pairs(self._onCloseHandlers) do
 			spawn(function()
 				local success, err = pcall(func)
 				if (not success) then
