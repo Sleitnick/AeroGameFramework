@@ -495,25 +495,22 @@ function Data:Start()
 	local function FireBoundToCloseCallbacks()
 		local numBinded = #self._onCloseHandlers
 		if (numBinded == 0) then return end
-		local Bindable = Instance.new("BindableEvent")
+		local bindable = Instance.new("BindableEvent")
 		local numCompleted = 0
-		
 		for _,func in pairs(self._onCloseHandlers) do
 			spawn(function()
 				local success, err = pcall(func)
 				if (not success) then
-					warn("BindToClose function errored: " .. tostring(err))
+					warn("Data BindToClose function failed: " .. tostring(err))
 				end
-				
 				numCompleted = (numCompleted + 1)
 				if (numCompleted == numBinded) then
-					Bindable:Fire()
+					bindable:Fire()
 				end
 			end)
 		end
-			
-		Bindable.Event:Wait()
-		Bindable:Destroy()
+		bindable.Event:Wait()
+		bindable:Destroy()
 	end
 
 	local function AutoSaveAllData()
