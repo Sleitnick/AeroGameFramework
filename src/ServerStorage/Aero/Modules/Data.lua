@@ -137,7 +137,7 @@ Data._onCloseHandlers = {}
 
 Data.AutoSaveInterval = 60
 Data.PlayerLeftSaveInterval = 10
-Data.SaveInStudio = true
+Data.SaveInStudio = false
 
 local NAME_MAX_LEN = 50
 local SCOPE_MAX_LEN = 50
