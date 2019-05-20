@@ -33,6 +33,10 @@
 		Promise<Void>        data:SaveAll()
 		Promise<Void>        data:Destroy([Boolean saveAll])
 		Number               data:GetRequestBudget(DataStoreRequestType requestType)
+		
+	EVENTS:
+		data.Success		 data.Success:Connect(String method, String key)
+		data.Failed			 data.Failed:Connect(String method, String key, String err)
 
 	METHOD DESCRIPTIONS:
 		Get
@@ -133,7 +137,7 @@ Data._onCloseHandlers = {}
 
 Data.AutoSaveInterval = 60
 Data.PlayerLeftSaveInterval = 10
-Data.SaveInStudio = false
+Data.SaveInStudio = true
 
 local NAME_MAX_LEN = 50
 local SCOPE_MAX_LEN = 50
@@ -189,7 +193,9 @@ function Data.new(name, scope)
 		_cache = {};
 		_destroyed = false;
 	}, Data)
-
+	
+	self.Success = self.Shared.Event.new()
+	self.Failed = self.Shared.Event.new()
 	dataPool[ds] = self
 
 	return self
@@ -225,9 +231,11 @@ function Data:_load(key)
 			return self._ds:GetAsync(key)
 		end)
 		if (success) then
+			self.Success:Fire("GetAsync", key)
 			self._cache[key] = value
 			resolve(value)
 		else
+			self.Failed:Fire("GetAsync", key, value)
 			reject(value)
 		end
 	end, true)
@@ -248,8 +256,10 @@ function Data:_save(key, value)
 			return self._ds:SetAsync(key, value)
 		end)
 		if (success) then
+			self.Success:Fire("SetAsync", key)
 			resolve()
 		else
+			self.Failed:Fire("SetAsync", key, err)
 			reject(err)
 		end
 	end, true)
@@ -262,8 +272,10 @@ function Data:_delete(key)
 			return self._ds:RemoveAsync(key)
 		end)
 		if (success) then
+			self.Success:Fire("RemoveAsync", key)
 			resolve()
 		else
+			self.Failed:Fire("RemoveAsync", key, err)
 			reject(err)
 		end
 	end, true)
@@ -276,8 +288,10 @@ function Data:_update(key, transformFunc)
 			return self._ds:UpdateAsync(key, transformFunc)
 		end)
 		if (success) then
+			self.Success:Fire("UpdateAsync", key)
 			resolve(value)
 		else
+			self.Failed:Fire("UpdateAsync", key, value)
 			reject(value)
 		end
 	end, true)
@@ -383,8 +397,10 @@ function Data:OnUpdate(key, callback)
 			return self._ds:OnUpdate(key, callback)
 		end)
 		if (success) then
+			self.Success:Fire("OnUpdate", key)
 			resolve()
 		else
+			self.Failed:Fire("OnUpdate", key, err)
 			reject(err)
 		end
 	end)
@@ -437,6 +453,8 @@ function Data:Destroy(save)
 		return Promise.Reject("Data already destroyed")
 	end
 	self._destroyed = true
+	self.Failed:Destroy()
+	self.Success:Destroy()
 	local savePromise
 	if (save) then
 		savePromise = self:SaveAll(false, nil)
@@ -512,7 +530,7 @@ function Data:Start()
 		bindable.Event:Wait()
 		bindable:Destroy()
 	end
-
+	
 	local function AutoSaveAllData()
 		if (autoSaving) then return end
 		autoSaving = true
