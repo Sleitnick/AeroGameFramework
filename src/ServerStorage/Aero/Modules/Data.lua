@@ -130,7 +130,18 @@
 			-- Cleanup stuff
 		end)
 
-			
+
+		-- OrderedDataStore example:
+		data = Data.ForPlayer(somePlayer, true)
+
+		data:GetSorted(true, 10, 0, 1000):Then(function(pages)
+			return pages:GetCurrentPage()
+		end):Then(function(page)
+			for k,v in pairs(page) do
+				print(k, v)
+			end
+		end)
+
 
 
 	For in-depth info on DataStores:
