@@ -6,9 +6,9 @@
 --[[
 	
 	CONSTRUCTORS:
-		data = Data.new(name, scope)              [Creates or gets existing Data object for given name and scope]
-		data = Data.ForPlayer(userId | player)    [Creates or gets existing Data object for given player OR UserId]
-		data = Data.ForServer()                   [Creates or gets existing Data object for the server]
+		data = Data.new(name, scope [, ordered])              [Creates or gets existing Data object for given name and scope]
+		data = Data.ForPlayer(userId | player [, ordered])    [Creates or gets existing Data object for given player OR UserId]
+		data = Data.ForServer([ordered])                      [Creates or gets existing Data object for the server]
 
 	STATIC FIELDS:
 		Data.IsUsingMockService        [Whether or not the MockDataStoreService is being utilized]
@@ -24,19 +24,21 @@
 		data.DestroyOnLeave     [Defaults to 'true'; if linked to a player, 'Destroy()' will automatically be invoked when the player leaves; see static field PlayerLeftSaveInterval]
 
 	METHODS:
-		Promise<Value>       data:Get(String key [, Any defaultValue])
-		Promise<Void>        data:Set(String key, String value)
-		Promise<Void>        data:Delete(String key)
-		Promise<Value>       data:Increment(String key, Number incrementValue)
-		Promise<Connection>  data:OnUpdate(String key, Function callback)
-		Promise<Void>        data:Save(String key)
-		Promise<Void>        data:SaveAll()
-		Promise<Void>        data:Destroy([Boolean saveAll])
-		Number               data:GetRequestBudget(DataStoreRequestType requestType)
+		Promise<Value>          data:Get(String key [, Any defaultValue])
+		Promise<DataStorePage>  data:GetSorted(Boolean isAscendint, Int pageSize, Number minValue, Number maxValue)
+		Promise<Void>           data:Set(String key, String value)
+		Promise<Void>           data:Delete(String key)
+		Promise<Value>          data:Increment(String key, Number incrementValue)
+		Promise<Connection>     data:OnUpdate(String key, Function callback)
+		Promise<Void>           data:Save(String key)
+		Promise<Void>           data:SaveAll()
+		Promise<Void>           data:Destroy([Boolean saveAll])
+		Number                  data:GetRequestBudget(DataStoreRequestType requestType)
 		
 	EVENTS:
 		data.Success         data.Success:Connect(String method, String key)
 		data.Failed          data.Failed:Connect(String method, String key, String err)
+
 
 	METHOD DESCRIPTIONS:
 		Get
@@ -45,6 +47,15 @@
 			call the DataStore if it has not yet done so and gotten a non-nil value. If
 			a call has already been made for the given key, the value will be cached
 			and the cached value will be returned.
+
+		GetSorted
+			Calls the GetSortedAsync method on the OrderedDataStore connected to this
+			data object. It will return a custom DataStorePage object described below:
+
+			DataStorePage:
+				Boolean         dataStorePage.IsFinished
+				Promise<Void>   dataStorePage:AdvanceToNextPage()
+				Promise<Table>  dataStorePage:GetCurrentPage()
 
 		Set
 			Sets the value to the given key in the local cache. This does NOT set the
@@ -168,18 +179,50 @@ end
 
 
 ---------------------------------------------------------------------------------------------------------------------------
+-- DataStorePages wrapper for promises:
+
+local DataStorePages = {}
+DataStorePages.__index = DataStorePages
+function DataStorePages.new(dsp)
+	return setmetatable({
+		DSP = dsp;
+		IsFinished = dsp.IsFinished;
+	}, DataStorePages)
+end
+
+function DataStorePages:AdvanceToNextPage()
+	return Promise.new(function(resolve, reject)
+		local success, err = pcall(self.DSP.AdvanceToNextPageAsync, self.DSP)
+		self.IsFinished = self.DSP.IsFinished
+		if (success) then resolve() else reject(err) end
+	end, true)
+end
+
+function DataStorePages:GetCurrentPage()
+	return Promise.new(function(resolve, reject)
+		local success, page = pcall(self.DSP.GetCurrentPage, self.DSP)
+		if (success) then resolve(page) else reject(page) end
+	end, true)
+end
+---------------------------------------------------------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------------------------------------------------------
 -- CONSTRUCTORS:
 
 
-function Data.new(name, scope)
+function Data.new(name, scope, ordered)
 
 	assert(type(name) == "string", "Argument #1 (name) must be a string")
 	assert(type(scope) == "string", "Argument #2 (scope) must be a string")
 	assert(#name <= NAME_MAX_LEN, "Argument #1 (name) must be less or equal to " .. NAME_MAX_LEN .. " characters")
 	assert(#scope <= SCOPE_MAX_LEN, "Argument #1 (scope) must be less or equal to " .. SCOPE_MAX_LEN .. " characters")
+	assert(type(ordered) == "boolean" or ordered == nil, "Argument #3 (ordered) must be a boolean or nil")
+
+	ordered = (not not ordered)
 
 	-- Get cached 'data' object if available:
-	local ds = dataStoreService:GetDataStore(name, scope)
+	local ds = (ordered and dataStoreService:GetOrderedDataStore(name, scope) or dataStoreService:GetDataStore(name, scope))
 	local self = dataPool[ds]
 	if (self and not self._destroyed) then return self end
 
@@ -192,11 +235,13 @@ function Data.new(name, scope)
 		_ds = ds;
 		_cache = {};
 		_dirty = {};
+		_ordered = ordered;
 		_destroyed = false;
 	}, Data)
 	
 	self.Success = self.Shared.Event.new()
 	self.Failed = self.Shared.Event.new()
+
 	dataPool[ds] = self
 
 	return self
@@ -204,7 +249,7 @@ function Data.new(name, scope)
 end
 
 
-function Data.ForPlayer(userId)
+function Data.ForPlayer(userId, ordered)
 	if (typeof(userId) == "Instance") then
 		assert(userId:IsA("Player"), "Expected Player; got " .. userId.ClassName)
 		userId = userId.UserId
@@ -212,13 +257,13 @@ function Data.ForPlayer(userId)
 		assert(type(userId) == "number" and userId >= 0 and math.floor(userId) == userId, "Expected integer >= 0")
 	end
 	local scope = tostring(userId)
-	local data = Data.new(PLAYER_DATA_NAME, scope)
+	local data = Data.new(PLAYER_DATA_NAME, scope, ordered)
 	return data
 end
 
 
-function Data.ForServer()
-	return Data.new("global", "global")
+function Data.ForServer(ordered)
+	return Data.new("global", "global", ordered)
 end
 
 
@@ -229,9 +274,7 @@ end
 -- Load a given key from the DataStore:
 function Data:_load(key)
 	return Promise.new(function(resolve, reject)
-		local success, value = pcall(function()
-			return self._ds:GetAsync(key)
-		end)
+		local success, value = pcall(self._ds.GetAsync, self._ds, key)
 		if (success) then
 			self._cache[key] = value
 			self._dirty[key] = false
@@ -261,9 +304,7 @@ function Data:_save(key, value)
 	end
 	return Promise.new(function(resolve, reject)
 		local valBeforeSave = self:_getCache(key)
-		local success, err = pcall(function()
-			return self._ds:SetAsync(key, value)
-		end)
+		local success, err = pcall(self._ds.SetAsync, self._ds, key, value)
 		if (success) then
 			if (self:_getCache(key) == valBeforeSave) then
 				self._dirty[key] = false
@@ -280,9 +321,7 @@ end
 
 function Data:_delete(key)
 	return Promise.new(function(resolve, reject)
-		local success, err = pcall(function()
-			return self._ds:RemoveAsync(key)
-		end)
+		local success, err = pcall(self._ds.RemoveAsync, self._ds, key)
 		if (success) then
 			self:_clearCache(key)
 			self.Success:Fire("RemoveAsync", key)
@@ -297,9 +336,7 @@ end
 
 function Data:_update(key, transformFunc)
 	return Promise.new(function(resolve, reject)
-		local success, value = pcall(function()
-			return self._ds:UpdateAsync(key, transformFunc)
-		end)
+		local success, value = pcall(self._ds.UpdateAsync, self._ds, key, transformFunc)
 		if (success) then
 			self:_setCache(key, value, true)
 			self.Success:Fire("UpdateAsync", key)
@@ -345,6 +382,18 @@ function Data:_countKeysInCache()
 end
 
 
+function Data:_getSorted(isAscending, pageSize, minValue, maxValue)
+	return Promise.new(function(resolve, reject)
+		local success, dsp = pcall(self._ds.GetSortedAsync, self._ods, isAscending, pageSize, minValue, maxValue)
+		if (success) then
+			resolve(DataStorePages.new(dsp))
+		else
+			reject(dsp)
+		end
+	end, true)
+end
+
+
 ---------------------------------------------------------------------------------------------------------------------------
 -- PUBLIC METHODS:
 
@@ -374,6 +423,17 @@ function Data:Get(key, defaultVal)
 			return value
 		end
 	end)
+end
+
+
+function Data:GetSorted(isAscending, pageSize, minValue, maxValue)
+	if (self._destroyed) then
+		return Promise.Reject("Data already destroyed")
+	end
+	if (not self._ordered) then
+		return Promise.Reject("GetSorted can only be invoked on an ordered data object")
+	end
+	return self:_getSorted(isAscending, pageSize, minValue, maxValue)
 end
 
 
@@ -430,9 +490,7 @@ function Data:OnUpdate(key, callback)
 		return Promise.Reject("Callback must be a function")
 	end
 	return Promise.new(function(resolve, reject)
-		local success, err = pcall(function()
-			return self._ds:OnUpdate(key, callback)
-		end)
+		local success, err = pcall(self._ds.OnUpdate, self._ds, key, callback)
 		if (success) then
 			self.Success:Fire("OnUpdate", key)
 			resolve()
