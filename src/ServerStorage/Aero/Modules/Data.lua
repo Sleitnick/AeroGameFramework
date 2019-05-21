@@ -35,8 +35,8 @@
 		Number               data:GetRequestBudget(DataStoreRequestType requestType)
 		
 	EVENTS:
-		data.Success		 data.Success:Connect(String method, String key)
-		data.Failed			 data.Failed:Connect(String method, String key, String err)
+		data.Success         data.Success:Connect(String method, String key)
+		data.Failed          data.Failed:Connect(String method, String key, String err)
 
 	METHOD DESCRIPTIONS:
 		Get
@@ -191,6 +191,7 @@ function Data.new(name, scope)
 		DestroyOnLeave = true;
 		_ds = ds;
 		_cache = {};
+		_dirty = {};
 		_destroyed = false;
 	}, Data)
 	
@@ -225,14 +226,16 @@ end
 -- PRIVATE METHODS:
 
 
+-- Load a given key from the DataStore:
 function Data:_load(key)
 	return Promise.new(function(resolve, reject)
 		local success, value = pcall(function()
 			return self._ds:GetAsync(key)
 		end)
 		if (success) then
-			self.Success:Fire("GetAsync", key)
 			self._cache[key] = value
+			self._dirty[key] = false
+			self.Success:Fire("GetAsync", key)
 			resolve(value)
 		else
 			self.Failed:Fire("GetAsync", key, value)
@@ -242,20 +245,29 @@ function Data:_load(key)
 end
 
 
+-- Get the cached value from the key, or load it from the DataStore if not yet cached:
 function Data:_loadIfNotCached(key)
-	if (self._cache[key] ~= nil) then
-		return Promise.Resolve(self._cache[key])
+	if (self:_cacheExists(key)) then
+		return Promise.Resolve(self:_getCache(key))
 	end
 	return self:_load(key)
 end
 
 
+-- Save the key/value to the DataStore:
 function Data:_save(key, value)
+	if (self._dirty[key] == false) then
+		return Promise.Resolve()
+	end
 	return Promise.new(function(resolve, reject)
+		local valBeforeSave = self:_getCache(key)
 		local success, err = pcall(function()
 			return self._ds:SetAsync(key, value)
 		end)
 		if (success) then
+			if (self:_getCache(key) == valBeforeSave) then
+				self._dirty[key] = false
+			end
 			self.Success:Fire("SetAsync", key)
 			resolve()
 		else
@@ -272,6 +284,7 @@ function Data:_delete(key)
 			return self._ds:RemoveAsync(key)
 		end)
 		if (success) then
+			self:_clearCache(key)
 			self.Success:Fire("RemoveAsync", key)
 			resolve()
 		else
@@ -288,6 +301,7 @@ function Data:_update(key, transformFunc)
 			return self._ds:UpdateAsync(key, transformFunc)
 		end)
 		if (success) then
+			self:_setCache(key, value, true)
 			self.Success:Fire("UpdateAsync", key)
 			resolve(value)
 		else
@@ -295,6 +309,30 @@ function Data:_update(key, transformFunc)
 			reject(value)
 		end
 	end, true)
+end
+
+
+function Data:_getCache(key)
+	return self._cache[key]
+end
+
+
+function Data:_setCache(key, value, isClean)
+	if (self._cache[key] ~= value) then
+		self._cache[key] = value
+		self._dirty[key] = (not isClean)
+	end
+end
+
+
+function Data:_clearCache(key)
+	self._cache[key] = nil
+	self._dirty[key] = nil
+end
+
+
+function Data:_cacheExists(key)
+	return (self._cache[key] ~= nil)
 end
 
 
@@ -323,8 +361,8 @@ function Data:Get(key, defaultVal)
 	if (not CheckKey(key)) then
 		return Promise.Reject(KEY_MAX_LEN_ERR)
 	end
-	if (self._cache[key] ~= nil) then
-		return Promise.Resolve(self._cache[key])
+	if (self:_cacheExists(key)) then
+		return Promise.Resolve(self:_getCache(key))
 	end
 	return self:_load(key):Then(function(value)
 		if (value == nil and defaultVal ~= nil) then
@@ -348,10 +386,9 @@ function Data:Set(key, value)
 	end
 	return self:_loadIfNotCached(key):Then(function()
 		if (value == nil) then
-			self._cache[key] = nil
 			return self:_delete(key)
 		else
-			self._cache[key] = value
+			self:_setCache(key, value)
 		end
 	end)
 end
@@ -414,7 +451,7 @@ function Data:Save(key)
 	if (not CheckKey(key)) then
 		return Promise.Reject(KEY_MAX_LEN_ERR)
 	end
-	local cachedVal = self._cache[key]
+	local cachedVal = self:_getCache(key)
 	if (cachedVal == nil) then
 		return Promise.Reject("Cannot save key that has not already been loaded via Data:Get(key)")
 	end
@@ -453,8 +490,6 @@ function Data:Destroy(save)
 		return Promise.Reject("Data already destroyed")
 	end
 	self._destroyed = true
-	self.Failed:Destroy()
-	self.Success:Destroy()
 	local savePromise
 	if (save) then
 		savePromise = self:SaveAll(false, nil)
@@ -463,7 +498,13 @@ function Data:Destroy(save)
 	end
 	return savePromise:Then(function()
 		self._cache = {}
+		self._dirty = {}
+		self.Failed:Destroy()
+		self.Success:Destroy()
 		dataPool[self._ds] = nil
+	end):Catch(function(err)
+		self._destroyed = false
+		error(err)
 	end)
 end
 
