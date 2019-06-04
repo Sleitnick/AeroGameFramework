@@ -32,6 +32,17 @@
 		
 		-- Custom shake:
 		camShake:ShakeOnce(3, 1, 0.2, 1.5)
+
+		wait(1)
+
+		-- Sustained shake:
+		local swayShakeInstance = CameraShaker.Presets.GentleSway
+		camShake:ShakeSustain(swayShakeInstance)
+		
+		wait(3)
+
+		-- Sustained shake fadeout:
+		swayShakeInstance:StartFadeOut(3)
 	
 	
 	
