@@ -29,4 +29,70 @@
 	
 --]]
 
-local g=Vector3.new local b=math.max local c=math.pi local e=c*2 local f=tick local d=g().Dot local function a(a,b)local a=((b-a)%e)return(a>c and(a-e)or a)end local function c(b,c)return g(a(b.X,c.X),a(b.Y,c.Y),a(b.Z,c.Z))end local function a(b,a)return(b.magnitude>a and(b.unit*a)or b)end local e={}e.__index=e function e.new()local a=setmetatable({MaxSpeed=math.huge;_update=f();_velocity=g()},e)return a end function e:Update(h,i,k)local m=self._velocity local c=f()local f=(c-self._update)k=b(0.0001,k)local g=(2/k)local b=(g*f)local e=(1/(1+b+0.48*b*b+0.235*b*b*b))local l=(h-i)local j=i local b=(self.MaxSpeed*k)l=a(l,b)i=(h-l)local a=((m+g*l)*f)m=((m-g*a)*e)local a=(i+(l+a)*e)if(d(j-h,a-j)>0)then a=j m=((a-j)/f)end self._velocity=m self._update=c return a end function e:UpdateAngle(d,b,a)return self:Update(d,(d+c(d,b)),a)end return e
+
+----------------------------------------------------------------------------------------------------------------
+
+local V3 = Vector3.new
+local MAX = math.max
+local PI = math.pi
+local TAU = PI * 2
+local tick = tick
+local Dot = V3().Dot
+
+local function DeltaAngle(current, target)
+	local n = ((target - current) % TAU)
+	return (n > PI and (n - TAU) or n)
+end
+
+local function DeltaAngleV3(p1, p2)
+	return V3(DeltaAngle(p1.X, p2.X), DeltaAngle(p1.Y, p2.Y), DeltaAngle(p1.Z, p2.Z))
+end
+
+local function ClampMagnitude(v, mag)
+	return (v.magnitude > mag and (v.unit * mag) or v)
+end
+
+----------------------------------------------------------------------------------------------------------------
+
+local SmoothDamp = {}
+SmoothDamp.__index = SmoothDamp
+
+function SmoothDamp.new()
+	local smoothDamp = setmetatable({
+		MaxSpeed = math.huge;
+		_update = tick();
+		_velocity = V3();
+	}, SmoothDamp)
+	return smoothDamp
+end
+
+function SmoothDamp:Update(current, target, smoothTime)
+	local currentVelocity = self._velocity
+	local now = tick()
+	local deltaTime = (now - self._update)
+	smoothTime = MAX(0.0001, smoothTime)
+	local num = (2 / smoothTime)
+	local num2 = (num * deltaTime)
+	local d = (1 / (1 + num2 + 0.48 * num2 * num2 + 0.235 * num2 * num2 * num2))
+	local vector = (current - target)
+	local vector2 = target
+	local maxLength = (self.MaxSpeed * smoothTime)
+	vector = ClampMagnitude(vector, maxLength)
+	target = (current - vector)
+	local vector3 = ((currentVelocity + num * vector) * deltaTime)
+	currentVelocity = ((currentVelocity - num * vector3) * d)
+	local vector4 = (target + (vector + vector3) * d)
+	if (Dot(vector2 - current, vector4 - vector2) > 0) then
+		vector4 = vector2
+		currentVelocity = ((vector4 - vector2) / deltaTime)
+	end
+	self._velocity = currentVelocity
+	self._update = now
+	return vector4
+end
+
+function SmoothDamp:UpdateAngle(current, target, smoothTime)
+	return self:Update(current, (current + DeltaAngleV3(current, target)), smoothTime)
+end
+
+return SmoothDamp
