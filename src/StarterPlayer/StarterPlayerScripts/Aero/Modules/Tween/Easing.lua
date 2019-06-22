@@ -4,6 +4,104 @@
 
 -- Source: https://github.com/RoStrap/Interpolation/blob/master/EasingFunctions.lua
 
+local BezierCreator do
+	local NEWTON_ITERATIONS = 4
+	local NEWTON_MIN_SLOPE = 0.001
+	local SUBDIVISION_PRECISION = 0.0000001
+	local SUBDIVISION_MAX_ITERATIONS = 10
+	local K_SPLINE_TABLE_SIZE = 11
+	
+	local K_SAMPLE_STEP_SIZE = 1 / (K_SPLINE_TABLE_SIZE - 1)
+	
+	local function Linear(t, b, c, d)
+		return (c or 1)*t / (d or 1) + (b or 0)
+	end
+	
+	function BezierCreator(x1, y1, x2, y2)
+		if not (x1 and y1 and x2 and y2) then error("Need 4 numbers to construct a Bezier curve") end
+		if not (0 <= x1 and x1 <= 1 and 0 <= x2 and x2 <= 1) then error("The x values must be within range [0, 1]") end
+	
+		if x1 == y1 and x2 == y2 then
+			return Linear
+		end
+	
+		-- Precompute redundant values
+		local e, f = 3*x1, 3*x2
+		local g, h, i = 1 - f + e, f - 2*e, 3*(1 - f + e)
+		local j, k = 2*h, 3*y1
+		local l, m = 1 - 3*y2 + k, 3*y2 - 2*k
+	
+		-- Precompute samples table
+		local SampleValues = { }
+		for a = 0, K_SPLINE_TABLE_SIZE - 1 do
+			local z = a*K_SAMPLE_STEP_SIZE
+			SampleValues[a] = ((g*z + h)*z + e)*z -- CalcBezier
+		end
+	
+		return function(t, b, c, d)
+			t = (c or 1)*t / (d or 1) + (b or 0)
+	
+			if t == 0 or t == 1 then -- Make sure the endpoints are correct
+				return t
+			end
+	
+			local CurrentSample = K_SPLINE_TABLE_SIZE - 2
+	
+			for a = 1, CurrentSample do
+				if SampleValues[a] > t then
+					CurrentSample = a - 1
+					break
+				end
+			end
+	
+			-- Interpolate to provide an initial guess for t
+			local IntervalStart = CurrentSample*K_SAMPLE_STEP_SIZE
+			local GuessForT = IntervalStart + K_SAMPLE_STEP_SIZE*(t - SampleValues[CurrentSample]) / (SampleValues[CurrentSample + 1] - SampleValues[CurrentSample])
+			local InitialSlope = (i*GuessForT + j)*GuessForT + e
+	
+			if InitialSlope >= NEWTON_MIN_SLOPE then
+				for NewtonRaphsonIterate = 1, NEWTON_ITERATIONS do
+					local CurrentSlope = (i*GuessForT + j)*GuessForT + e
+					if CurrentSlope == 0 then break end
+					GuessForT = GuessForT - (((g*GuessForT + h)*GuessForT + e)*GuessForT - t) / CurrentSlope
+				end
+			elseif InitialSlope ~= 0 then
+				local IntervalStep = IntervalStart + K_SAMPLE_STEP_SIZE
+	
+				for BinarySubdivide = 1, SUBDIVISION_MAX_ITERATIONS do
+					GuessForT = IntervalStart + (IntervalStep - IntervalStart) / 2
+					local BezierCalculation = ((g*GuessForT + h)*GuessForT + e)*GuessForT - t
+	
+					if BezierCalculation > 0 then
+						IntervalStep = GuessForT
+					else
+						IntervalStart = GuessForT
+						BezierCalculation = -BezierCalculation
+					end
+	
+					if BezierCalculation <= SUBDIVISION_PRECISION then break end
+				end
+			end
+	
+			return ((l*GuessForT + m)*GuessForT + k)*GuessForT
+		end
+	end
+end
+
+-- @specs https://material.io/guidelines/motion/duration-easing.html#duration-easing-natural-easing-curves
+local Sharp = BezierCreator(0.4, 0, 0.6, 1)
+local Standard = BezierCreator(0.4, 0, 0.2, 1)
+local Acceleration = BezierCreator(0.4, 0, 1, 1)
+local Deceleration = BezierCreator(0, 0, 0.2, 1)
+
+-- @specs https://developer.microsoft.com/en-us/fabric#/styles/web/motion#basic-animations
+local FabricStandard = BezierCreator(0.8, 0, 0.2, 1) -- used for moving.
+local FabricAccelerate = BezierCreator(0.9, 0.1, 1, 0.2) -- used for exiting.
+local FabricDecelerate = BezierCreator(0.1, 0.9, 0.2, 1) -- used for entering.
+
+-- @specs https://docs.microsoft.com/en-us/windows/uwp/design/motion/timing-and-easing
+local UWPAccelerate = BezierCreator(0.7, 0, 1, 0.5)
+
 --[[
 	Disclaimer for Robert Penner's Easing Equations license:
 
@@ -35,7 +133,11 @@
 -- a = amplitude
 -- p = period
 
-local sin, cos, asin = math.sin, math.cos, math.asin
+local math_sin = math.sin
+local math_cos = math.cos
+local math_asin = math.asin
+local math_exp = math.exp
+local math_sqrt = math.sqrt
 
 local function Linear(t, b, c, d)
 	return c * t / d + b
@@ -54,23 +156,23 @@ end
 -- Arceusinator's Easing Functions
 local function RevBack(t, b, c, d)
 	t = 1 - t / d
-	return c * (1 - (sin(t * 1.5707963267948965579989817342720925807952880859375) + (sin(t * 3.14159265358979311599796346854418516159057617187) * (cos(t * 3.14159265358979311599796346854418516159057617187) + 1) * 0.5))) + b
+	return c * (1 - (math_sin(t * 1.5707963267948965579989817342720925807952880859375) + (math_sin(t * 3.141592653589793115997963468544185161590576171875) * (math_cos(t * 3.141592653589793115997963468544185161590576171875) + 1) / 2))) + b
 end
 
 local function RidiculousWiggle(t, b, c, d)
 	t = t / d
-	return c * sin(sin(t * 3.14159265358979311599796346854418516159057617187) * 1.5707963267948965579989817342720925807952880859375) + b
+	return c * math_sin(math_sin(t * 3.141592653589793115997963468544185161590576171875) * 1.5707963267948965579989817342720925807952880859375) + b
 end
 
 -- YellowTide's Easing Functions
 local function Spring(t, b, c, d)
 	t = t / d
-	return (1 + (-2.72 ^ (-6.9 * t) * cos(-20.1061929829746759423869661986827850341796875 * t))) * c + b
+	return (1 + (-math_exp(-6.9 * t) * math_cos(-20.1061929829746759423869661986827850341796875 * t))) * c + b
 end
 
 local function SoftSpring(t, b, c, d)
 	t = t / d
-	return (1 + (-2.72 ^ (-7.5 * t) * cos(-10.05309649148733797119348309934139251708984375 * t))) * c + b
+	return (1 + (-math_exp(-7.5 * t) * math_cos(-10.05309649148733797119348309934139251708984375 * t))) * c + b
 end
 -- End of YellowTide's functions
 
@@ -86,15 +188,15 @@ end
 
 local function InOutQuad(t, b, c, d)
 	t = t / d * 2
-	return t < 1 and c * 0.5 * t * t + b or -c * 0.5 * ((t - 1) * (t - 3) - 1) + b
+	return t < 1 and c / 2 * t * t + b or -c / 2 * ((t - 1) * (t - 3) - 1) + b
 end
 
 local function OutInQuad(t, b, c, d)
-	if t < d * 0.5 then
+	if t < d / 2 then
 		t = 2 * t / d
-		return -0.5 * c * t * (t - 2) + b
+		return -c / 2 * t * (t - 2) + b
 	else
-		t, c = ((t * 2) - d) / d, 0.5 * c
+		t, c = ((t * 2) - d) / d, c / 2
 		return c * t * t + b + c
 	end
 end
@@ -112,19 +214,19 @@ end
 local function InOutCubic(t, b, c, d)
 	t = t / d * 2
 	if t < 1 then
-		return c * 0.5 * t * t * t + b
+		return c / 2 * t * t * t + b
 	else
 		t = t - 2
-		return c * 0.5 * (t * t * t + 2) + b
+		return c / 2 * (t * t * t + 2) + b
 	end
 end
 
 local function OutInCubic(t, b, c, d)
-	if t < d * 0.5 then
+	if t < d / 2 then
 		t = t * 2 / d - 1
-		return c * 0.5 * (t * t * t + 1) + b
+		return c / 2 * (t * t * t + 1) + b
 	else
-		t, c = ((t * 2) - d) / d, c * 0.5
+		t, c = ((t * 2) - d) / d, c / 2
 		return c * t * t * t + b + c
 	end
 end
@@ -142,19 +244,19 @@ end
 local function InOutQuart(t, b, c, d)
 	t = t / d * 2
 	if t < 1 then
-		return c * 0.5 * t * t * t * t + b
+		return c / 2 * t * t * t * t + b
 	else
 		t = t - 2
-		return -c * 0.5 * (t * t * t * t - 2) + b
+		return -c / 2 * (t * t * t * t - 2) + b
 	end
 end
 
 local function OutInQuart(t, b, c, d)
-	if t < d * 0.5 then
-		t, c = t * 2 / d - 1, c * 0.5
+	if t < d / 2 then
+		t, c = t * 2 / d - 1, c / 2
 		return -c * (t * t * t * t - 1) + b
 	else
-		t, c = ((t * 2) - d) / d, c * 0.5
+		t, c = ((t * 2) - d) / d, c / 2
 		return c * t * t * t * t + b + c
 	end
 end
@@ -172,111 +274,158 @@ end
 local function InOutQuint(t, b, c, d)
 	t = t / d * 2
 	if t < 1 then
-		return c * 0.5 * t * t * t * t * t + b
+		return c / 2 * t * t * t * t * t + b
 	else
 		t = t - 2
-		return c * 0.5 * (t * t * t * t * t + 2) + b
+		return c / 2 * (t * t * t * t * t + 2) + b
 	end
 end
 
 local function OutInQuint(t, b, c, d)
-	if t < d * 0.5 then
+	if t < d / 2 then
 		t = t * 2 / d - 1
-		return c * 0.5 * (t * t * t * t * t + 1) + b
+		return c / 2 * (t * t * t * t * t + 1) + b
 	else
-		t, c = ((t * 2) - d) / d, c * 0.5
+		t, c = ((t * 2) - d) / d, c / 2
 		return c * t * t * t * t * t + b + c
 	end
 end
 
 local function InSine(t, b, c, d)
-	return -c * cos(t / d * 1.5707963267948965579989817342720925807952880859375) + c + b
+	return -c * math_cos(t / d * 1.5707963267948965579989817342720925807952880859375) + c + b
 end
 
 local function OutSine(t, b, c, d)
-	return c * sin(t / d * 1.5707963267948965579989817342720925807952880859375) + b
+	return c * math_sin(t / d * 1.5707963267948965579989817342720925807952880859375) + b
 end
 
 local function InOutSine(t, b, c, d)
-	return -c * 0.5 * (cos(3.14159265358979311599796346854418516159057617187 * t / d) - 1) + b
+	return -c / 2 * (math_cos(3.141592653589793115997963468544185161590576171875 * t / d) - 1) + b
 end
 
 local function OutInSine(t, b, c, d)
-	c = c * 0.5
-	return t < d * 0.5 and c * sin(t * 2 / d * 1.5707963267948965579989817342720925807952880859375) + b or -c * cos(((t * 2) - d) / d * 1.5707963267948965579989817342720925807952880859375) + 2 * c + b
+	c = c / 2
+	return t < d / 2 and c * math_sin(t * 2 / d * 1.5707963267948965579989817342720925807952880859375) + b or -c * math_cos(((t * 2) - d) / d * 1.5707963267948965579989817342720925807952880859375) + 2 * c + b
 end
 
 local function InExpo(t, b, c, d)
-	return t == 0 and b or c * 2 ^ (10 * (t / d - 1)) + b - c * 0.001
+	if t == 0 then
+		return b
+	else
+		return c * 1024 ^ (t / d - 1) + b - c / 1000
+	end
 end
 
 local function OutExpo(t, b, c, d)
-	return t == d and b + c or c * 1.001 * (1 - 2 ^ (-10 * t / d)) + b
+	if t == d then
+		return b + c
+	else
+		return c * 1.001 * (1 - math_exp(-6.9314718055994531 * (t / d))) + b
+	end
 end
 
 local function InOutExpo(t, b, c, d)
 	t = t / d * 2
-	return t == 0 and b or t == 2 and b + c or t < 1 and c * 0.5 * 2 ^ (10 * (t - 1)) + b - c * 0.0005 or c * 0.5 * 1.0005 * (2 - 2 ^ (-10 * (t - 1))) + b
+
+	if t == 0 then
+		return b
+	elseif t == 2 then
+		return b + c
+	elseif t < 1 then
+		return c / 2 * 1024 ^ (t - 1) + b - c / 2000
+	else
+		return c * 0.50025 * (2 - math_exp(-6.9314718055994531 * (t - 1))) + b
+	end
 end
 
 local function OutInExpo(t, b, c, d)
-	c = c * 0.5
-	return t < d * 0.5 and (t * 2 == d and b + c or c * 1.001 * (1 - 2 ^ (-20 * t / d)) + b) or t * 2 - d == 0 and b + c or c * 2 ^ (10 * ((t * 2 - d) / d - 1)) + b + c - c * 0.001
+	c = c / 2
+	if t < d / 2 then
+		if t * 2 == d then
+			return b + c
+		else
+			return c * 1.001 * (1 - math_exp(13.8629436111989062 * t / d)) + b
+		end
+	else
+		if t * 2 - d == 0 then
+			return b + c
+		else
+			return c * 1024 ^ ((t * 2 - d) / d - 1) + b + c - c / 1000
+		end
+	end
 end
 
 local function InCirc(t, b, c, d)
 	t = t / d
-	return -c * ((1 - t * t) ^ 0.5 - 1) + b
+	return -c * (math_sqrt(1 - t * t) - 1) + b
 end
 
 local function OutCirc(t, b, c, d)
 	t = t / d - 1
-	return c * (1 - t * t) ^ 0.5 + b
+	return c * math_sqrt(1 - t * t) + b
 end
 
 local function InOutCirc(t, b, c, d)
 	t = t / d * 2
 	if t < 1 then
-		return -c * 0.5 * ((1 - t * t) ^ 0.5 - 1) + b
+		return -c / 2 * (math_sqrt(1 - t * t) - 1) + b
 	else
 		t = t - 2
-		return c * 0.5 * ((1 - t * t) ^ 0.5 + 1) + b
+		return c / 2 * (math_sqrt(1 - t * t) + 1) + b
 	end
 end
 
 local function OutInCirc(t, b, c, d)
-	c = c * 0.5
-	if t < d * 0.5 then
+	c = c / 2
+	if t < d / 2 then
 		t = t * 2 / d - 1
-		return c * (1 - t * t) ^ 0.5 + b
+		return c * math_sqrt(1 - t * t) + b
 	else
 		t = (t * 2 - d) / d
-		return -c * ((1 - t * t) ^ 0.5 - 1) + b + c
+		return -c * (math_sqrt(1 - t * t) - 1) + b + c
 	end
 end
 
 local function InElastic(t, b, c, d, a, p)
 	t = t / d - 1
-	p = p or d * 0.3
-	return t == -1 and b or t == 0 and b + c or (not a or a < (c >= 0 and c or 0 - c)) and -(c * 2 ^ (10 * t) * sin((t * d - p * 0.25) * 6.28318530717958623199592693708837032318115234375 / p)) + b or -(a * 2 ^ (10 * t) * sin((t * d - p / 6.28318530717958623199592693708837032318115234375 * asin(c / a)) * 6.28318530717958623199592693708837032318115234375 / p)) + b
+	if t == -1 then
+		return b
+	else
+		if t == 0 then
+			return b + c
+		else
+			p = p or d * 0.3
+			if a == nil or a < (c >= 0 and c or 0 - c) then
+				return -(c * 1024 ^ t * math_sin((t * d - p / 4) * 6.28318530717958623199592693708837032318115234375 / p)) + b
+			else
+				return -(a * 1024 ^ t * math_sin((t * d - p / 6.28318530717958623199592693708837032318115234375 * math_asin(c / a)) * 6.28318530717958623199592693708837032318115234375 / p)) + b
+			end
+		end
+	end
 end
 
 local function OutElastic(t, b, c, d, a, p)
 	t = t / d
-	p = p or d * 0.3
-	return t == 0 and b or t == 1 and b + c or (not a or a < (c >= 0 and c or 0 - c)) and c * 2 ^ (-10 * t) * sin((t * d - p * 0.25) * 6.28318530717958623199592693708837032318115234375 / p) + c + b or a * 2 ^ (-10 * t) * sin((t * d - p / 6.28318530717958623199592693708837032318115234375 * asin(c / a)) * 6.28318530717958623199592693708837032318115234375 / p) + c + b
+	if t == 0 then
+		return b
+	else
+		if t == 1 then
+			return b + c
+		else
+			p = p or d * 0.3
+			if a == nil or a < (c >= 0 and c or 0 - c) then
+				return c * math_exp(-6.9314718055994531 * t) * math_sin((t * d - p / 4) * 6.28318530717958623199592693708837032318115234375 / p) + c + b
+			else
+				return a * math_exp(-6.9314718055994531 * t) * math_sin((t * d - p / 6.28318530717958623199592693708837032318115234375 * math_asin(c / a)) * 6.28318530717958623199592693708837032318115234375 / p) + c + b
+			end
+		end
+	end
 end
 
 local function InOutElastic(t, b, c, d, a, p)
-	if t == 0 then
-		return b
-	end
-
+	if t == 0 then return b end
 	t = t / d * 2 - 1
-
-	if t == 1 then
-		return b + c
-	end
+	if t == 1 then return b + c end
 
 	p = p or d * 0.45
 	a = a or 0
@@ -285,23 +434,23 @@ local function InOutElastic(t, b, c, d, a, p)
 
 	if not a or a < (c >= 0 and c or 0 - c) then
 		a = c
-		s = p * 0.25
+		s = p / 4
 	else
-		s = p / 6.28318530717958623199592693708837032318115234375 * asin(c / a)
+		s = p / 6.28318530717958623199592693708837032318115234375 * math_asin(c / a)
 	end
 
 	if t < 1 then
-		return -0.5 * a * 2 ^ (10 * t) * sin((t * d - s) * 6.28318530717958623199592693708837032318115234375 / p) + b
+		return -a / 2 * 1024 ^ t * math_sin((t * d - s) * 6.28318530717958623199592693708837032318115234375 / p) + b
 	else
-		return a * 2 ^ (-10 * t) * sin((t * d - s) * 6.28318530717958623199592693708837032318115234375 / p ) * 0.5 + c + b
+		return a * math_exp(-6.9314718055994531 * t) * math_sin((t * d - s) * 6.28318530717958623199592693708837032318115234375 / p) / 2 + c + b
 	end
 end
 
 local function OutInElastic(t, b, c, d, a, p)
-	if t < d * 0.5 then
-		return OutElastic(t * 2, b, c * 0.5, d, a, p)
+	if t < d / 2 then
+		return OutElastic(t * 2, b, c / 2, d, a, p)
 	else
-		return InElastic(t * 2 - d, b + c * 0.5, c * 0.5, d, a, p)
+		return InElastic(t * 2 - d, b + c / 2, c / 2, d, a, p)
 	end
 end
 
@@ -321,17 +470,17 @@ local function InOutBack(t, b, c, d, s)
 	s = (s or 1.70158) * 1.525
 	t = t / d * 2
 	if t < 1 then
-		return c * 0.5 * (t * t * ((s + 1) * t - s)) + b
+		return c / 2 * (t * t * ((s + 1) * t - s)) + b
 	else
 		t = t - 2
-		return c * 0.5 * (t * t * ((s + 1) * t + s) + 2) + b
+		return c / 2 * (t * t * ((s + 1) * t + s) + 2) + b
 	end
 end
 
 local function OutInBack(t, b, c, d, s)
-	c = c * 0.5
+	c = c / 2
 	s = s or 1.70158
-	if t < d * 0.5 then
+	if t < d / 2 then
 		t = (t * 2) / d - 1
 		return c * (t * t * ((s + 1) * t + s) + 1) + b
 	else
@@ -361,18 +510,18 @@ local function InBounce(t, b, c, d)
 end
 
 local function InOutBounce(t, b, c, d)
-	if t < d * 0.5 then
-		return InBounce(t * 2, 0, c, d) * 0.5 + b
+	if t < d / 2 then
+		return InBounce(t * 2, 0, c, d) / 2 + b
 	else
-		return OutBounce(t * 2 - d, 0, c, d) * 0.5 + c * 0.5 + b
+		return OutBounce(t * 2 - d, 0, c, d) / 2 + c / 2 + b
 	end
 end
 
 local function OutInBounce(t, b, c, d)
-	if t < d * 0.5 then
-		return OutBounce(t * 2, b, c * 0.5, d)
+	if t < d / 2 then
+		return OutBounce(t * 2, b, c / 2, d)
 	else
-		return InBounce(t * 2 - d, b + c * 0.5, c * 0.5, d)
+		return InBounce(t * 2 - d, b + c / 2, c / 2, d)
 	end
 end
 
@@ -392,6 +541,14 @@ return {
 		RidiculousWiggle = RidiculousWiggle;
 		Spring = Spring;
 		SoftSpring = SoftSpring;
+		Sharp = Sharp;
+		Standard = Standard;
+		Acceleration = Acceleration;
+		Deceleration = Deceleration;
+		FabricStandard = FabricStandard;
+		FabricAccelerate = FabricAccelerate;
+		FabricDecelerate = FabricDecelerate;
+		UWPAccelerate = UWPAccelerate;
 		Expo = InExpo;
 		Cubic = InCubic;
 		Circ = InCirc;
@@ -412,6 +569,14 @@ return {
 		RidiculousWiggle = RidiculousWiggle;
 		Spring = Spring;
 		SoftSpring = SoftSpring;
+		Sharp = Sharp;
+		Standard = Standard;
+		Acceleration = Acceleration;
+		Deceleration = Deceleration;
+		FabricStandard = FabricStandard;
+		FabricAccelerate = FabricAccelerate;
+		FabricDecelerate = FabricDecelerate;
+		UWPAccelerate = UWPAccelerate;
 		Expo = OutExpo;
 		Cubic = OutCubic;
 		Circ = OutCirc;
@@ -432,6 +597,14 @@ return {
 		RidiculousWiggle = RidiculousWiggle;
 		Spring = Spring;
 		SoftSpring = SoftSpring;
+		Sharp = Sharp;
+		Standard = Standard;
+		Acceleration = Acceleration;
+		Deceleration = Deceleration;
+		FabricStandard = FabricStandard;
+		FabricAccelerate = FabricAccelerate;
+		FabricDecelerate = FabricDecelerate;
+		UWPAccelerate = UWPAccelerate;
 		Expo = InOutExpo;
 		Cubic = InOutCubic;
 		Circ = InOutCirc;
@@ -452,6 +625,14 @@ return {
 		RidiculousWiggle = RidiculousWiggle;
 		Spring = Spring;
 		SoftSpring = SoftSpring;
+		Sharp = Sharp;
+		Standard = Standard;
+		Acceleration = Acceleration;
+		Deceleration = Deceleration;
+		FabricStandard = FabricStandard;
+		FabricAccelerate = FabricAccelerate;
+		FabricDecelerate = FabricDecelerate;
+		UWPAccelerate = UWPAccelerate;
 		Expo = OutInExpo;
 		Cubic = OutInCubic;
 		Circ = OutInCirc;
