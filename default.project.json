@@ -2,43 +2,28 @@
 	"name": "AeroGameFramework",
 	"tree": {
 		"$className": "DataModel",
-		"ReplicatedStorage": {
-			"$className": "ReplicatedStorage",
-			"Aero": {
-				"$className": "Folder",
-				"Shared": {
-					"$path": "src/Shared"
-				},
-				"Internal": {
-					"$path": "src/_framework/rep_internal"
-				}
-			}
-		},
 		"ReplicatedFirst": {
 			"$className": "ReplicatedFirst",
 			"Aero": {
-				"$path": "src/_framework/rep_first"
+				"$path": "src/ReplicatedFirst/Aero"
 			}
 		},
-		"ServerStorage": {
-			"$className": "ServerStorage",
+		"ReplicatedStorage": {
+			"$className": "ReplicatedStorage",
 			"Aero": {
-				"$className": "Folder",
-				"Modules": {
-					"$path": "src/Server/Modules"
-				},
-				"Services": {
-					"$path": "src/Server/Services"
-				}
+				"$path": "src/ReplicatedStorage/Aero"
 			}
 		},
 		"ServerScriptService": {
 			"$className": "ServerScriptService",
 			"Aero": {
-				"$className": "Folder",
-				"Internal": {
-					"$path": "src/_framework/rep_internal"
-				}
+				"$path": "src/ServerScriptService/Aero"
+			}
+		},
+		"ServerStorage": {
+			"$className": "ServerStorage",
+			"Aero": {
+				"$path": "src/ServerStorage/Aero"
 			}
 		},
 		"StarterPlayer": {
@@ -46,16 +31,7 @@
 			"StarterPlayerScripts": {
 				"$className": "StarterPlayerScripts",
 				"Aero": {
-					"$className": "Folder",
-					"Controllers": {
-						"$path": "src/Client/Controllers"
-					},
-					"Modules": {
-						"$path": "src/Client/Modules"
-					},
-					"Internal": {
-						"$path": "src/_framework/client_internal"
-					}
+					"$path": "src/StarterPlayer/StarterPlayerScripts/Aero"
 				}
 			}
 		}
