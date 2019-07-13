@@ -38,19 +38,18 @@ local PROMPT_PURCHASE_FINISHED_EVENT = "PromptPurchaseFinished"
 local marketplaceService = game:GetService("MarketplaceService")
 
 local dataStoreScope = "PlayerReceipts"
-local services
+local modules
 
 
 local function IncrementPurchase(player, productId)
 	productId = tostring(productId)
-	local productPurchases = services.DataService:Get(player, PRODUCT_PURCHASES_KEY)
-	if (not productPurchases) then
-		productPurchases = {}
-		services.DataService:Set(player, PRODUCT_PURCHASES_KEY, productPurchases)
-	end
+	local playerData = modules.Data.ForPlayer(player)
+	local productPurchases = playerData:Get(PRODUCT_PURCHASES_KEY, {}):Await()
+
 	local n = productPurchases[productId]
 	productPurchases[productId] = (n and (n + 1) or 1)
-	services.DataService:FlushKey(player, PRODUCT_PURCHASES_KEY)
+	playerData:Set(PRODUCT_PURCHASES_KEY, productPurchases)
+	playerData:Save(PRODUCT_PURCHASES_KEY)
 end
 
 
@@ -71,13 +70,14 @@ local function ProcessReceipt(receiptInfo)
 	local dataStoreName = tostring(receiptInfo.PlayerId)
 	local key = tostring(receiptInfo.PurchaseId)
 	
+	local playerReceiptsData = modules.Data.new(dataStoreName, dataStoreScope)
 	-- Check if unique purchase was already completed:
-	local alreadyPurchased = services.DataService:GetCustom(dataStoreName, dataStoreScope, key)
+	local alreadyPurchased = playerReceiptsData:Get(key, false):Await()
 	
 	if (not alreadyPurchased) then
 		-- Mark as purchased and save immediately:
-		services.DataService:SetCustom(dataStoreName, dataStoreScope, key, true)
-		services.DataService:FlushCustom(dataStoreName, dataStoreScope, key)
+		playerReceiptsData:Set(key, true)
+		playerReceiptsData:Save(key)
 	end
 	
 	if (player) then
@@ -92,7 +92,8 @@ end
 
 
 function StoreService:HasPurchased(player, productId)
-	local productPurchases = services.DataService:Get(player, PRODUCT_PURCHASES_KEY)
+	local playerData = modules.Data.ForPlayer(player)
+	local productPurchases = playerData:Get(PRODUCT_PURCHASES_KEY, {}):Await()
 	return (productPurchases and productPurchases[tostring(productId)] ~= nil)
 end
 
@@ -108,7 +109,8 @@ end
 -- Get the number of productId's purchased:
 function StoreService:GetNumberPurchased(player, productId)
 	local n = 0
-	local productPurchases = services.DataService:Get(player, PRODUCT_PURCHASES_KEY)
+	local playerData = modules.Data.ForPlayer(player)
+	local productPurchases = playerData:Get(PRODUCT_PURCHASES_KEY, {}):Await()
 	if (productPurchases) then
 		n = (productPurchases[tostring(productId)] or 0)
 	end
@@ -139,7 +141,7 @@ end
 
 
 function StoreService:Init()
-	services = self.Services
+	modules = self.Modules
 	self:RegisterEvent(PROMPT_PURCHASE_FINISHED_EVENT)
 	self:RegisterClientEvent(PROMPT_PURCHASE_FINISHED_EVENT)
 end
