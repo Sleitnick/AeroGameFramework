@@ -6,11 +6,13 @@ A powerful game framework for the Roblox platform.
 AeroGameFramework is a Roblox game framework that makes development easy and fun. The framework is designed to simplify the communication between modules and seamlessly bridge the gap between the server and client. Never again will you have to touch RemoteFunctions or RemoteEvents.
 
 # Documentation
-The documentation website is currently under development. Until completion, please refer to [old doc](/doc) files & this readme file.
+The [documentation website](https://sleitnick.github.io/AeroGameFramework) is currently under development. Until completion, please refer to [old doc](/doc) files & this readme file.
 
 # Video Tutorial
 Learn how to use the framework in the video tutorial series:
 https://www.youtube.com/watch?v=8ta0cHX1ceE&index=1&list=PLk3R4TM3pnqv7doCTUHtn-wkydaA08npc
+
+**Note:** This tutorial series does not use the newer VS Code extension workflow. An updated series is in the works.
 
 # Install & Update
 Run the installer from the [AeroGameFramework plugin](https://www.roblox.com/library/1882232354/AeroGameFramework-Plugin). The installer will allow you to install and update the framework.
