@@ -63,7 +63,7 @@ function Mobile:Init()
 	end)
 	
 	userInput.TouchEnded:Connect(function(input, processed)
-		self.TouchStarted:Fire(input.Position)
+		self.TouchEnded:Fire(input.Position)
 	end)
 	
 	userInput.TouchMoved:Connect(function(input, processed)
