@@ -57,7 +57,7 @@ function Aero:WrapModule(tbl)
 end
 
 
-function LoadService(serviceFolder)
+local function LoadService(serviceFolder)
 	local service = {}
 	Aero.Services[serviceFolder.Name] = service
 	for _,v in pairs(serviceFolder:GetChildren()) do
@@ -80,7 +80,7 @@ function LoadService(serviceFolder)
 end
 
 
-function LoadServices()
+local function LoadServices()
 	local remoteServices = game:GetService("ReplicatedStorage"):WaitForChild("Aero"):WaitForChild("AeroRemoteServices")
 	for _,serviceFolder in pairs(remoteServices:GetChildren()) do
 		if (serviceFolder:IsA("Folder")) then
@@ -91,7 +91,7 @@ end
 
 
 -- Setup table to load modules on demand:
-function LazyLoadSetup(tbl, folder)
+local function LazyLoadSetup(tbl, folder)
 	setmetatable(tbl, {
 		__index = function(t, i)
 			local obj = require(folder[i])
@@ -105,7 +105,7 @@ function LazyLoadSetup(tbl, folder)
 end
 
 
-function LoadController(module)
+local function LoadController(module)
 	local controller = require(module)
 	Aero.Controllers[module.Name] = controller
 	controller._events = {}
@@ -113,14 +113,14 @@ function LoadController(module)
 end
 
 
-function InitController(controller)
+local function InitController(controller)
 	if (type(controller.Init) == "function") then
 		controller:Init()
 	end
 end
 
 
-function StartController(controller)
+local function StartController(controller)
 	-- Start controllers on separate threads:
 	if (type(controller.Start) == "function") then
 		FastSpawn(controller.Start, controller)
@@ -128,7 +128,7 @@ function StartController(controller)
 end
 
 
-function Init()
+local function Init()
 	
 	-- Lazy load modules:
 	LazyLoadSetup(Aero.Modules, modulesFolder)

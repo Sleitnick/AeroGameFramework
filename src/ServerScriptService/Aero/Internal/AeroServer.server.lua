@@ -99,7 +99,7 @@ end
 
 
 -- Setup table to load modules on demand:
-function LazyLoadSetup(tbl, folder)
+local function LazyLoadSetup(tbl, folder)
 	setmetatable(tbl, {
 		__index = function(t, i)
 			local obj = require(folder[i])
@@ -114,7 +114,7 @@ end
 
 
 -- Load service from module:
-function LoadService(module)
+local function LoadService(module)
 	
 	local remoteFolder = Instance.new("Folder")
 	remoteFolder.Name = module.Name
@@ -137,7 +137,7 @@ function LoadService(module)
 end
 
 
-function InitService(service)
+local function InitService(service)
 	
 	-- Initialize:
 	if (type(service.Init) == "function") then
@@ -154,7 +154,7 @@ function InitService(service)
 end
 
 
-function StartService(service)
+local function StartService(service)
 
 	-- Start services on separate threads:
 	if (type(service.Start) == "function") then
@@ -164,7 +164,7 @@ function StartService(service)
 end
 
 
-function Init()
+local function Init()
 	
 	-- Lazy-load server and shared modules:
 	LazyLoadSetup(AeroServer.Modules, modulesFolder)
