@@ -33,13 +33,7 @@ function UserInput:Init()
 	for _,obj in pairs(script:GetChildren()) do
 		if (obj:IsA("ModuleScript")) then
 			local module = require(obj)
-			setmetatable(module, getmetatable(self))
-			if (type(module.Init) == "function") then
-				module:Init()
-			end
-			if (type(module.Start) == "function") then
-				coroutine.wrap(module.Start)(module)
-			end
+			self:WrapModule(module)
 			modules[obj.Name] = module
 		end
 	end

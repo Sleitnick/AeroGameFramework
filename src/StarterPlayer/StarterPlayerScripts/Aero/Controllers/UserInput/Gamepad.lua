@@ -177,7 +177,7 @@ function Gamepad:ApplyDeadzone(value, deadzoneThreshold)
 	elseif (value > 0) then
 		return ((value - deadzoneThreshold) / (1 - deadzoneThreshold))
 	else
-		return ((value + deadzoneThreshold) / (1 - deadzoneThreshold)) 
+		return ((value + deadzoneThreshold) / (1 - deadzoneThreshold))
 	end
 end
 
