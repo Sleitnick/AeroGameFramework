@@ -4,7 +4,6 @@ import Header from "./Header";
 import Nav from "./Nav";
 import Home from "./pages/Home";
 import Install from "./pages/Install";
-import VSCode from "./pages/VSCode";
 import Services from "./pages/Services";
 import Controllers from "./pages/Controllers";
 import Modules from "./pages/Modules";
@@ -33,7 +32,6 @@ export default class Index extends React.Component {
 										<Route exact path="/" render={() => <Redirect to="/home"/>}/>
 										<Route exact path="/home" component={Home}/>
 										<Route exact path="/install" component={Install}/>
-										<Route exact path="/vscode" component={VSCode}/>
 										<Route exact path="/services" component={Services}/>
 										<Route exact path="/controllers" component={Controllers}/>
 										<Route exact path="/modules" component={Modules}/>

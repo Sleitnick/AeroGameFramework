@@ -24,8 +24,7 @@ export default class Nav extends React.Component {
 		return (
 			<nav className="nav flex-column">
 				<AGFNavLink to="/home">Home</AGFNavLink>
-				<AGFNavLink to="/install">Install</AGFNavLink>
-				<AGFNavLink to="/vscode">Visual Studio Code</AGFNavLink>
+				<AGFNavLink to="/install">Install & Setup</AGFNavLink>
 				<AGFNavLink to="/services">Services</AGFNavLink>
 				<AGFNavLink to="/controllers">Controllers</AGFNavLink>
 				<AGFNavLink to="/modules">Modules</AGFNavLink>

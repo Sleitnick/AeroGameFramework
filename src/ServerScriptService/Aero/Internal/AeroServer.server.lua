@@ -6,8 +6,8 @@
 
 local AeroServer = {
 	Services = {};
-	Modules  = {};
-	Shared   = {};
+	Modules = {};
+	Shared = {};
 }
 
 local mt = {__index = AeroServer}
@@ -21,6 +21,14 @@ local remoteServices = Instance.new("Folder")
 remoteServices.Name = "AeroRemoteServices"
 
 local FastSpawn = require(internalFolder.FastSpawn)
+
+local function PreventEventRegister()
+	error("Cannot register event after Init method")
+end
+
+local function PreventFunctionRegister()
+	error("Cannot register function after Init method")
+end
 
 
 function AeroServer:RegisterEvent(eventName)
@@ -102,26 +110,34 @@ end
 local function LazyLoadSetup(tbl, folder)
 	setmetatable(tbl, {
 		__index = function(t, i)
-			local obj = require(folder[i])
-			if (type(obj) == "table") then
-				AeroServer:WrapModule(obj)
+			local child = folder[i]
+			if (child:IsA("ModuleScript")) then
+				local obj = require(child)
+				if (type(obj) == "table") then
+					AeroServer:WrapModule(obj)
+				end
+				rawset(t, i, obj)
+				return obj
+			elseif (child:IsA("Folder")) then
+				local nestedTbl = {}
+				rawset(t, i, nestedTbl)
+				LazyLoadSetup(nestedTbl, child)
+				return nestedTbl
 			end
-			rawset(t, i, obj)
-			return obj
 		end;
 	})
 end
 
 
 -- Load service from module:
-local function LoadService(module)
+local function LoadService(module, servicesTbl, parentFolder)
 	
 	local remoteFolder = Instance.new("Folder")
 	remoteFolder.Name = module.Name
-	remoteFolder.Parent = remoteServices
+	remoteFolder.Parent = parentFolder
 	
 	local service = require(module)
-	AeroServer.Services[module.Name] = service
+	servicesTbl[module.Name] = service
 	
 	if (type(service.Client) ~= "table") then
 		service.Client = {}
@@ -150,6 +166,11 @@ local function InitService(service)
 			service:RegisterClientFunction(funcName, func)
 		end
 	end
+
+	-- Disallow registering events/functions after init:
+	service.RegisterEvent = PreventEventRegister
+	service.RegisterClientEvent = PreventEventRegister
+	service.RegisterClientFunction = PreventFunctionRegister
 	
 end
 
@@ -166,26 +187,70 @@ end
 
 local function Init()
 	
-	-- Lazy-load server and shared modules:
-	LazyLoadSetup(AeroServer.Modules, modulesFolder)
-	LazyLoadSetup(AeroServer.Shared, sharedFolder)
-	
 	-- Load service modules:
-	for _,module in pairs(servicesFolder:GetChildren()) do
-		if (module:IsA("ModuleScript")) then
-			LoadService(module)
+	local function LoadAllServices(parent, servicesTbl, parentFolder)
+		for _,child in pairs(parent:GetChildren()) do
+			if (child:IsA("ModuleScript")) then
+				LoadService(child, servicesTbl, parentFolder)
+			elseif (child:IsA("Folder")) then
+				local tbl = {}
+				local folder = Instance.new("Folder")
+				folder.Name = child.Name
+				folder.Parent = parentFolder
+				servicesTbl[child.Name] = tbl
+				LoadAllServices(child, tbl, folder)
+			end
 		end
 	end
 	
 	-- Initialize services:
-	for _,service in pairs(AeroServer.Services) do
-		InitService(service)
+	local function InitAllServices(services)
+		for _,service in pairs(services) do
+			if (getmetatable(service) == mt) then
+				InitService(service)
+			else
+				InitAllServices(service)
+			end
+		end
+	end
+
+	-- Remove unused folders:
+	local function ScanRemoteFoldersForEmpty(parent)
+		for _,child in pairs(parent:GetChildren()) do
+			if (child:IsA("Folder")) then
+				local remoteFunction = child:FindFirstChildWhichIsA("RemoteFunction", true)
+				local remoteEvent = child:FindFirstChildWhichIsA("RemoteEvent", true)
+				if ((not remoteFunction) and (not remoteEvent)) then
+					child:Destroy()
+				else
+					ScanRemoteFoldersForEmpty(child)
+				end
+			end
+		end
 	end
 	
 	-- Start services:
-	for _,service in pairs(AeroServer.Services) do
-		StartService(service)
+	local function StartAllServices(services)
+		for _,service in pairs(services) do
+			if (getmetatable(service) == mt) then
+				StartService(service)
+			else
+				StartAllServices(service)
+			end
+		end
 	end
+
+	--------------------------------------------------------------------
+	
+	-- Lazy-load server and shared modules:
+	LazyLoadSetup(AeroServer.Modules, modulesFolder)
+	LazyLoadSetup(AeroServer.Shared, sharedFolder)
+
+	-- Load, init, and start services:
+	LoadAllServices(servicesFolder, AeroServer.Services, remoteServices)
+	InitAllServices(AeroServer.Services)
+	ScanRemoteFoldersForEmpty(remoteServices)
+	StartAllServices(AeroServer.Services)
 	
 	-- Expose server framework to client and global scope:
 	remoteServices.Parent = game:GetService("ReplicatedStorage").Aero
