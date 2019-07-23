@@ -22,6 +22,14 @@ remoteServices.Name = "AeroRemoteServices"
 
 local FastSpawn = require(internalFolder.FastSpawn)
 
+local function PreventEventRegister()
+	error("Cannot register event after Init method")
+end
+
+local function PreventFunctionRegister()
+	error("Cannot register function after Init method")
+end
+
 
 function AeroServer:RegisterEvent(eventName)
 	local event = self.Shared.Event.new()
@@ -122,14 +130,12 @@ end
 
 
 -- Load service from module:
-local function LoadService(module, servicesTbl)
+local function LoadService(module, servicesTbl, parentFolder)
 	
 	local remoteFolder = Instance.new("Folder")
 	remoteFolder.Name = module.Name
-	remoteFolder.Parent = remoteServices
 	
 	local service = require(module)
-	--AeroServer.Services[module.Name] = service
 	servicesTbl[module.Name] = service
 	
 	if (type(service.Client) ~= "table") then
@@ -142,6 +148,7 @@ local function LoadService(module, servicesTbl)
 	service._events = {}
 	service._clientEvents = {}
 	service._remoteFolder = remoteFolder
+	service._remoteFolderParent = parentFolder
 	
 end
 
@@ -159,6 +166,19 @@ local function InitService(service)
 			service:RegisterClientFunction(funcName, func)
 		end
 	end
+
+	-- Expose remote folder if it contains any objects:
+	if (#service._remoteFolder:GetChildren() > 0) then
+		service._remoteFolder.Parent = service._remoteFolderParent
+	else
+		service._remoteFolder:Destroy()
+	end
+	service._remoteFolderParent = nil
+
+	-- Disallow registering events/functions after init:
+	service.RegisterEvent = PreventEventRegister
+	service.RegisterClientEvent = PreventEventRegister
+	service.RegisterClientFunction = PreventFunctionRegister
 	
 end
 
@@ -180,18 +200,21 @@ local function Init()
 	LazyLoadSetup(AeroServer.Shared, sharedFolder)
 	
 	-- Load service modules:
-	local function LoadAllServices(parent, servicesTbl)
+	local function LoadAllServices(parent, servicesTbl, parentFolder)
 		for _,child in pairs(parent:GetChildren()) do
 			if (child:IsA("ModuleScript")) then
-				LoadService(child, servicesTbl)
+				LoadService(child, servicesTbl, parentFolder)
 			elseif (child:IsA("Folder")) then
 				local tbl = {}
+				local folder = Instance.new("Folder")
+				folder.Name = child.Name
+				folder.Parent = parentFolder
 				servicesTbl[child.Name] = tbl
-				LoadAllServices(child, tbl)
+				LoadAllServices(child, tbl, folder)
 			end
 		end
 	end
-	LoadAllServices(servicesFolder, AeroServer.Services)
+	LoadAllServices(servicesFolder, AeroServer.Services, remoteServices)
 	
 	-- Initialize services:
 	local function InitAllServices(services)

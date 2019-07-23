@@ -1,7 +1,12 @@
-local AnotherService = {}
+local AnotherService = {Client = {}}
 
 
 AnotherService.Message = "Hello from AnotherService"
+
+
+function AnotherService.Client:Test()
+	return 32
+end
 
 
 function AnotherService:Start()
