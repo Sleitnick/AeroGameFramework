@@ -21,6 +21,10 @@ local internalFolder = game:GetService("ReplicatedStorage").Aero:WaitForChild("I
 
 local FastSpawn = require(internalFolder:WaitForChild("FastSpawn"))
 
+local function PreventEventRegister()
+	error("Cannot register event after Init method")
+end
+
 
 function Aero:RegisterEvent(eventName)
 	local event = self.Shared.Event.new()
@@ -132,6 +136,7 @@ local function InitController(controller)
 	if (type(controller.Init) == "function") then
 		controller:Init()
 	end
+	controller.RegisterEvent = PreventEventRegister
 end
 
 
@@ -145,13 +150,6 @@ end
 
 local function Init()
 	
-	-- Lazy load modules:
-	LazyLoadSetup(Aero.Modules, modulesFolder)
-	LazyLoadSetup(Aero.Shared, sharedFolder)
-	
-	-- Load server-side services:
-	LoadServices()
-	
 	-- Load controllers:
 	local function LoadAllControllers(parent, controllersTbl)
 		for _,child in pairs(parent:GetChildren()) do
@@ -164,7 +162,6 @@ local function Init()
 			end
 		end
 	end
-	LoadAllControllers(controllersFolder, Aero.Controllers)
 	
 	-- Initialize controllers:
 	local function InitAllControllers(controllers)
@@ -176,7 +173,6 @@ local function Init()
 			end
 		end
 	end
-	InitAllControllers(Aero.Controllers)
 	
 	-- Start controllers:
 	local function StartAllControllers(controllers)
@@ -188,6 +184,19 @@ local function Init()
 			end
 		end
 	end
+
+	------------------------------------------------------
+	
+	-- Lazy load modules:
+	LazyLoadSetup(Aero.Modules, modulesFolder)
+	LazyLoadSetup(Aero.Shared, sharedFolder)
+	
+	-- Load server-side services:
+	LoadServices()
+
+	-- Load, init, and start controllers:
+	LoadAllControllers(controllersFolder, Aero.Controllers)
+	InitAllControllers(Aero.Controllers)
 	StartAllControllers(Aero.Controllers)
 
 	-- Expose client framework globally:

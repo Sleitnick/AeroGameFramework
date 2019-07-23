@@ -12,6 +12,7 @@ end
 function AnotherService:Start()
 	local favNum = self.Services.Test.ABC.TestService.FavoriteNumber
 	print("My favorite number is " .. favNum)
+	print(self.Shared.Sharable.Lunch.Apple)
 end
 
 

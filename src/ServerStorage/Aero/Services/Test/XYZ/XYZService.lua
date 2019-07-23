@@ -10,7 +10,7 @@ end
 
 
 function XYZService:Init()
-
+	self:RegisterClientEvent("Hello")
 end
 
 

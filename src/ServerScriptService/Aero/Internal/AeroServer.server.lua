@@ -6,8 +6,8 @@
 
 local AeroServer = {
 	Services = {};
-	Modules  = {};
-	Shared   = {};
+	Modules = {};
+	Shared = {};
 }
 
 local mt = {__index = AeroServer}
@@ -134,6 +134,7 @@ local function LoadService(module, servicesTbl, parentFolder)
 	
 	local remoteFolder = Instance.new("Folder")
 	remoteFolder.Name = module.Name
+	remoteFolder.Parent = parentFolder
 	
 	local service = require(module)
 	servicesTbl[module.Name] = service
@@ -148,7 +149,6 @@ local function LoadService(module, servicesTbl, parentFolder)
 	service._events = {}
 	service._clientEvents = {}
 	service._remoteFolder = remoteFolder
-	service._remoteFolderParent = parentFolder
 	
 end
 
@@ -166,14 +166,6 @@ local function InitService(service)
 			service:RegisterClientFunction(funcName, func)
 		end
 	end
-
-	-- Expose remote folder if it contains any objects:
-	if (#service._remoteFolder:GetChildren() > 0) then
-		service._remoteFolder.Parent = service._remoteFolderParent
-	else
-		service._remoteFolder:Destroy()
-	end
-	service._remoteFolderParent = nil
 
 	-- Disallow registering events/functions after init:
 	service.RegisterEvent = PreventEventRegister
@@ -195,10 +187,6 @@ end
 
 local function Init()
 	
-	-- Lazy-load server and shared modules:
-	LazyLoadSetup(AeroServer.Modules, modulesFolder)
-	LazyLoadSetup(AeroServer.Shared, sharedFolder)
-	
 	-- Load service modules:
 	local function LoadAllServices(parent, servicesTbl, parentFolder)
 		for _,child in pairs(parent:GetChildren()) do
@@ -214,7 +202,6 @@ local function Init()
 			end
 		end
 	end
-	LoadAllServices(servicesFolder, AeroServer.Services, remoteServices)
 	
 	-- Initialize services:
 	local function InitAllServices(services)
@@ -226,7 +213,21 @@ local function Init()
 			end
 		end
 	end
-	InitAllServices(AeroServer.Services)
+
+	-- Remove unused folders:
+	local function ScanRemoteFoldersForEmpty(parent)
+		for _,child in pairs(parent:GetChildren()) do
+			if (child:IsA("Folder")) then
+				local remoteFunction = child:FindFirstChildWhichIsA("RemoteFunction", true)
+				local remoteEvent = child:FindFirstChildWhichIsA("RemoteEvent", true)
+				if ((not remoteFunction) and (not remoteEvent)) then
+					child:Destroy()
+				else
+					ScanRemoteFoldersForEmpty(child)
+				end
+			end
+		end
+	end
 	
 	-- Start services:
 	local function StartAllServices(services)
@@ -238,6 +239,17 @@ local function Init()
 			end
 		end
 	end
+
+	--------------------------------------------------------------------
+	
+	-- Lazy-load server and shared modules:
+	LazyLoadSetup(AeroServer.Modules, modulesFolder)
+	LazyLoadSetup(AeroServer.Shared, sharedFolder)
+
+	-- Load, init, and start services:
+	LoadAllServices(servicesFolder, AeroServer.Services, remoteServices)
+	InitAllServices(AeroServer.Services)
+	ScanRemoteFoldersForEmpty(remoteServices)
 	StartAllServices(AeroServer.Services)
 	
 	-- Expose server framework to client and global scope:
