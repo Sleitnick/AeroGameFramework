@@ -102,26 +102,35 @@ end
 local function LazyLoadSetup(tbl, folder)
 	setmetatable(tbl, {
 		__index = function(t, i)
-			local obj = require(folder[i])
-			if (type(obj) == "table") then
-				AeroServer:WrapModule(obj)
+			local child = folder[i]
+			if (child:IsA("ModuleScript")) then
+				local obj = require(child)
+				if (type(obj) == "table") then
+					AeroServer:WrapModule(obj)
+				end
+				rawset(t, i, obj)
+				return obj
+			elseif (child:IsA("Folder")) then
+				local nestedTbl = {}
+				rawset(t, i, nestedTbl)
+				LazyLoadSetup(nestedTbl, child)
+				return nestedTbl
 			end
-			rawset(t, i, obj)
-			return obj
 		end;
 	})
 end
 
 
 -- Load service from module:
-local function LoadService(module)
+local function LoadService(module, servicesTbl)
 	
 	local remoteFolder = Instance.new("Folder")
 	remoteFolder.Name = module.Name
 	remoteFolder.Parent = remoteServices
 	
 	local service = require(module)
-	AeroServer.Services[module.Name] = service
+	--AeroServer.Services[module.Name] = service
+	servicesTbl[module.Name] = service
 	
 	if (type(service.Client) ~= "table") then
 		service.Client = {}
@@ -171,21 +180,42 @@ local function Init()
 	LazyLoadSetup(AeroServer.Shared, sharedFolder)
 	
 	-- Load service modules:
-	for _,module in pairs(servicesFolder:GetChildren()) do
-		if (module:IsA("ModuleScript")) then
-			LoadService(module)
+	local function LoadAllServices(parent, servicesTbl)
+		for _,child in pairs(parent:GetChildren()) do
+			if (child:IsA("ModuleScript")) then
+				LoadService(child, servicesTbl)
+			elseif (child:IsA("Folder")) then
+				local tbl = {}
+				servicesTbl[child.Name] = tbl
+				LoadAllServices(child, tbl)
+			end
 		end
 	end
+	LoadAllServices(servicesFolder, AeroServer.Services)
 	
 	-- Initialize services:
-	for _,service in pairs(AeroServer.Services) do
-		InitService(service)
+	local function InitAllServices(services)
+		for _,service in pairs(services) do
+			if (getmetatable(service) == mt) then
+				InitService(service)
+			else
+				InitAllServices(service)
+			end
+		end
 	end
+	InitAllServices(AeroServer.Services)
 	
 	-- Start services:
-	for _,service in pairs(AeroServer.Services) do
-		StartService(service)
+	local function StartAllServices(services)
+		for _,service in pairs(services) do
+			if (getmetatable(service) == mt) then
+				StartService(service)
+			else
+				StartAllServices(service)
+			end
+		end
 	end
+	StartAllServices(AeroServer.Services)
 	
 	-- Expose server framework to client and global scope:
 	remoteServices.Parent = game:GetService("ReplicatedStorage").Aero
