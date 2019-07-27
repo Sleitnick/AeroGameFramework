@@ -6,22 +6,25 @@
 	
 	gamepad = Gamepad.new(gamepadUserInputType)
 	
-	Boolean      gamepad:IsDown(keyCode)
-	Boolean      gamepad:IsConnected()
-	InputObject  gamepad:GetState(keyCode)
-	Void         gamepad:SetMotor(motor, value)
-	Void         gamepad:StopMotor(motor)
-	Void         gamepad:StopAllMotors()
-	Boolean      gamepad:IsMotorSupported(motor)
-	Boolean      gamepad:IsVibrationSupported()
-	Float        gamepad:GetMotorValue(motor)
-	Float        gamepad:ApplyDeadzone(value, deadzoneThreshold)
+	Methods:
+		Boolean      gamepad:IsDown(keyCode)
+		Boolean      gamepad:IsConnected()
+		InputObject  gamepad:GetState(keyCode)
+		Void         gamepad:SetMotor(motor, value)
+		Void         gamepad:StopMotor(motor)
+		Void         gamepad:StopAllMotors()
+		Boolean      gamepad:IsMotorSupported(motor)
+		Boolean      gamepad:IsVibrationSupported()
+		Float        gamepad:GetMotorValue(motor)
+		Float        gamepad:ApplyDeadzone(value, deadzoneThreshold)
 	
-	gamepad.ButtonDown(keyCode)
-	gamepad.ButtonUp(keyCode)
-	gamepad.Changed(keyCode, input)
-	gamepad.Connected()
-	gamepad.Disconnected()
+	
+	Events:
+		gamepad.ButtonDown(keyCode)
+		gamepad.ButtonUp(keyCode)
+		gamepad.Changed(keyCode, input)
+		gamepad.Connected()
+		gamepad.Disconnected()
 	
 --]]
 
@@ -49,11 +52,11 @@ function Gamepad.new(gamepad)
 		_isConnected = false;
 	}, Gamepad)
 	
-	self.ButtonDown   = self.Shared.Event.new()
-	self.ButtonUp     = self.Shared.Event.new()
-	self.Changed      = self.Shared.Event.new()
-	self.Connected    = self.Shared.Event.new()
-	self.Disconnected = self.Shared.Event.new()
+	self:RegisterEvent('ButtonDown')
+	self:RegisterEvent('ButtonUp')
+	self:RegisterEvent('Changed')
+	self:RegisterEvent('Connected')
+	self:RegisterEvent('Disconnected')
 	
 	self._listeners = self.Shared.ListenerList.new()
 	
@@ -67,7 +70,7 @@ function Gamepad.new(gamepad)
 		if (gamepadNum == gamepad) then
 			self._isConnected = true
 			self:ConnectAll()
-			self.Connected:Fire()
+			self:FireEvent('Connected')
 		end
 	end)
 	
@@ -76,7 +79,7 @@ function Gamepad.new(gamepad)
 		if (gamepadNum == gamepad) then
 			self._isConnected = false
 			self:DisconnectAll()
-			self.Disconnected:Fire()
+			self:FireEvent('Disconnected')
 		end
 	end)
 	
@@ -98,21 +101,21 @@ function Gamepad:ConnectAll()
 	self._listeners:Connect(userInput.InputBegan, function(input, processed)
 		if (processed) then return end
 		if (input.UserInputType == self._gamepadInput) then
-			self.ButtonDown:Fire(input.KeyCode)
+			self:FireEvent('ButtonDown', input.KeyCode)
 		end
 	end)
 	
 	-- Input Ended:
 	self._listeners:Connect(userInput.InputEnded, function(input, processed)
 		if (input.UserInputType == self._gamepadInput) then
-			self.ButtonUp:Fire(input.KeyCode)
+			self:FireEvent('ButtonUp', input.KeyCode)
 		end
 	end)
 	
 	-- Input Changed:
 	self._listeners:Connect(userInput.InputChanged, function(input, processed)
 		if (input.UserInputType == self._gamepadInput) then
-			self.Changed:Fire(input.KeyCode, input)
+			self:FireEvent('Changed', input.KeyCode, input)
 		end
 	end)
 	
@@ -179,16 +182,6 @@ function Gamepad:ApplyDeadzone(value, deadzoneThreshold)
 	else
 		return ((value + deadzoneThreshold) / (1 - deadzoneThreshold))
 	end
-end
-
-
-function Gamepad:Start()
-	
-end
-
-
-function Gamepad:Init()
-	
 end
 
 
