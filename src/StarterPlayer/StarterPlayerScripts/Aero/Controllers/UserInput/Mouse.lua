@@ -4,26 +4,29 @@
 
 --[[
 	
-	Vector2   Mouse:GetPosition()
-	Vector2   Mouse:GetDelta()
-	Void      Mouse:Lock()
-	Void      Mouse:LockCenter()
-	Void      Mouse:Unlock()
-	Void      Mouse:SetMouseIcon(iconId)
-	Void      Mouse:SetMouseIconEnabled(isEnabled)
-	Boolean   Mouse:IsMouseIconEnabled()
-	Many      Mouse:Cast(ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
-	Many      Mouse:CastWithIgnoreList(ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
-	Many      Mouse:CastWithWhitelist(whitelistDescendantsTable, ignoreWater)
+	Methods:
+		Vector2   Mouse:GetPosition()
+		Vector2   Mouse:GetDelta()
+		Void      Mouse:Lock()
+		Void      Mouse:LockCenter()
+		Void      Mouse:Unlock()
+		Void      Mouse:SetMouseIcon(iconId)
+		Void      Mouse:SetMouseIconEnabled(isEnabled)
+		Boolean   Mouse:IsMouseIconEnabled()
+		Many      Mouse:Cast(ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
+		Many      Mouse:CastWithIgnoreList(ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
+		Many      Mouse:CastWithWhitelist(whitelistDescendantsTable, ignoreWater)
 	
-	Mouse.LeftDown()
-	Mouse.LeftUp()
-	Mouse.RightDown()
-	Mouse.RightUp()
-	Mouse.MiddleDown()
-	Mouse.MiddleUp()
-	Mouse.Moved()
-	Mouse.Scrolled(amount)
+	
+	Events:
+		Mouse.LeftDown()
+		Mouse.LeftUp()
+		Mouse.RightDown()
+		Mouse.RightUp()
+		Mouse.MiddleDown()
+		Mouse.MiddleUp()
+		Mouse.Moved()
+		Mouse.Scrolled(amount)
 	
 --]]
 
@@ -103,50 +106,50 @@ end
 
 function Mouse:Start()
 	
-end
-
-
-function Mouse:Init()
-	
-	self.LeftDown   = self.Shared.Event.new()
-	self.LeftUp     = self.Shared.Event.new()
-	self.RightDown  = self.Shared.Event.new()
-	self.RightUp    = self.Shared.Event.new()
-	self.MiddleDown = self.Shared.Event.new()
-	self.MiddleUp   = self.Shared.Event.new()
-	self.Moved      = self.Shared.Event.new()
-	self.Scrolled   = self.Shared.Event.new()
-	
 	userInput.InputBegan:Connect(function(input, processed)
 		if (processed) then return end
 		if (input.UserInputType == Enum.UserInputType.MouseButton1) then
-			self.LeftDown:Fire()
+			self:FireEvent('LeftDown')
 		elseif (input.UserInputType == Enum.UserInputType.MouseButton2) then
-			self.RightDown:Fire()
+			self:FireEvent('RightDown')
 		elseif (input.UserInputType == Enum.UserInputType.MouseButton3) then
-			self.MiddleDown:Fire()
+			self:FireEvent('MiddleDown')
 		end
 	end)
 	
 	userInput.InputEnded:Connect(function(input, processed)
 		if (input.UserInputType == Enum.UserInputType.MouseButton1) then
-			self.LeftUp:Fire()
+			self:FireEvent('LeftUp')
 		elseif (input.UserInputType == Enum.UserInputType.MouseButton2) then
-			self.RightUp:Fire()
+			self:FireEvent('RightUp')
 		elseif (input.UserInputType == Enum.UserInputType.MouseButton3) then
-			self.MiddleUp:Fire()
+			self:FireEvent('MiddleUp')
 		end
 	end)
 	
 	userInput.InputChanged:Connect(function(input, processed)
 		if (input.UserInputType == Enum.UserInputType.MouseMovement) then
-			self.Moved:Fire()
+			self:FireEvent('Moved')
 		elseif (input.UserInputType == Enum.UserInputType.MouseWheel) then
-			if (not processed) then
-				self.Scrolled:Fire(input.Position.Z)
-			end
+			if (processed) then return end
+			
+			self:FireEvent('Scrolled', input.Position.Z)
 		end
 	end)
+	
+end
+
+
+function Mouse:Init()
+	
+	self:RegisterEvent('LeftDown')
+	self:RegisterEvent('LeftUp')
+	self:RegistetEvent('RightDown')
+	self:RegisterEvent('RightUp')
+	self:RegisterEvent('MiddleDown')
+	self:RegisterEvent('MiddleUp')
+	self:RegisterEvent('Moved')
+	self:RegisterEvent('Scrolled')
 	
 end
 
