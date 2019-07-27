@@ -4,12 +4,15 @@
 
 --[[
 	
-	Boolean   Keyboard:IsDown(keyCode)
-	Boolean   Keyboard:AreAllDown(keyCodes...)
-	Boolean   Keyboard:AreAnyDown(keyCodes...)
+	Methods:
+		Boolean   Keyboard:IsDown(keyCode)
+		Boolean   Keyboard:AreAllDown(keyCodes...)
+		Boolean   Keyboard:AreAnyDown(keyCodes...)
 	
-	Keyboard.KeyDown(keyCode)
-	Keyboard.KeyUp(keyCode)
+
+	Events:
+		Keyboard.KeyDown(keyCode)
+		Keyboard.KeyUp(keyCode)
 	
 --]]
 
