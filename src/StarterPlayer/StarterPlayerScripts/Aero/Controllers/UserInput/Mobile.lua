@@ -4,11 +4,12 @@
 
 --[[
 	
-	Mobile.TouchStarted(position)
-	Mobile.TouchEnded(position)
-	Mobile.TouchMoved(position, delta)
-	Mobile.TouchTapInWorld(position)
-	Mobile.TouchPinch(scale, state)
+	Events:
+		Mobile.TouchStarted(position)
+		Mobile.TouchEnded(position)
+		Mobile.TouchMoved(position, delta)
+		Mobile.TouchTapInWorld(position)
+		Mobile.TouchPinch(scale, state)
 	
 --]]
 
@@ -46,40 +47,40 @@ end
 
 function Mobile:Start()
 	
+	userInput.TouchStarted:Connect(function(input, processed)
+		if (processed) then return end
+		self:FireEvent('TouchStarted', input.Position)
+	end)
+	
+	userInput.TouchEnded:Connect(function(input, processed)
+		self:FireEvent('TouchEnded', input.Position)
+	end)
+	
+	userInput.TouchMoved:Connect(function(input, processed)
+		if (processed) then return end
+		self:FireEvent('TouchMoved', input.Position, input.Delta)
+	end)
+	
+	userInput.TouchTapInWorld:Connect(function(position, processed)
+		if (processed) then return end
+		self:FireEvent('TouchTapInWorld', position)
+	end)
+	
+	userInput.TouchPinch:Connect(function(touchPositions, scale, velocity, state, processed)
+		if (processed) then return end
+		self:FireEvent('TouchPinch', scale, state)
+	end)
+	
 end
 
 
 function Mobile:Init()
 	
-	self.TouchStarted    = self.Shared.Event.new()
-	self.TouchEnded      = self.Shared.Event.new()
-	self.TouchMoved      = self.Shared.Event.new()
-	self.TouchTapInWorld = self.Shared.Event.new()
-	self.TouchPinch      = self.Shared.Event.new()
-	
-	userInput.TouchStarted:Connect(function(input, processed)
-		if (processed) then return end
-		self.TouchStarted:Fire(input.Position)
-	end)
-	
-	userInput.TouchEnded:Connect(function(input, processed)
-		self.TouchEnded:Fire(input.Position)
-	end)
-	
-	userInput.TouchMoved:Connect(function(input, processed)
-		if (processed) then return end
-		self.TouchMoved:Fire(input.Position, input.Delta)
-	end)
-	
-	userInput.TouchTapInWorld:Connect(function(position, processed)
-		if (processed) then return end
-		self.TouchTapInWorld:Fire(position)
-	end)
-	
-	userInput.TouchPinch:Connect(function(touchPositions, scale, velocity, state, processed)
-		if (processed) then return end
-		self.TouchPinch:Fire(scale, state)
-	end)
+	self:RegisterEvent('TouchStarted')
+	self:RegisterEvent('TouchEnded')
+	self:RegisterEvent('TouchMoved')
+	self:RegisterEvent('TouchTapInWorld')
+	self:RegisterEvent('TouchPinch')
 	
 end
 
