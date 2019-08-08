@@ -6,21 +6,21 @@ interface AGFNavLinkProps {
 }
 
 class AGFNavLink extends React.Component<AGFNavLinkProps> {
-	constructor(props: AGFNavLinkProps) {
+	public constructor(props: AGFNavLinkProps) {
 		super(props);
 	}
-	public render() {
+	public render(): JSX.Element {
 		return <NavLink className="nav-link-item" activeClassName="active-nav" to={this.props.to}>{this.props.children}</NavLink>
 	}
 }
 
 export default class Nav extends React.Component {
 
-	constructor(props) {
+	public constructor(props) {
 		super(props);
 	}
 
-	public render() {
+	public render(): JSX.Element {
 		return (
 			<nav className="nav flex-column">
 				<AGFNavLink to="/home">Home</AGFNavLink>

@@ -9,21 +9,21 @@ export default class CodeBlock extends React.Component<CodeBlockProps> {
 
 	private readonly codeRef: React.RefObject<HTMLDivElement>;
 
-	constructor(props: CodeBlockProps) {
+	public constructor(props: CodeBlockProps) {
 		super(props);
 		this.highlight = this.highlight.bind(this);
 		this.codeRef = React.createRef();
 	}
 
-	public componentDidMount() {
+	public componentDidMount(): void {
 		this.highlight();
 	}
 
-	public componentDidUpdate() {
+	public componentDidUpdate(): void {
 		this.highlight();
 	}
 
-	public render() {
+	public render(): JSX.Element {
 		return (
 			<div ref={this.codeRef}>
 				<pre className="line-numbers" data-src={this.props.src}/>
@@ -31,7 +31,7 @@ export default class CodeBlock extends React.Component<CodeBlockProps> {
 		);
 	}
 
-	private highlight() {
+	private highlight(): void {
 		Prism.fileHighlight(this.codeRef.current);
 	}
 

@@ -1,51 +1,68 @@
 import * as React from "react";
+import Markdown from "../Markdown"
 
 export default class ExecutionModel extends React.Component {
 
-	constructor(props) {
+	public constructor(props) {
 		super(props);
 	}
 
-	public render() {
+	public render(): JSX.Element {
 		return (
 			<div>
-				<h1>Execution Model</h1>
+				<Markdown>
+				{`
+					# Execution Model
 
-				<hr/>
+					---------------------
 
-				<h3>Services and Controllers</h3>
-				<p>Services and Controllers act as singletons. In other words, only one instance exists per service or controller in a given environment.</p>
-				<ol>
-					<li>All modules are loaded using <code>require()</code> at the start of runtime.</li>
-					<li>All modules have properties and methods "injected" via metatable.</li>
-					<li>Each <code>Init</code> method on the modules are invoked one-by-one synchronously.</li>
-					<li>Each <code>Start</code> method on the modules are invoked asynchronously.</li>
-					<li>The module remains in memory for the remainder of runtime.</li>
-				</ol>
+					### Services and Controllers
 
-				<hr/>
+					Services and Controllers act as singletons. In other words, only one instance exists per
+					service or controller in a given environment.
 
-				<h3>Modules and Shared</h3>
-				<ol>
-					<li>A module (in Modules or Shared) is loaded using <code>require()</code> the first time it is referenced (i.e. lazy-loaded).</li>
-					<li>The module has properties and methods "injected" via metatable.</li>
-					<li>The module's <code>Init</code> method is invoked synchronously.</li>
-					<li>The module's <code>Start</code> method is invoked immediately and asynchronously after the <code>Init</code> method is completed.</li>
-				</ol>
+					1. All modules are loaded using \`require()\` at the start of runtime.
+					1. All modules have properties and methods exposed via metamethods.
+					1. Each \`Init\` method on the modules are invoekd one-by-one synchronously.
+					1. Each \`Start\` method on the modules are invoked asynchronously.
+					1. The module remains in memory for the remainder of runtime.
 
-				<hr/>
+					---------------------
 
-				<h3>Notes and Best Practices</h3>
-				<ul>
-					<li>The <code>Init</code> and <code>Start</code> methods are always optional, but it is good practice to always include them.</li>
-					<li>The <code>Init</code> method should be used to set up the individual module.</li>
-					<li>The <code>Init</code> method should try to do as minimal work as possible, as other modules are blocked until it is completed.</li>
-					<li>The <code>Init</code> method should <i>not</i> be used to invoke methods from other modules in the framework (that should be done in or after <code>Start</code>)</li>
-					<li>Events <i>must</i> be registered in the <code>Init</code> method.</li>
-					<li>Events should <i>never</i> be connected or fired within the <code>Init</code> method. Do this within the <code>Start</code> method.</li>
-					<li>Because Modules and Shared modules are lazy-loaded, their <code>Init</code> methods are executed after other modules have been started.</li>
-				</ul>
+					### Modules and Shared
 
+					1. A module (in Modules or Shared) is loaded using \`require()\` the first time it is referenced (i.e. lazy-loaded).
+					1. The module has properties and methods exposed via metatable.
+					1. The module's \`Init\` method is invoked synchronously.
+					1. The module's \`Start\` method is invoked immediately and asynchronously after the \`Init\` method is completed.
+
+					---------------------
+
+					### Preventing Init or Start
+
+					There might be times where it is not desired for the framework to invoke either the \`Start\` or the \`Init\` method
+					on a module, service, or controller. In such an instance, a flag can be added to indicate that the method should not
+					be invoked by the framework.
+
+					The two flags are:
+					- __aeroPreventInit
+					- __aeroPreventStart
+
+					Simply set the flag to a truthy value (preferrable just \`true\`). See the example under the [Modules](/#/modules) page.
+
+					---------------------
+
+					### Notes and Best Practices
+
+					- The \`Init\` and \`Start\` methods are always optional, but it is good practice to always include them.
+					- The \`Init\` method should be used to set up the individual module and register events.
+					- The \`Init\` method should try to do as minimal work as possible, as other modules are blocked until it is completed.
+					- The \`Init\` method should _not_ be used to invoke methods from other modules in the framework (that should be done in or after \`Start\`)
+					- Events _must_ be registered in the \`Init\` method.
+					- Events should _never_ be connected or fired within the \`Init\` method. Do this within the \`Start\` method.
+					- Because Modules and Shared modules are lazy-loaded, their \`Init\` methods are invoked the first time they are referenced.
+				`}
+				</Markdown>
 			</div>
 		);
 	}

@@ -1,21 +1,26 @@
 import * as React from "react";
 import * as marked from "marked";
 import * as Prism from "prismjs";
+import * as PropTypes from 'prop-types';
 
 marked.setOptions({
-	highlight: function(code) {
+	highlight: function(code): string {
 		return Prism.highlight(code, Prism.languages.lua, "lua");
 	}
 });
 
-export default class Markdown extends React.Component {
+class Markdown extends React.Component {
 
-	constructor(props) {
+	public static propTypes = {
+		children: PropTypes.node.isRequired
+	};
+
+	public constructor(props) {
 		super(props);
 		this.removeLeadingTabs = this.removeLeadingTabs.bind(this);
 	}
 
-	public render() {
+	public render(): JSX.Element {
 		const children = this.removeLeadingTabs(this.props.children.toString());
 		return (
 			<div
@@ -44,3 +49,5 @@ export default class Markdown extends React.Component {
 	}
 
 }
+
+export default Markdown;

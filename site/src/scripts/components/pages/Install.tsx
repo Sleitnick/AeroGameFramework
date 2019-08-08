@@ -3,11 +3,11 @@ import { NavLink } from "react-router-dom";
 
 export default class VSCode extends React.Component {
 
-	constructor(props) {
+	public constructor(props) {
 		super(props);
 	}
 
-	public render() {
+	public render(): JSX.Element {
 		return (
 			<div>
 				<h1>Install & Setup</h1>
@@ -15,7 +15,7 @@ export default class VSCode extends React.Component {
 				<hr/>
 
 				<p>
-					The preferred editor for the AeroGameFramework is <a href="https://code.visualstudio.com/" target="_blank">Visual Studio Code</a>.
+					The preferred editor for the AeroGameFramework is <a href="https://code.visualstudio.com/" target="_blank" rel="noopener noreferrer">Visual Studio Code</a>.
 					AeroGameFramework includes a VS Code extension, and ties in with other useful extensions &
 					plugins (such as Rojo and Luacheck).
 				</p>
@@ -33,27 +33,27 @@ export default class VSCode extends React.Component {
 					</thead>
 					<tbody>
 						<tr>
-							<td><a href="https://marketplace.visualstudio.com/items?itemName=aerogameframework-vsce.aerogameframework" target="_blank">AeroGameFramework</a></td>
+							<td><a href="https://marketplace.visualstudio.com/items?itemName=aerogameframework-vsce.aerogameframework" target="_blank" rel="noopener noreferrer">AeroGameFramework</a></td>
 							<td>Main VS Code extension</td>
 							<td className="text-success">Yes</td>
 						</tr>
 						<tr>
-							<td><a href="https://rojo.space/docs/latest/guide/installation/" target="_blank">Rojo</a></td>
+							<td><a href="https://rojo.space/docs/latest/guide/installation/" target="_blank" rel="noopener noreferrer">Rojo</a></td>
 							<td>Sync files between VS Code and Roblox Studio</td>
 							<td className="text-success">Yes</td>
 						</tr>
 						<tr>
-							<td><a href="https://marketplace.visualstudio.com/items?itemName=evaera.vscode-rojo" target="_blank">Rojo for VS Code</a></td>
+							<td><a href="https://marketplace.visualstudio.com/items?itemName=evaera.vscode-rojo" target="_blank" rel="noopener noreferrer">Rojo for VS Code</a></td>
 							<td>Use and manage Rojo directly from VS Code</td>
 							<td className="text-muted">No</td>
 						</tr>
 						<tr>
-							<td><a href="https://github.com/mpeterv/luacheck" target="_blank">Luacheck</a></td>
+							<td><a href="https://github.com/mpeterv/luacheck" target="_blank" rel="noopener noreferrer">Luacheck</a></td>
 							<td>Static analyzer and linter for Lua</td>
 							<td className="text-muted">No (<span className="text-success">Yes</span> if using vscode-lua)</td>
 						</tr>
 						<tr>
-							<td><a href="https://marketplace.visualstudio.com/items?itemName=trixnz.vscode-lua" target="_blank">vscode-lua</a></td>
+							<td><a href="https://marketplace.visualstudio.com/items?itemName=trixnz.vscode-lua" target="_blank" rel="noopener noreferrer">vscode-lua</a></td>
 							<td>Intellisense and linting for Lua (utilizes Luacheck)</td>
 							<td className="text-muted">No</td>
 						</tr>
@@ -65,7 +65,7 @@ export default class VSCode extends React.Component {
 				<h3>Project Setup</h3>
 				<ol>
 					<li>Create a new directory for your project</li>
-					<li>Open the directory within VS Code (<code className="text-muted">File > Open Folder...</code>)</li>
+					<li>Open the directory within VS Code (<code className="text-muted">File &gt; Open Folder...</code>)</li>
 					<li>From the command panel <code className="text-muted">(Ctrl+Shift+P)</code>, run <code className="text-success">AeroGameFramework: Init</code></li>
 					<li>If using the Rojo VS Code extension, restart VS Code</li>
 					<li>Enable HTTP requests within your Roblox game settings</li>
@@ -114,7 +114,7 @@ export default class VSCode extends React.Component {
 				<p>
 					The VS Code extension for AeroGameFramework provides a simplified directory hierarchy that will only show
 					the source files that should be edited. In other words, it hides all of the files that you do not need to
-					worry about. This view can be selected from the "AGF" icon on the left-hand panel in VS Code.
+					worry about. This view can be selected from the &quot;AGF&quot; icon on the left-hand panel in VS Code.
 				</p>
 
 				<hr/>

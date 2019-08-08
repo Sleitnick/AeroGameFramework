@@ -3,11 +3,11 @@ import { NavLink } from "react-router-dom";
 
 export default class Header extends React.Component {
 
-	constructor(props) {
+	public constructor(props) {
 		super(props);
 	}
 
-	public render() {
+	public render(): JSX.Element {
 		return (
 			<div className="header">
 				<div className="header-content">

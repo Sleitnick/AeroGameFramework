@@ -2,11 +2,11 @@ import * as React from "react";
 
 export default class NotFound extends React.Component {
 
-	constructor(props) {
+	public constructor(props) {
 		super(props);
 	}
 
-	public render() {
+	public render(): JSX.Element {
 		return (
 			<div>
 				<h1>Not Found</h1>

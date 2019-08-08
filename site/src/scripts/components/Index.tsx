@@ -12,11 +12,11 @@ import NotFound from "./pages/NotFound";
 
 export default class Index extends React.Component {
 
-	constructor(props) {
+	public constructor(props) {
 		super(props);
 	}
 
-	public render() {
+	public render(): JSX.Element {
 		return (
 			<Router>
 				<div>
@@ -29,7 +29,7 @@ export default class Index extends React.Component {
 								</div>
 								<div className="col-lg-8 col-md-8 col-sm-12">
 									<Switch>
-										<Route exact path="/" render={() => <Redirect to="/home"/>}/>
+										<Route exact path="/" render={(): JSX.Element => <Redirect to="/home"/>}/>
 										<Route exact path="/home" component={Home}/>
 										<Route exact path="/install" component={Install}/>
 										<Route exact path="/services" component={Services}/>
