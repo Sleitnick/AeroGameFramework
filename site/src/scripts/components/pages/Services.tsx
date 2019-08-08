@@ -16,11 +16,11 @@ import "../../lua/service_11.lua";
 
 export default class Services extends React.Component {
 
-	constructor(props) {
+	public constructor(props) {
 		super(props);
 	}
 
-	public render() {
+	public render(): JSX.Element {
 		return (
 			<div>
 
@@ -138,7 +138,7 @@ export default class Services extends React.Component {
 
 					The \`Start\` method is called after all services have been initialized (i.e. their \`Init\` methods have been
 					fully executed). Each \`Start\` method is executed on a _separate_ thread (asynchronously). From here, it is safe to reference
-					and invoke other services in the framework
+					and invoke other services in the framework.
 
 					---------------------
 
