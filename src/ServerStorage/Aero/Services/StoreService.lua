@@ -44,12 +44,16 @@ local modules
 local function IncrementPurchase(player, productId)
 	productId = tostring(productId)
 	local playerData = modules.Data.ForPlayer(player)
-	local productPurchases = playerData:Get(PRODUCT_PURCHASES_KEY, {}):Await()
-
-	local n = productPurchases[productId]
-	productPurchases[productId] = (n and (n + 1) or 1)
-	playerData:Set(PRODUCT_PURCHASES_KEY, productPurchases)
-	playerData:Save(PRODUCT_PURCHASES_KEY)
+	local success, productPurchases = playerData:Get(PRODUCT_PURCHASES_KEY, {}):Await()
+	
+	if (success) then
+		local n = productPurchases[productId]
+		productPurchases[productId] = (n and (n + 1) or 1)
+		playerData:Set(PRODUCT_PURCHASES_KEY, productPurchases)
+		playerData:Save(PRODUCT_PURCHASES_KEY)
+	else
+		print("Something went wrong while retrieving product purchases: " .. productPurchases)
+	end
 end
 
 
@@ -72,12 +76,17 @@ local function ProcessReceipt(receiptInfo)
 	
 	local playerReceiptsData = modules.Data.new(dataStoreName, dataStoreScope)
 	-- Check if unique purchase was already completed:
-	local alreadyPurchased = playerReceiptsData:Get(key, false):Await()
+	local success, alreadyPurchased = playerReceiptsData:Get(key, false):Await()
 	
-	if (not alreadyPurchased) then
-		-- Mark as purchased and save immediately:
-		playerReceiptsData:Set(key, true)
-		playerReceiptsData:Save(key)
+	if (success) then
+		if (not alreadyPurchased) then
+			-- Mark as purchased and save immediately:
+			playerReceiptsData:Set(key, true)
+			playerReceiptsData:Save(key)
+		end
+	else
+		print("Something went wrong while retrieving product purchase status: " .. alreadyPurchased)
+		return Enum.ProductPurchaseDecision.NotProcessedYet
 	end
 	
 	if (player) then
@@ -93,8 +102,14 @@ end
 
 function StoreService:HasPurchased(player, productId)
 	local playerData = modules.Data.ForPlayer(player)
-	local productPurchases = playerData:Get(PRODUCT_PURCHASES_KEY, {}):Await()
-	return (productPurchases and productPurchases[tostring(productId)] ~= nil)
+	local success, productPurchases = playerData:Get(PRODUCT_PURCHASES_KEY, {}):Await()
+	
+	if (success) then
+		return (productPurchases and productPurchases[tostring(productId)] ~= nil)
+	else
+		print("Something went wrong while retrieving product purchases: " .. productPurchases)
+		return nil
+	end
 end
 
 
@@ -110,10 +125,14 @@ end
 function StoreService:GetNumberPurchased(player, productId)
 	local n = 0
 	local playerData = modules.Data.ForPlayer(player)
-	local productPurchases = playerData:Get(PRODUCT_PURCHASES_KEY, {}):Await()
-	if (productPurchases) then
+	local success, productPurchases = playerData:Get(PRODUCT_PURCHASES_KEY, {}):Await()
+	
+	if (success) then
 		n = (productPurchases[tostring(productId)] or 0)
+	else
+		print("Something went wrong while retrieving product purchases: " .. productPurchases)
 	end
+	
 	return n
 end
 
