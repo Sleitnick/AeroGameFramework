@@ -113,10 +113,10 @@ local function LazyLoadSetup(tbl, folder)
 			local child = folder[i]
 			if (child:IsA("ModuleScript")) then
 				local obj = require(child)
+				rawset(t, i, obj)
 				if (type(obj) == "table") then
 					AeroServer:WrapModule(obj)
 				end
-				rawset(t, i, obj)
 				return obj
 			elseif (child:IsA("Folder")) then
 				local nestedTbl = {}
