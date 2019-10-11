@@ -1,0 +1,37 @@
+site_name: AeroGameFramework
+site_description: Documentation for the AeroGameFramework
+site_author: Stephen Leitnick
+site_url: https://github.com/Sleitnick/AeroGameFramework
+
+nav:
+  - Home: index.md
+  - Install & Setup: install.md
+  - Services: services.md
+  - Controllers: controllers.md
+  - Modules: modules.md
+  - Execution Model: execution_model.md
+
+theme:
+  logo: "img/logo_64.png"
+  name: material
+  palette:
+    primary: blue
+    accent: blue
+  highlightjs: true
+  hljs_languages:
+    - python
+    - lua
+  feature:
+    tabs: true
+
+extra:
+  social:
+    - type: github
+      link: https://github.com/Sleitnick/AeroGameFramework
+
+markdown_extensions:
+  - codehilite:
+      linenums: true
+  - admonition
+  - toc:
+      permalink: true
