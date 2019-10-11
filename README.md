@@ -1,4 +1,4 @@
-![Logo](/imgs/logo_256.png)
+![Logo](/imgs/logo_github_readme.png)
 
 # AeroGameFramework
 A powerful game framework for the Roblox platform.
