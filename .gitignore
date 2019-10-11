@@ -1,3 +1,4 @@
 imgs/*.psd
 .luacheckrc
 node_modules/
+site/
