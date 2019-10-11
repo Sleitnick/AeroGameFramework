@@ -52,3 +52,5 @@ end
 
 return MyService
 ```
+
+These are complete code examples. They could be put into the framework and work as-is.
