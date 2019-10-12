@@ -13,6 +13,7 @@ nav:
 
 theme:
   logo: "img/logo_64.png"
+  favicon: "img/logo_32.png"
   name: material
   palette:
     primary: blue
@@ -21,8 +22,6 @@ theme:
   hljs_languages:
     - python
     - lua
-  feature:
-    tabs: true
 
 extra:
   social:
