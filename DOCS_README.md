@@ -6,15 +6,15 @@ To simplify the development process, the `docs.sh` script has been written. The 
 
 #### Watch:
 ```sh
-$ ./docs_deploy.sh watch
+$ ./docs.sh watch
 ```
 
 #### Build:
 ```sh
-$ ./docs_deploy.sh build
+$ ./docs.sh build
 ```
 
 #### Deploy:
 ```sh
-$ ./docs_deploy.sh deploy
+$ ./docs.sh deploy
 ```
