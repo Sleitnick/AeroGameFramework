@@ -24,7 +24,7 @@ return MyModule
 
 --------------------------
 
-## Prevet `Init` or `Start`
+## Prevent `Init` or `Start`
 
 If you are trying to use a module that already has a `Start` or `Init` method that doesn't relate to the AeroGameFramework (e.g. a 3rd-party module not designed for the framework), then you can prevent the framework from invoking these methods. This is done by setting the `__aeroPreventInit` and `__aeroPreventStart` flags on the module. Note that those two flags are prefixed by two underscores, similar to Lua metamethods.
 

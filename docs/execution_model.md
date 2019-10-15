@@ -31,7 +31,7 @@ The two flags are:
 - `__aeroPreventStart`
 
 !!! note
-	Set the flag to a truthy value (preferrably just `true`). See the example under the [Modules](/modules/#prevet-init-or-start) page.
+	Set the flag to a truthy value (preferrably just `true`). See the example under the [Modules](modules.md#prevent-init-or-start) page.
 
 --------------------------
 

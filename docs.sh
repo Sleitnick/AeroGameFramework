@@ -1,3 +1,5 @@
+#!/usr/bin/sh
+
 deploy () {
 	mkdocs gh-deploy
 }
