@@ -20,6 +20,8 @@ local internalFolder = game:GetService("ReplicatedStorage").Aero.Internal
 local remoteServices = Instance.new("Folder")
 remoteServices.Name = "AeroRemoteServices"
 
+local players = {}
+
 local FastSpawn = require(internalFolder.FastSpawn)
 
 local function PreventEventRegister()
@@ -59,6 +61,16 @@ end
 
 function AeroServer:FireAllClientsEvent(eventName, ...)
 	self._clientEvents[eventName]:FireAllClients(...)
+end
+
+
+function AeroServer:FireAllClientsEventExcept(eventName, client, ...)
+	local event = self._clientEvents[eventName]
+	for _,player in pairs(players) do
+		if (player ~= client) then
+			event:FireClient(player, ...)
+		end
+	end
 end
 
 
@@ -186,6 +198,20 @@ end
 
 
 local function Init()
+
+	local function PlayerAdded(player)
+		players[#players + 1] = player
+	end
+
+	local function PlayerRemoving(player)
+		local nPlayers = #players
+		for i = 1,nPlayers do
+			if (players[i] == player) then
+				players[i] = players[nPlayers]
+				players[nPlayers] = nil
+			end
+		end
+	end
 	
 	-- Load service modules:
 	local function LoadAllServices(parent, servicesTbl, parentFolder)
@@ -241,6 +267,10 @@ local function Init()
 	end
 
 	--------------------------------------------------------------------
+
+	players = game:GetService("Players"):GetPlayers()
+	game:GetService("Players").PlayerAdded:Connect(PlayerAdded)
+	game:GetService("Players").PlayerRemoving:Connect(PlayerRemoving)
 	
 	-- Lazy-load server and shared modules:
 	LazyLoadSetup(AeroServer.Modules, modulesFolder)
