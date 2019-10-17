@@ -89,7 +89,7 @@ local MONTHS_SHORT = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "S
 
 
 -- Single-level table copy:
-function CopyTable(t)
+local function CopyTable(t)
 	local tCopy = {}
 	for k,v in pairs(t) do
 		tCopy[k] = v
