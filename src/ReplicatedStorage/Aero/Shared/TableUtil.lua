@@ -1,5 +1,5 @@
 -- Table Util
--- Crazyman32
+-- Stephen Leitnick
 -- September 13, 2017
 
 --[[

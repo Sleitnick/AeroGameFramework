@@ -1,5 +1,5 @@
 -- Fade
--- Crazyman32
+-- Stephen Leitnick
 -- February 4, 2017
 
 --[[

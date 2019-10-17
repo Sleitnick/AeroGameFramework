@@ -1,5 +1,5 @@
 -- User Input
--- Crazyman32
+-- Stephen Leitnick
 -- January 2, 2018
 
 --[[

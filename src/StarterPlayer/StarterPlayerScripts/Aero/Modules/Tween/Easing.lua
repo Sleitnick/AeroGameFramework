@@ -1,5 +1,5 @@
 -- Easing
--- Crazyman32
+-- Stephen Leitnick
 -- June 21, 2017
 
 -- Source: https://github.com/RoStrap/Interpolation/blob/master/EasingFunctions.lua

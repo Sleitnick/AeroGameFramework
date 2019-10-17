@@ -1,5 +1,5 @@
 -- Smooth Damp
--- Crazyman32
+-- Stephen Leitnick
 -- January 30, 2017
 
 --[[
