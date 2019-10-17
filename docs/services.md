@@ -46,6 +46,7 @@ return MyService
 | `void` | `service:FireEvent(String eventName, ...)` |
 | `void` | `service:FireClientEvent(String clientEventName, Player player, ...)` |
 | `void` | `service:FireAllClientsEvent(String clientEventName, ...)` |
+| `void` | `service:FireAllClientsEventExcept(String clientEventName, Player player, ...)` |
 | `Connection` | `service:ConnectEvent(String eventName, Function handler)` |
 | `Connection` | `service:ConnectClientEvent(String clientEventName, Function handler)` |
 
