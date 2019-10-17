@@ -29,7 +29,7 @@ end
 return MyController
 ```
 
-### Injected Properties:
+### Injected Properties
 
 | Property | Description |
 | -------- | ----------- |
@@ -39,7 +39,7 @@ return MyController
 | `controller.Services` | Table of all server-side services, referenced by the name of the ModuleScript |
 | `controller.Player` | Reference to the LocalPlayer (`game.Players.LocalPlayer`) |
 
-### Injected Methods:
+### Injected Methods
 
 | Returns | Method |
 | -------- | ----------- |
@@ -167,7 +167,7 @@ end
 
 ## Other Examples
 
-Invoking another controller:
+### Invoking another controller
 
 ```lua
 function MyController:Start()
@@ -179,7 +179,7 @@ function MyController:Start()
 end
 ```
 
-Invoking a service:
+### Invoking a service
 
 ```lua
 function MyController:Start()
@@ -190,7 +190,7 @@ function MyController:Start()
 end
 ```
 
-Using a module:
+### Using a module
 
 ```lua
 function MyController:Start()
@@ -199,7 +199,7 @@ function MyController:Start()
 end
 ```
 
-Using a shared module:
+### Using a shared module
 
 ```lua
 function MyController:Start()
@@ -210,7 +210,7 @@ function MyController:Start()
 end
 ```
 
-Connecting to a service event:
+### Connecting to a service event
 
 ```lua
 function MyController:Start()
@@ -221,7 +221,7 @@ function MyController:Start()
 end
 ```
 
-Firing a service event:
+### Firing a service event
 
 ```lua
 -- Client controller:

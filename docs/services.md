@@ -27,7 +27,7 @@ end
 return MyService
 ```
 
-### Injected Properties:
+### Injected Properties
 
 | Property | Description |
 | -------- | ----------- |
@@ -36,7 +36,7 @@ return MyService
 | `service.Shared` | Table of all shared modules, referenced by the name of the ModuleScript |
 | `service.Client.Server` | Reference back to the service, so client-facing methods can invoke server-facing methods |
 
-### Injected Methods:
+### Injected Methods
 
 | Returns | Method |
 | -------- | ----------- |
@@ -202,7 +202,7 @@ end
 
 ## Other Examples
 
-### Invoking another service:
+### Invoking another service
 
 ```lua
 function MyService:Start()
@@ -212,7 +212,7 @@ function MyService:Start()
 end
 ```
 
-### Using a Module:
+### Using a Module
 
 ```lua
 function MyService:Start()
@@ -221,7 +221,7 @@ function MyService:Start()
 end
 ```
 
-### Using a Shared module:
+### Using a Shared module
 
 ```lua
 function MyService:Start()
