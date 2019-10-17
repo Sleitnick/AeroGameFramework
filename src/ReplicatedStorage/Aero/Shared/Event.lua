@@ -62,7 +62,6 @@ end
 
 
 function Event:Fire(...)
-	local connections = self._connections
 	self._args = {...}
 	self._numArgs = SELECT("#", ...)
 	self._bindable:Fire()
