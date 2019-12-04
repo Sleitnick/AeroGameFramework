@@ -125,6 +125,38 @@
 			print(tblSum)  -- > 130
 
 
+		Assign:
+
+			This allows you to assign values from multiple tables into one. The
+			Assign function is very similar to JavaScript's Object.Assign() and
+			is useful for things such as composition-designed systems.
+
+			local function Driver()
+				return {
+					Drive = function(self) self.Speed = 10 end;
+				}
+			end
+
+			local function Teleporter()
+				return {
+					Teleport = function(self, pos) self.Position = pos end;
+				}
+			end
+
+			local function CreateCar()
+				local state = {
+					Speed = 0;
+					Position = Vector3.new();
+				}
+				-- Assign the Driver and Teleporter components to the car:
+				return TableUtil.Assign({}, Driver(), Teleporter())
+			end
+
+			local car = CreateCar()
+			car:Drive()
+			car:Teleport(Vector3.new(0, 10, 0))
+
+
 		IndexOf:
 
 			Returns the index of the given item in the table. If not found, this
