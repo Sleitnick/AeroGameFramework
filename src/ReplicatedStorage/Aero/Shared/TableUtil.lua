@@ -12,6 +12,7 @@
 	TableUtil.Map(Table tbl, Function callback)
 	TableUtil.Filter(Table tbl, Function callback)
 	TableUtil.Reduce(Table tbl, Function callback [, Number initialValue])
+	TableUtil.Assign(Table target, ...Table sources)
 	TableUtil.IndexOf(Table tbl, Variant item)
 	TableUtil.Reverse(Table tbl)
 	TableUtil.Shuffle(Table tbl)
@@ -278,6 +279,17 @@ local function Reduce(t, f, init)
 end
 
 
+-- tableUtil.Assign(Table target, ...Table sources)
+local function Assign(target, ...)
+	for _,src in pairs({...}) do
+		for k,v in pairs(src) do
+			target[k] = v
+		end
+	end
+	return target
+end
+
+
 local function Print(tbl, label, deepPrint)
 
 	assert(type(tbl) == "table", "First argument must be a table")
@@ -398,6 +410,7 @@ TableUtil.Print = Print
 TableUtil.Map = Map
 TableUtil.Filter = Filter
 TableUtil.Reduce = Reduce
+TableUtil.Assign = Assign
 TableUtil.IndexOf = IndexOf
 TableUtil.Reverse = Reverse
 TableUtil.Shuffle = Shuffle
