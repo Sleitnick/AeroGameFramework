@@ -313,7 +313,7 @@ end
 
 -- tableUtil.Assign(Table target, ...Table sources)
 local function Assign(target, ...)
-	for _,src in pairs({...}) do
+	for _,src in ipairs({...}) do
 		for k,v in pairs(src) do
 			target[k] = v
 		end
