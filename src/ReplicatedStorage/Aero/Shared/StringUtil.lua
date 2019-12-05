@@ -34,98 +34,98 @@
 
 		TrimStart:
 
-			The same as Trim, but only trims the start of the string:
+			The same as Trim, but only trims the start of the string.
 
 			StringUtil.TrimStart("  hello world  ") == "hello world  "
 
 
 		TrimEnd:
 
-			The same as Trim, but only trims the end of the string:
+			The same as Trim, but only trims the end of the string.
 
 			StringUtil.TrimEnd("  hello world  ") == "  hello world"
 
 
 		EqualsIgnoreCase:
 
-			Checks if two strings are equal, but ignores their case:
+			Checks if two strings are equal, but ignores their case.
 
 			StringUtil.EqualsIgnoreCase("HELLo woRLD", "hEllo wORLd") == true
 
 
 		RemoveWhitespace:
 
-			Removes all whitespace from a string:
+			Removes all whitespace from a string.
 
 			StringUtil.RemoveWhitespace("  hello World!\n") == "helloWorld!"
 
 
 		RemoveExcessWhitespace:
 
-			Replaces all whitespace with a single space. This does not trim the string:
+			Replaces all whitespace with a single space. This does not trim the string.
 
 			StringUtil.RemoveExcessWhitespace("This     is    a   \n  test") == "This is a test"
 
 
 		EndsWith:
 
-			Checks if a string ends with a certain string:
+			Checks if a string ends with a certain string.
 
 			StringUtil.EndsWith("Hello world", "rld") == true
 
 
 		StartsWith:
 
-			Checks if a string starts with a certain string:
+			Checks if a string starts with a certain string.
 
 			StringUtil.StartsWith("Hello world", "He") == true
 
 
 		Contains:
 
-			Checks if a string contains another string:
+			Checks if a string contains another string.
 
 			StringUtil.Contains("Hello world", "lo wor") == true
 
 
 		ToCharArray:
 
-			Returns a table of all the characters in the string:
+			Returns a table of all the characters in the string.
 
 			StringUtil.ToCharArray("Hello") >>> {"H","e","l","l","o"}
 
 
 		ToByteArray:
 
-			Returns a table of all the bytes of each character in the string:
+			Returns a table of all the bytes of each character in the string.
 
 			StringUtil.ToByteArray("Hello") >>> {72,101,108,108,111}
 
 
 		ByteArrayToString:
 
-			Transforms an array of bytes into a string:
+			Transforms an array of bytes into a string.
 
 			StringUtil.ByteArrayToString({97, 98, 99}) == "abc"
 
 
 		ToCamelCase:
 		
-			Returns a string in camelCase:
+			Returns a string in camelCase.
 
 			StringUtil.ToCamelCase("Hello_world-abc") == "helloWorldAbc"
 
 
 		ToPascalCase:
 		
-			Returns a string in PascalCase:
+			Returns a string in PascalCase.
 
 			StringUtil.ToPascalCase("Hello_world-abc") == "HelloWorldAbc"
 
 
 		ToSnakeCase:
 		
-			Returns a string in snake_case or SNAKE_CASE:
+			Returns a string in snake_case or SNAKE_CASE.
 
 			StringUtil.ToPascalCase("Hello_world-abc") == "hello_world_abc"
 			StringUtil.ToPascalCase("Hello_world-abc", true) == "HELLO_WORLD_ABC"
@@ -133,7 +133,7 @@
 
 		ToKebabCase:
 		
-			Returns a string in kebab-case or KEBAB-CASE:
+			Returns a string in kebab-case or KEBAB-CASE.
 
 			StringUtil.ToKebabCase("Hello_world-abc") == "hello-world-abc"
 			StringUtil.ToKebabCase("Hello_world-abc", true) == "HELLO-WORLD-ABC"
@@ -143,7 +143,7 @@
 
 			Escapes a string from pattern characters. In other words, it prefixes
 			any special pattern characters with a %. For example, the dollar
-			sign $ would become %$. Example below:
+			sign $ would become %$. See the example below.
 
 			StringUtil.Escape("Hello. World$ ^-^") == "Hello%. World%$ %^%-%^"
 
@@ -154,7 +154,7 @@
 			is useful when a large string needs to be concatenated. Traditional
 			concatenation of a string using ".." can be a performance issue, and thus
 			StringBuilders can be used to store the pieces of the string in a table
-			and then concatenate them all at once:
+			and then concatenate them all at once.
 
 			local builder = StringUtil.StringBuilder()
 
