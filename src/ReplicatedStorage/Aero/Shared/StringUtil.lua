@@ -15,6 +15,7 @@
 	StringUtil.Contains(String str, String contains)
 	StringUtil.ToCharArray(String str)
 	StringUtil.ToByteArray(String str)
+	StringUtil.ByteArrayToString(Table bytes)
 	StringUtil.ToCamelCase(String str)
 	StringUtil.ToPascalCase(String str)
 	StringUtil.ToSnakeCase(String str [, uppercase])
@@ -101,6 +102,13 @@
 			StringUtil.ToByteArray("Hello") >>> {72,101,108,108,111}
 
 
+		ByteArrayToString:
+
+			Transforms an array of bytes into a string:
+
+			StringUtil.ByteArrayToString({97, 98, 99}) == "abc"
+
+
 		ToCamelCase:
 		
 			Returns a string in camelCase:
@@ -159,6 +167,8 @@
 
 
 local StringUtil = {}
+
+local MAX_TUPLE = 7997
 
 
 function StringUtil.Escape(str)
@@ -225,8 +235,9 @@ end
 
 
 function StringUtil.ToCharArray(str)
-	local chars = {}
-	for i = 1,#str do
+	local len = #str
+	local chars = table.create(len)
+	for i = 1,len do
 		chars[i] = str:sub(i, i)
 	end
 	return chars
@@ -234,11 +245,31 @@ end
 
 
 function StringUtil.ToByteArray(str)
-	local bytes = {}
-	for i = 1,#str do
+	local len = #str
+	if (len == 0) then return {} end
+	if (len <= MAX_TUPLE) then
+		return table.pack(str:byte(1, #str))
+	end
+	local bytes = table.create(len)
+	for i = 1,len do
 		bytes[i] = str:sub(i, i):byte()
 	end
 	return bytes
+end
+
+
+function StringUtil.ByteArrayToString(bytes)
+	local size = #bytes
+	if (size <= MAX_TUPLE) then
+		return string.char(table.unpack(bytes))
+	end
+	local numChunks = math.ceil(size / MAX_TUPLE)
+	local stringBuild = table.create(numChunks)
+	for i = 1, numChunks do
+		local chunk = string.char(table.unpack(bytes, ((i - 1) * MAX_TUPLE) + 1, math.min(size, ((i - 1) * MAX_TUPLE) + MAX_TUPLE)))
+		stringBuild[i] = chunk
+	end
+	return table.concat(stringBuild, "")
 end
 
 
