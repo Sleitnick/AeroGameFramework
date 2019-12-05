@@ -19,6 +19,7 @@
 	StringUtil.ToPascalCase(String str)
 	StringUtil.ToSnakeCase(String str [, uppercase])
 	StringUtil.ToKebabCase(String str [, uppercase])
+	StringUtil.Escape(str)
 	StringUtil.StringBuilder()
 
 	EXAMPLES:
@@ -128,6 +129,15 @@
 
 			StringUtil.ToKebabCase("Hello_world-abc") == "hello-world-abc"
 			StringUtil.ToKebabCase("Hello_world-abc", true) == "HELLO-WORLD-ABC"
+
+
+		Escape:
+
+			Escapes a string from pattern characters. In other words, it prefixes
+			any special pattern characters with a %. For example, the dollar
+			sign $ would become %$. Example below:
+
+			StringUtil.Escape("Hello. World$ ^-^") == "Hello%. World%$ %^%-%^"
 
 
 		StringBuilder:
