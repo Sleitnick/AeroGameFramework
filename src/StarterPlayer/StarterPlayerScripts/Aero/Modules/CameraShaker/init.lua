@@ -10,6 +10,7 @@
 	
 	CameraShaker:Start()
 	CameraShaker:Stop()
+	CameraShaker:StopSustained([fadeOutTime])
 	CameraShaker:Shake(shakeInstance)
 	CameraShaker:ShakeSustain(shakeInstance)
 	CameraShaker:ShakeOnce(magnitude, roughness [, fadeInTime, fadeOutTime, posInfluence, rotInfluence])
@@ -33,22 +34,16 @@
 		-- Custom shake:
 		camShake:ShakeOnce(3, 1, 0.2, 1.5)
 
-		wait(1)
-
 		-- Sustained shake:
-		local swayShakeInstance = CameraShaker.Presets.GentleSway
-		camShake:ShakeSustain(swayShakeInstance)
-		
-		wait(3)
+		camShake:ShakeSustain(CameraShaker.Presets.Earthquake)
 
-		-- Sustained shake fadeout:
-		swayShakeInstance:StartFadeOut(3)
+		-- Stop all sustained shakes:
+		camShake:StopSustained(1) -- Argument is the fadeout time (defaults to the same as fadein time if not supplied)
 
-		-- "CameraShaker.Presets.GentleSway" or any other preset
-		-- will always return a new ShakeInstance. If you want
-		-- to fade out a previously sustained ShakeInstance, you
-		-- will need to assign it to a variable before sustaining it.
-
+		-- Stop only one sustained shake:
+		shakeInstance = camShake:ShakeSustain(CameraShaker.Presets.Earthquake)
+		wait(2)
+		shakeInstance:StartFadeOut(1) -- Argument is the fadeout time
 	
 	
 	NOTE:
@@ -57,6 +52,8 @@
 		permission by the developer, Road Turtle Games, to port this to Roblox.
 		
 		Original asset link: https://assetstore.unity.com/packages/tools/camera/ez-camera-shake-33148
+
+		GitHub repository: https://github.com/Sleitnick/RbxCameraShaker
 	
 	
 --]]
@@ -129,6 +126,15 @@ function CameraShaker:Stop()
 end
 
 
+function CameraShaker:StopSustained(duration)
+	for _,c in pairs(self._camShakeInstances) do
+		if (c.fadeOutDuration == 0) then
+			c:StartFadeOut(duration or c.fadeInDuration)
+		end
+	end
+end
+
+
 function CameraShaker:Update(dt)
 	
 	local posAddShake = v3Zero
@@ -145,8 +151,9 @@ function CameraShaker:Update(dt)
 		if (state == CameraShakeState.Inactive and c.DeleteOnInactive) then
 			self._removeInstances[#self._removeInstances + 1] = i
 		elseif (state ~= CameraShakeState.Inactive) then
-			posAddShake = posAddShake + (c:UpdateShake(dt) * c.PositionInfluence)
-			rotAddShake = rotAddShake + (c:UpdateShake(dt) * c.RotationInfluence)
+			local shake = c:UpdateShake(dt)
+			posAddShake = posAddShake + (shake * c.PositionInfluence)
+			rotAddShake = rotAddShake + (shake * c.RotationInfluence)
 		end
 		
 	end
