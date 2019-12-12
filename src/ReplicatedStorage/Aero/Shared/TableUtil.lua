@@ -5,6 +5,7 @@
 --[[
 	
 	TableUtil.Copy(Table tbl)
+	TableUtil.CopyShallow(Table tbl)
 	TableUtil.Sync(Table tbl, Table templateTbl)
 	TableUtil.Print(Table tbl, String label, Boolean deepPrint)
 	TableUtil.FastRemove(Table tbl, Number index)
@@ -12,6 +13,7 @@
 	TableUtil.Map(Table tbl, Function callback)
 	TableUtil.Filter(Table tbl, Function callback)
 	TableUtil.Reduce(Table tbl, Function callback [, Number initialValue])
+	TableUtil.Assign(Table target, ...Table sources)
 	TableUtil.IndexOf(Table tbl, Variant item)
 	TableUtil.Reverse(Table tbl)
 	TableUtil.Shuffle(Table tbl)
@@ -23,10 +25,22 @@
 
 		Copy:
 
-			Performs a deep copy of the given table.
+			Performs a deep copy of the given table. In other words,
+			all nested tables will also get copied.
 
 			local tbl = {"a", "b", "c"}
 			local tblCopy = TableUtil.Copy(tbl)
+
+
+		CopyShallow:
+
+			Performs a shallow copy of the given table. In other words,
+			all nested tables will not be copied, but only moved by
+			reference. Thus, a nested table in both the original and
+			the copy will be the same.
+
+			local tbl = {"a", "b", "c"}
+			local tblCopy = TableUtil.CopyShallow(tbl)
 
 
 		Sync:
@@ -124,6 +138,38 @@
 			print(tblSum)  -- > 130
 
 
+		Assign:
+
+			This allows you to assign values from multiple tables into one. The
+			Assign function is very similar to JavaScript's Object.Assign() and
+			is useful for things such as composition-designed systems.
+
+			local function Driver()
+				return {
+					Drive = function(self) self.Speed = 10 end;
+				}
+			end
+
+			local function Teleporter()
+				return {
+					Teleport = function(self, pos) self.Position = pos end;
+				}
+			end
+
+			local function CreateCar()
+				local state = {
+					Speed = 0;
+					Position = Vector3.new();
+				}
+				-- Assign the Driver and Teleporter components to the car:
+				return TableUtil.Assign({}, Driver(), Teleporter())
+			end
+
+			local car = CreateCar()
+			car:Drive()
+			car:Teleport(Vector3.new(0, 10, 0))
+
+
 		IndexOf:
 
 			Returns the index of the given item in the table. If not found, this
@@ -163,7 +209,7 @@ local http = game:GetService("HttpService")
 
 local function CopyTable(t)
 	assert(type(t) == "table", "First argument must be a table")
-	local tCopy = {}
+	local tCopy = table.create(#t)
 	for k,v in pairs(t) do
 		if (type(v) == "table") then
 			tCopy[k] = CopyTable(v)
@@ -171,6 +217,13 @@ local function CopyTable(t)
 			tCopy[k] = v
 		end
 	end
+	return tCopy
+end
+
+
+local function CopyTableShallow(t)
+	local tCopy = table.create(#t)
+	for k,v in pairs(t) do tCopy[k] = v end
 	return tCopy
 end
 
@@ -234,7 +287,7 @@ end
 local function Map(t, f)
 	assert(type(t) == "table", "First argument must be a table")
 	assert(type(f) == "function", "Second argument must be an array")
-	local newT = {}
+	local newT = table.create(#t)
 	for k,v in pairs(t) do
 		newT[k] = f(v, k, t)
 	end
@@ -245,7 +298,7 @@ end
 local function Filter(t, f)
 	assert(type(t) == "table", "First argument must be a table")
 	assert(type(f) == "function", "Second argument must be an array")
-	local newT = {}
+	local newT = table.create(#t)
 	if (#t > 0) then
 		local n = 0
 		for i = 1,#t do
@@ -275,6 +328,17 @@ local function Reduce(t, f, init)
 		result = f(result, v, k, t)
 	end
 	return result
+end
+
+
+-- tableUtil.Assign(Table target, ...Table sources)
+local function Assign(target, ...)
+	for _,src in ipairs({...}) do
+		for k,v in pairs(src) do
+			target[k] = v
+		end
+	end
+	return target
 end
 
 
@@ -347,8 +411,8 @@ end
 
 
 local function Reverse(tbl)
-	local tblRev = {}
 	local n = #tbl
+	local tblRev = table.create(n)
 	for i = 1,n do
 		tblRev[i] = tbl[n - i + 1]
 	end
@@ -358,8 +422,9 @@ end
 
 local function Shuffle(tbl)
 	assert(type(tbl) == "table", "First argument must be a table")
+	local rng = Random.new()
 	for i = #tbl, 2, -1 do
-		local j = math.random(i)
+		local j = rng:NextInteger(1, i)
 		tbl[i], tbl[j] = tbl[j], tbl[i]
 	end
 end
@@ -391,6 +456,7 @@ end
 
 
 TableUtil.Copy = CopyTable
+TableUtil.CopyShallow = CopyTableShallow
 TableUtil.Sync = Sync
 TableUtil.FastRemove = FastRemove
 TableUtil.FastRemoveFirstValue = FastRemoveFirstValue
@@ -398,6 +464,7 @@ TableUtil.Print = Print
 TableUtil.Map = Map
 TableUtil.Filter = Filter
 TableUtil.Reduce = Reduce
+TableUtil.Assign = Assign
 TableUtil.IndexOf = IndexOf
 TableUtil.Reverse = Reverse
 TableUtil.Shuffle = Shuffle
