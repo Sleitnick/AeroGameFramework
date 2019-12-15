@@ -14,6 +14,7 @@ As always, you can also check the commit history for a given version as well, an
 
 | Version | Date | Description |
 | ---|---|--- |
+| [1.4.1](#1.4.1) | 2019-12-15 | <ul><li>Fixed execution order for modules to respect init/start lifecycle</li><li>Add ability to force `Init` execution order using `__aeroOrder` field</li></ul> |
 | [1.4.0](#1.4.0) | 2019-10-17 | <ul><li>Added `service:FireAllClientsEventExcept(eventName, player, ...)`</li><li>Dropped Roblox Studio plugin support in favor of VS Code extension</li><li>New documentation site</li></ul> |
 | [1.3.0](#1.3.0) | 2018-12-19 | <ul><li>Restructured source directory and installer to be compatible with Rojo</li></ul> |
 | [1.2.6](#1.2.6) | 2018-11-12 | <ul><li>Expanded TableUtil library</li></ul> |
@@ -23,6 +24,11 @@ As always, you can also check the commit history for a given version as well, an
 | [1.2.2](#1.2.2) | 2018-08-15 | <ul><li>Added Failed events for DataService.</li><li>Added Failed event for DataStoreCache.</li><li>Added Failed event for SafeDataStore.</li></ul> |
 
 ### Version History Notes
+
+#### <a name="1.4.1"></a> Version 1.4.1
+Fixed an issue with lazy-loaded modules. Before, lazy-loaded modules could break the execution lifecycle rule if loaded within the `Init` method of a service or controller. When this happened, the `Init` _and_ `Start` method would execute within the loaded module. This is a problem, since `Start` should not be executed yet. This is now fixed. The `Start` method will be held off from execution until the proper time within the framework lifecycle.
+
+A new optional field has been added called `__aeroOrder`. Setting this field to a number will define the `Init` execution order for the service or controller. The order is interpreted in ascending order. In other words, a service with an order of `1` will be guaranteed to initialize before a service with the order of `2`. Services and controllers that don't define `__aeroOrder` will default to an order of `math.huge`, which simply makes them executed last, but in no particular order otherwise.
 
 #### <a name="1.4.0"></a> Version 1.4.0
 Added `service:FireAllClientsEventExcept(eventName, player, ...)`, which allows firing client events for all clients except the given player. One use-case for this is to implement custom replication, where a player's action needs to be communicated to the other players.
