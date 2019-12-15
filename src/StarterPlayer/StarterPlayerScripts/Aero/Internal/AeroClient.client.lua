@@ -19,6 +19,8 @@ local modulesFolder = script.Parent.Parent:WaitForChild("Modules")
 local sharedFolder = game:GetService("ReplicatedStorage"):WaitForChild("Aero"):WaitForChild("Shared")
 local internalFolder = game:GetService("ReplicatedStorage").Aero:WaitForChild("Internal")
 
+local modulesAwaitingStart = {}
+
 local FastSpawn = require(internalFolder:WaitForChild("FastSpawn"))
 
 local function PreventEventRegister()
@@ -56,7 +58,11 @@ function Aero:WrapModule(tbl)
 		tbl:Init()
 	end
 	if (type(tbl.Start) == "function" and not tbl.__aeroPreventStart) then
-		FastSpawn(tbl.Start, tbl)
+		if (modulesAwaitingStart) then
+			modulesAwaitingStart[#modulesAwaitingStart + 1] = tbl
+		else
+			FastSpawn(tbl.Start, tbl)
+		end
 	end
 end
 
@@ -185,6 +191,14 @@ local function Init()
 		end
 	end
 
+	-- Start modules that were already loaded:
+	local function StartLoadedModules()
+		for _,tbl in pairs(modulesAwaitingStart) do
+			FastSpawn(tbl.Start, tbl)
+		end
+		modulesAwaitingStart = nil
+	end
+
 	------------------------------------------------------
 	
 	-- Lazy load modules:
@@ -198,6 +212,7 @@ local function Init()
 	LoadAllControllers(controllersFolder, Aero.Controllers)
 	InitAllControllers(Aero.Controllers)
 	StartAllControllers(Aero.Controllers)
+	StartLoadedModules()
 
 	-- Expose client framework globally:
 	_G.Aero = Aero

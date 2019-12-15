@@ -21,6 +21,7 @@ local remoteServices = Instance.new("Folder")
 remoteServices.Name = "AeroRemoteServices"
 
 local players = {}
+local modulesAwaitingStart = {}
 
 local FastSpawn = require(internalFolder.FastSpawn)
 
@@ -113,7 +114,11 @@ function AeroServer:WrapModule(tbl)
 		tbl:Init()
 	end
 	if (type(tbl.Start) == "function" and not tbl.__aeroPreventStart) then
-		FastSpawn(tbl.Start, tbl)
+		if (modulesAwaitingStart) then
+			modulesAwaitingStart[#modulesAwaitingStart + 1] = tbl
+		else
+			FastSpawn(tbl.Start, tbl)
+		end
 	end
 end
 
@@ -266,6 +271,14 @@ local function Init()
 		end
 	end
 
+	-- Start modules that were already loaded:
+	local function StartLoadedModules()
+		for _,tbl in pairs(modulesAwaitingStart) do
+			FastSpawn(tbl.Start, tbl)
+		end
+		modulesAwaitingStart = nil
+	end
+
 	--------------------------------------------------------------------
 
 	players = game:GetService("Players"):GetPlayers()
@@ -281,6 +294,7 @@ local function Init()
 	InitAllServices(AeroServer.Services)
 	ScanRemoteFoldersForEmpty(remoteServices)
 	StartAllServices(AeroServer.Services)
+	StartLoadedModules()
 	
 	-- Expose server framework to client and global scope:
 	remoteServices.Parent = game:GetService("ReplicatedStorage").Aero
