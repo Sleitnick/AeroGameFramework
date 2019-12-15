@@ -271,6 +271,7 @@ local function Init()
 		end
 	end
 
+	-- Start modules that were already loaded:
 	local function StartLoadedModules()
 		for _,tbl in pairs(modulesAwaitingStart) do
 			FastSpawn(tbl.Start, tbl)
