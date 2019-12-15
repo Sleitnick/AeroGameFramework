@@ -28,7 +28,7 @@ The order of which `Init` is invoked for services and controllers can be explici
 Simply set the service or controller `__aeroOrder` field to a number. The `Init` process will execute based on ascending order. Services and controllers without an `__aeroOrder` field set will be executed last (technically, the default order is set to `math.huge`).
 
 !!! note
-	The `__aeroOrder` field can be any valid number, including negatives and non-whole numbers. See the examples under the [Services](services.md) and [Controllers](controllers.md) page.
+	The `__aeroOrder` field can be any valid number, including negatives and non-whole numbers. See the examples under the [Services](services.md#forcing-init-order) and [Controllers](controllers.md#forcing-init-order) page.
 
 --------------------------
 
