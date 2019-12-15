@@ -200,6 +200,32 @@ end
 
 --------------------------
 
+## Forcing `Init` Order
+
+By setting the `__aeroOrder` field, the `Init` execution order can be defined. By default, the order of execution is unknown.
+
+```lua
+local MyService = {}
+MyService.__aeroOrder = 1
+
+function MyService:Init()
+	print("MyService will be initialized before AnotherService")
+end
+
+...
+
+local AnotherService = {}
+AnotherService.__aeroOrder = 2
+
+function AnotherService:Init()
+	print("AnotherService will be initialized after MyService")
+end
+```
+
+By practice, it is discouraged to utilize another service before entering into the `Start` phase of the service (i.e. after all services have been initialized). However, using `__aeroOrder` can be used to guarantee initialization order. In the above example, `AnotherService` would be able to safely utilize `MyService`, knowing that `MyService` is guaranteed to have been initialized due to the execution order.
+
+--------------------------
+
 ## Other Examples
 
 ### Invoking another service

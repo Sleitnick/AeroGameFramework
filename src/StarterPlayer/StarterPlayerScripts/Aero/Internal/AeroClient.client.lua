@@ -171,12 +171,27 @@ local function Init()
 	
 	-- Initialize controllers:
 	local function InitAllControllers(controllers)
-		for _,controller in pairs(controllers) do
-			if (getmetatable(controller) == mt) then
-				InitController(controller)
-			else
-				InitAllControllers(controller)
+		-- Collect all controllers:
+		local controllerTables = {}
+		local function CollectControllers(_controllers)
+			for _,controller in pairs(_controllers) do
+				if (getmetatable(controller) == mt) then
+					controllerTables[#controllerTables + 1] = controller
+				else
+					CollectControllers(controller)
+				end
 			end
+		end
+		CollectControllers(controllers)
+		-- Sort controllers by optional __aeroOrder field:
+		table.sort(controllerTables, function(a, b)
+			local aOrder = (type(a.__aeroOrder) == "number" and a.__aeroOrder or math.huge)
+			local bOrder = (type(b.__aeroOrder) == "number" and b.__aeroOrder or math.huge)
+			return (aOrder < bOrder)
+		end)
+		-- Initialize controllers:
+		for _,controller in ipairs(controllerTables) do
+			InitController(controller)
 		end
 	end
 	
