@@ -236,12 +236,27 @@ local function Init()
 	
 	-- Initialize services:
 	local function InitAllServices(services)
-		for _,service in pairs(services) do
-			if (getmetatable(service) == mt) then
-				InitService(service)
-			else
-				InitAllServices(service)
+		-- Collect all services:
+		local serviceTables = {}
+		local function CollectServices(_services)
+			for _,service in pairs(_services) do
+				if (getmetatable(service) == mt) then
+					serviceTables[#serviceTables + 1] = service
+				else
+					CollectServices(service)
+				end
 			end
+		end
+		CollectServices(services)
+		-- Sort services by optional __aeroOrder field:
+		table.sort(serviceTables, function(a, b)
+			local aOrder = (type(a.__aeroOrder) == "number" and a.__aeroOrder or math.huge)
+			local bOrder = (type(b.__aeroOrder) == "number" and b.__aeroOrder or math.huge)
+			return (aOrder < bOrder)
+		end)
+		-- Initialize services:
+		for _,service in ipairs(serviceTables) do
+			InitService(service)
 		end
 	end
 
