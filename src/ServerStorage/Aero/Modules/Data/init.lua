@@ -401,7 +401,7 @@ end
 function Data:_getSorted(isAscending, pageSize, minValue, maxValue)
 	return Promise.Async(function(resolve, reject)
 		-- Call GetSortedAsync and return the custom DataStorePages object:
-		local success, dsp = pcall(self._ds.GetSortedAsync, self._ods, isAscending, pageSize, minValue, maxValue)
+		local success, dsp = pcall(self._ds.GetSortedAsync, self._ds, isAscending, pageSize, minValue, maxValue)
 		if (success) then
 			resolve(DataStorePages.new(dsp))
 		else
