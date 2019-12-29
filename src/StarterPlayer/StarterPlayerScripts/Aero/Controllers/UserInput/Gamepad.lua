@@ -1,5 +1,5 @@
 -- Gamepad
--- Crazyman32
+-- Stephen Leitnick
 -- December 28, 2017
 
 --[[
@@ -177,7 +177,7 @@ function Gamepad:ApplyDeadzone(value, deadzoneThreshold)
 	elseif (value > 0) then
 		return ((value - deadzoneThreshold) / (1 - deadzoneThreshold))
 	else
-		return ((value + deadzoneThreshold) / (1 - deadzoneThreshold)) 
+		return ((value + deadzoneThreshold) / (1 - deadzoneThreshold))
 	end
 end
 

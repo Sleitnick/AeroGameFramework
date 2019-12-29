@@ -37,7 +37,7 @@ local runService = game:GetService("RunService")
 					
 	returns scheduler
 		method Pause      Pauses the scheduler so it won't run tasks. Tasks may still be added while the scheduler is
-						  paused. They just won't be touched until it's resumed. Performance efficient -- disables 
+						  paused. They just won't be touched until it's resumed. Performance efficient -- disables
 						  execution loop entirely until scheduler is resumed.
 		
 		method Resume     Resumes the paused scheduler.
@@ -88,7 +88,7 @@ function TaskScheduler:CreateScheduler(targetFps)
 		lastIteration = tick()
 		for i = #frameUpdateTable,1,-1 do
 			frameUpdateTable[i + 1] = ((frameUpdateTable[i] >= (lastIteration - 1)) and frameUpdateTable[i] or nil)
-		end	
+		end
 		frameUpdateTable[1] = lastIteration
 	end
 
@@ -142,7 +142,7 @@ function TaskScheduler:CreateScheduler(targetFps)
 	end
 	
 	function scheduler:QueueTask(callback)
-		queue[#queue + 1] = callback 
+		queue[#queue + 1] = callback
 		if (sleeping and not paused) then
 			sleeping = false
 			Loop()

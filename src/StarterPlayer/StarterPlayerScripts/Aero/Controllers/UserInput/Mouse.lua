@@ -1,5 +1,5 @@
 -- Mouse
--- Crazyman32
+-- Stephen Leitnick
 -- December 28, 2017
 
 --[[
@@ -9,9 +9,12 @@
 	Void      Mouse:Lock()
 	Void      Mouse:LockCenter()
 	Void      Mouse:Unlock()
+	Ray       Mouse:GetRay(distance)
+	Ray       Mouse:GetRayFromXY(x, y)
 	Void      Mouse:SetMouseIcon(iconId)
 	Void      Mouse:SetMouseIconEnabled(isEnabled)
 	Boolean   Mouse:IsMouseIconEnabled()
+	Booleam   Mouse:IsButtonPressed(mouseButton)
 	Many      Mouse:Cast(ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
 	Many      Mouse:CastWithIgnoreList(ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
 	Many      Mouse:CastWithWhitelist(whitelistDescendantsTable, ignoreWater)
@@ -37,6 +40,8 @@ local cam = workspace.CurrentCamera
 
 local workspace = workspace
 local RAY = Ray.new
+
+local RAY_DISTANCE = 999
 
 
 function Mouse:GetPosition()
@@ -79,25 +84,36 @@ function Mouse:IsMouseIconEnabled()
 end
 
 
-function Mouse:GetRay()
+function Mouse:IsButtonPressed(mouseButton)
+	return userInput:IsMouseButtonPressed(mouseButton)
+end
+
+
+function Mouse:GetRay(distance)
 	local mousePos = userInput:GetMouseLocation()
 	local viewportMouseRay = cam:ViewportPointToRay(mousePos.X, mousePos.Y)
-	return RAY(viewportMouseRay.Origin, viewportMouseRay.Direction * 999)
+	return RAY(viewportMouseRay.Origin, viewportMouseRay.Direction * distance)
+end
+
+
+function Mouse:GetRayFromXY(x, y)
+	local viewportMouseRay = cam:ViewportPointToRay(x, y)
+	return RAY(viewportMouseRay.Origin, viewportMouseRay.Direction)
 end
 
 
 function Mouse:Cast(ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
-	return workspace:FindPartOnRay(self:GetRay(), ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
+	return workspace:FindPartOnRay(self:GetRay(RAY_DISTANCE), ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
 end
 
 
 function Mouse:CastWithIgnoreList(ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
-	return workspace:FindPartOnRayWithIgnoreList(self:GetRay(), ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
+	return workspace:FindPartOnRayWithIgnoreList(self:GetRay(RAY_DISTANCE), ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
 end
 
 
 function Mouse:CastWithWhitelist(whitelistDescendantsTable, ignoreWater)
-	return workspace:FindPartOnRayWithWhitelist(self:GetRay(), whitelistDescendantsTable, ignoreWater)
+	return workspace:FindPartOnRayWithWhitelist(self:GetRay(RAY_DISTANCE), whitelistDescendantsTable, ignoreWater)
 end
 
 

@@ -1,20 +1,18 @@
-![Logo](/imgs/logo_github_readme.png)
-
 # AeroGameFramework
-A powerful game framework for the Roblox platform.
+
+## About
 
 AeroGameFramework is a Roblox game framework that makes development easy and fun. The framework is designed to simplify the communication between modules and seamlessly bridge the gap between the server and client. Never again will you have to touch RemoteFunctions or RemoteEvents.
 
-# Documentation
-Visit the [documentation site](https://sleitnick.github.io/AeroGameFramework).
+## Collaborate
+AeroGameFramework is an open-source project, and your support is much appreciated. Feel free to report bugs, suggest features, and make pull requests. Please visit the [GitHub repository](https://github.com/Sleitnick/AeroGameFramework) for more information.
 
-# Video Tutorial
-Learn how to use the framework in the video tutorial series:
-https://www.youtube.com/watch?v=8ta0cHX1ceE&index=1&list=PLk3R4TM3pnqv7doCTUHtn-wkydaA08npc
+The framework was built and is supported primary by [Stephen Leitnick](https://github.com/Sleitnick).
 
-**Note:** This tutorial series does not use the newer VS Code extension workflow. An updated series is in the works.
 
-# Example
+--------------------------
+
+## Example
 
 Here is an example of a client-side controller invoking a server-side service to respawn the player. Notice that no remote objects have to be explicitly referenced:
 

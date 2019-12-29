@@ -1,5 +1,5 @@
 -- Camera Shake Presets
--- Crazyman32
+-- Stephen Leitnick
 -- February 26, 2018
 
 --[[
@@ -7,6 +7,7 @@
 	CameraShakePresets.Bump
 	CameraShakePresets.Explosion
 	CameraShakePresets.Earthquake
+	CameraShakePresets.GentleSway
 	CameraShakePresets.BadTrip
 	CameraShakePresets.HandheldCamera
 	CameraShakePresets.Vibration
@@ -47,6 +48,16 @@ local CameraShakePresets = {
 		local c = CameraShakeInstance.new(0.6, 3.5, 2, 10)
 		c.PositionInfluence = Vector3.new(0.25, 0.25, 0.25)
 		c.RotationInfluence = Vector3.new(1, 1, 4)
+		return c
+	end;
+	
+	
+	-- A gentle left/right/up/down sway. Good for intro screens/landscapes.
+	-- Sustained.
+	GentleSway = function()
+		local c = CameraShakeInstance.new(0.65, 0.08, 0.1, 0.75)
+		c.PositionInfluence = Vector3.new(1.20, 0.35, 0.05)
+		c.RotationInfluence = Vector3.new(0.02, 0.02, 0.02)
 		return c
 	end;
 	

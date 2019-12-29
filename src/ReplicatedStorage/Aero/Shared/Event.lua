@@ -1,5 +1,5 @@
 -- Event
--- Crazyman32
+-- Stephen Leitnick
 -- March 17, 2017
 
 --[[
@@ -62,7 +62,6 @@ end
 
 
 function Event:Fire(...)
-	local connections = self._connections
 	self._args = {...}
 	self._numArgs = SELECT("#", ...)
 	self._bindable:Fire()

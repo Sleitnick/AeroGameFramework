@@ -1,13 +1,13 @@
 -- Aero Server
--- Crazyman32
+-- Stephen Leitnick
 -- July 21, 2017
 
 
 
 local AeroServer = {
 	Services = {};
-	Modules  = {};
-	Shared   = {};
+	Modules = {};
+	Shared = {};
 }
 
 local mt = {__index = AeroServer}
@@ -20,7 +20,18 @@ local internalFolder = game:GetService("ReplicatedStorage").Aero.Internal
 local remoteServices = Instance.new("Folder")
 remoteServices.Name = "AeroRemoteServices"
 
+local players = {}
+local modulesAwaitingStart = {}
+
 local FastSpawn = require(internalFolder.FastSpawn)
+
+local function PreventEventRegister()
+	error("Cannot register event after Init method")
+end
+
+local function PreventFunctionRegister()
+	error("Cannot register function after Init method")
+end
 
 
 function AeroServer:RegisterEvent(eventName)
@@ -51,6 +62,16 @@ end
 
 function AeroServer:FireAllClientsEvent(eventName, ...)
 	self._clientEvents[eventName]:FireAllClients(...)
+end
+
+
+function AeroServer:FireAllClientsEventExcept(eventName, client, ...)
+	local event = self._clientEvents[eventName]
+	for _,player in pairs(players) do
+		if (player ~= client) then
+			event:FireClient(player, ...)
+		end
+	end
 end
 
 
@@ -93,35 +114,47 @@ function AeroServer:WrapModule(tbl)
 		tbl:Init()
 	end
 	if (type(tbl.Start) == "function" and not tbl.__aeroPreventStart) then
-		FastSpawn(tbl.Start, tbl)
+		if (modulesAwaitingStart) then
+			modulesAwaitingStart[#modulesAwaitingStart + 1] = tbl
+		else
+			FastSpawn(tbl.Start, tbl)
+		end
 	end
 end
 
 
 -- Setup table to load modules on demand:
-function LazyLoadSetup(tbl, folder)
+local function LazyLoadSetup(tbl, folder)
 	setmetatable(tbl, {
 		__index = function(t, i)
-			local obj = require(folder[i])
-			if (type(obj) == "table") then
-				AeroServer:WrapModule(obj)
+			local child = folder[i]
+			if (child:IsA("ModuleScript")) then
+				local obj = require(child)
+				rawset(t, i, obj)
+				if (type(obj) == "table") then
+					AeroServer:WrapModule(obj)
+				end
+				return obj
+			elseif (child:IsA("Folder")) then
+				local nestedTbl = {}
+				rawset(t, i, nestedTbl)
+				LazyLoadSetup(nestedTbl, child)
+				return nestedTbl
 			end
-			rawset(t, i, obj)
-			return obj
 		end;
 	})
 end
 
 
 -- Load service from module:
-function LoadService(module)
+local function LoadService(module, servicesTbl, parentFolder)
 	
 	local remoteFolder = Instance.new("Folder")
 	remoteFolder.Name = module.Name
-	remoteFolder.Parent = remoteServices
+	remoteFolder.Parent = parentFolder
 	
 	local service = require(module)
-	AeroServer.Services[module.Name] = service
+	servicesTbl[module.Name] = service
 	
 	if (type(service.Client) ~= "table") then
 		service.Client = {}
@@ -137,7 +170,7 @@ function LoadService(module)
 end
 
 
-function InitService(service)
+local function InitService(service)
 	
 	-- Initialize:
 	if (type(service.Init) == "function") then
@@ -150,11 +183,16 @@ function InitService(service)
 			service:RegisterClientFunction(funcName, func)
 		end
 	end
+
+	-- Disallow registering events/functions after init:
+	service.RegisterEvent = PreventEventRegister
+	service.RegisterClientEvent = PreventEventRegister
+	service.RegisterClientFunction = PreventFunctionRegister
 	
 end
 
 
-function StartService(service)
+local function StartService(service)
 
 	-- Start services on separate threads:
 	if (type(service.Start) == "function") then
@@ -164,28 +202,114 @@ function StartService(service)
 end
 
 
-function Init()
-	
-	-- Lazy-load server and shared modules:
-	LazyLoadSetup(AeroServer.Modules, modulesFolder)
-	LazyLoadSetup(AeroServer.Shared, sharedFolder)
+local function Init()
+
+	local function PlayerAdded(player)
+		players[#players + 1] = player
+	end
+
+	local function PlayerRemoving(player)
+		local nPlayers = #players
+		for i = 1,nPlayers do
+			if (players[i] == player) then
+				players[i] = players[nPlayers]
+				players[nPlayers] = nil
+			end
+		end
+	end
 	
 	-- Load service modules:
-	for _,module in pairs(servicesFolder:GetChildren()) do
-		if (module:IsA("ModuleScript")) then
-			LoadService(module)
+	local function LoadAllServices(parent, servicesTbl, parentFolder)
+		for _,child in pairs(parent:GetChildren()) do
+			if (child:IsA("ModuleScript")) then
+				LoadService(child, servicesTbl, parentFolder)
+			elseif (child:IsA("Folder")) then
+				local tbl = {}
+				local folder = Instance.new("Folder")
+				folder.Name = child.Name
+				folder.Parent = parentFolder
+				servicesTbl[child.Name] = tbl
+				LoadAllServices(child, tbl, folder)
+			end
 		end
 	end
 	
 	-- Initialize services:
-	for _,service in pairs(AeroServer.Services) do
-		InitService(service)
+	local function InitAllServices(services)
+		-- Collect all services:
+		local serviceTables = {}
+		local function CollectServices(_services)
+			for _,service in pairs(_services) do
+				if (getmetatable(service) == mt) then
+					serviceTables[#serviceTables + 1] = service
+				else
+					CollectServices(service)
+				end
+			end
+		end
+		CollectServices(services)
+		-- Sort services by optional __aeroOrder field:
+		table.sort(serviceTables, function(a, b)
+			local aOrder = (type(a.__aeroOrder) == "number" and a.__aeroOrder or math.huge)
+			local bOrder = (type(b.__aeroOrder) == "number" and b.__aeroOrder or math.huge)
+			return (aOrder < bOrder)
+		end)
+		-- Initialize services:
+		for _,service in ipairs(serviceTables) do
+			InitService(service)
+		end
+	end
+
+	-- Remove unused folders:
+	local function ScanRemoteFoldersForEmpty(parent)
+		for _,child in pairs(parent:GetChildren()) do
+			if (child:IsA("Folder")) then
+				local remoteFunction = child:FindFirstChildWhichIsA("RemoteFunction", true)
+				local remoteEvent = child:FindFirstChildWhichIsA("RemoteEvent", true)
+				if ((not remoteFunction) and (not remoteEvent)) then
+					child:Destroy()
+				else
+					ScanRemoteFoldersForEmpty(child)
+				end
+			end
+		end
 	end
 	
 	-- Start services:
-	for _,service in pairs(AeroServer.Services) do
-		StartService(service)
+	local function StartAllServices(services)
+		for _,service in pairs(services) do
+			if (getmetatable(service) == mt) then
+				StartService(service)
+			else
+				StartAllServices(service)
+			end
+		end
 	end
+
+	-- Start modules that were already loaded:
+	local function StartLoadedModules()
+		for _,tbl in pairs(modulesAwaitingStart) do
+			FastSpawn(tbl.Start, tbl)
+		end
+		modulesAwaitingStart = nil
+	end
+
+	--------------------------------------------------------------------
+
+	players = game:GetService("Players"):GetPlayers()
+	game:GetService("Players").PlayerAdded:Connect(PlayerAdded)
+	game:GetService("Players").PlayerRemoving:Connect(PlayerRemoving)
+	
+	-- Lazy-load server and shared modules:
+	LazyLoadSetup(AeroServer.Modules, modulesFolder)
+	LazyLoadSetup(AeroServer.Shared, sharedFolder)
+
+	-- Load, init, and start services:
+	LoadAllServices(servicesFolder, AeroServer.Services, remoteServices)
+	InitAllServices(AeroServer.Services)
+	ScanRemoteFoldersForEmpty(remoteServices)
+	StartAllServices(AeroServer.Services)
+	StartLoadedModules()
 	
 	-- Expose server framework to client and global scope:
 	remoteServices.Parent = game:GetService("ReplicatedStorage").Aero

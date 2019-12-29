@@ -1,5 +1,5 @@
 -- Easing
--- Crazyman32
+-- Stephen Leitnick
 -- June 21, 2017
 
 -- Source: https://github.com/RoStrap/Interpolation/blob/master/EasingFunctions.lua
@@ -386,15 +386,15 @@ return {
 		[Enum.EasingStyle.Quint.Name] = InQuint;
 		[Enum.EasingStyle.Bounce.Name] = InBounce;
 		[Enum.EasingStyle.Elastic.Name] = InElastic;
+		[Enum.EasingStyle.Exponential.Name] = InExpo;
+		[Enum.EasingStyle.Circular.Name] = InCirc;
+		[Enum.EasingStyle.Cubic.Name] = InCubic;
 		Smooth = Smooth;
 		Smoother = Smoother;
 		RevBack = RevBack;
 		RidiculousWiggle = RidiculousWiggle;
 		Spring = Spring;
 		SoftSpring = SoftSpring;
-		Expo = InExpo;
-		Cubic = InCubic;
-		Circ = InCirc;
 	};
 
 	[Enum.EasingDirection.Out.Name] = {
@@ -406,15 +406,15 @@ return {
 		[Enum.EasingStyle.Quint.Name] = OutQuint;
 		[Enum.EasingStyle.Bounce.Name] = OutBounce;
 		[Enum.EasingStyle.Elastic.Name] = OutElastic;
+		[Enum.EasingStyle.Exponential.Name] = OutExpo;
+		[Enum.EasingStyle.Circular.Name] = OutCirc;
+		[Enum.EasingStyle.Cubic.Name] = OutCubic;
 		Smooth = Smooth;
 		Smoother = Smoother;
 		RevBack = RevBack;
 		RidiculousWiggle = RidiculousWiggle;
 		Spring = Spring;
 		SoftSpring = SoftSpring;
-		Expo = OutExpo;
-		Cubic = OutCubic;
-		Circ = OutCirc;
 	};
 
 	[Enum.EasingDirection.InOut.Name] = {
@@ -426,15 +426,15 @@ return {
 		[Enum.EasingStyle.Quint.Name] = InOutQuint;
 		[Enum.EasingStyle.Bounce.Name] = InOutBounce;
 		[Enum.EasingStyle.Elastic.Name] = InOutElastic;
+		[Enum.EasingStyle.Exponential.Name] = InOutExpo;
+		[Enum.EasingStyle.Circular.Name] = InOutCirc;
+		[Enum.EasingStyle.Cubic.Name] = InOutCubic;
 		Smooth = Smooth;
 		Smoother = Smoother;
 		RevBack = RevBack;
 		RidiculousWiggle = RidiculousWiggle;
 		Spring = Spring;
 		SoftSpring = SoftSpring;
-		Expo = InOutExpo;
-		Cubic = InOutCubic;
-		Circ = InOutCirc;
 	};
 
 	OutIn = {
@@ -446,14 +446,14 @@ return {
 		[Enum.EasingStyle.Quint.Name] = OutInQuint;
 		[Enum.EasingStyle.Bounce.Name] = OutInBounce;
 		[Enum.EasingStyle.Elastic.Name] = OutInElastic;
+		[Enum.EasingStyle.Exponential.Name] = OutInExpo;
+		[Enum.EasingStyle.Circular.Name] = OutInCirc;
+		[Enum.EasingStyle.Cubic.Name] = OutInCubic;
 		Smooth = Smooth;
 		Smoother = Smoother;
 		RevBack = RevBack;
 		RidiculousWiggle = RidiculousWiggle;
 		Spring = Spring;
 		SoftSpring = SoftSpring;
-		Expo = OutInExpo;
-		Cubic = OutInCubic;
-		Circ = OutInCirc;
 	};
 }

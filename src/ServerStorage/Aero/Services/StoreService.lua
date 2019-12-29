@@ -1,5 +1,5 @@
 -- Store Service
--- Crazyman32
+-- Stephen Leitnick
 -- December 1, 2015
 
 -- Updated: December 31, 2016

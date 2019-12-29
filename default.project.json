@@ -1,0 +1,39 @@
+{
+	"name": "AeroGameFramework",
+	"tree": {
+		"$className": "DataModel",
+		"ReplicatedFirst": {
+			"$className": "ReplicatedFirst",
+			"Aero": {
+				"$path": "src/ReplicatedFirst/Aero"
+			}
+		},
+		"ReplicatedStorage": {
+			"$className": "ReplicatedStorage",
+			"Aero": {
+				"$path": "src/ReplicatedStorage/Aero"
+			}
+		},
+		"ServerScriptService": {
+			"$className": "ServerScriptService",
+			"Aero": {
+				"$path": "src/ServerScriptService/Aero"
+			}
+		},
+		"ServerStorage": {
+			"$className": "ServerStorage",
+			"Aero": {
+				"$path": "src/ServerStorage/Aero"
+			}
+		},
+		"StarterPlayer": {
+			"$className": "StarterPlayer",
+			"StarterPlayerScripts": {
+				"$className": "StarterPlayerScripts",
+				"Aero": {
+					"$path": "src/StarterPlayer/StarterPlayerScripts/Aero"
+				}
+			}
+		}
+	}
+}
