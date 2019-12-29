@@ -1,5 +1,5 @@
 -- Data
--- Crazyman32
+-- Stephen Leitnick
 -- November 20, 2018
 
 
@@ -34,6 +34,7 @@
 		Promise<Void>           data:SaveAll()
 		Promise<Void>           data:Destroy([Boolean saveAll])
 		Number                  data:GetRequestBudget(DataStoreRequestType requestType)
+		Void                    data:MarkDirty(String key)
 		
 	EVENTS:
 		data.Success         data.Success:Connect(String method, String key)
@@ -97,6 +98,11 @@
 			This is exactly the same as the DataStoreService's GetRequestBudget. Read
 			the documentation on the Roblox Developer site:
 			https://developer.roblox.com/api-reference/function/DataStoreService/GetRequestBudgetForRequestType
+
+		MarkDirty
+			Marks the key as dirty, which means that it will be forced to save the
+			next time a save invocation occurs. This is necessary when making changes
+			to tables.
 	
 
 	EXAMPLES:
@@ -159,7 +165,8 @@ Data._onCloseHandlers = {}
 -- Static fields; customize as needed:
 Data.AutoSaveInterval = 60
 Data.PlayerLeftSaveInterval = 10
-Data.SaveInStudio = false
+Data.SaveInStudio = true
+Data.Log = false
 
 -- Constants based on internal Roblox DataStore; DO NOT CHANGE:
 local NAME_MAX_LEN = 50
@@ -176,6 +183,12 @@ local dataPool = {}
 local assert = assert
 local tableUtil
 local Promise
+
+
+local function Log(...)
+	if (not Data.Log) then return end
+	print("Data ->", ...)
+end
 
 
 -- Check if key matches DataStore criteria:
@@ -203,18 +216,18 @@ function DataStorePages.new(dsp)
 end
 
 function DataStorePages:AdvanceToNextPage()
-	return Promise.new(function(resolve, reject)
+	return Promise.Async(function(resolve, reject)
 		local success, err = pcall(self.DSP.AdvanceToNextPageAsync, self.DSP)
 		self.IsFinished = self.DSP.IsFinished
 		if (success) then resolve() else reject(err) end
-	end, true)
+	end)
 end
 
 function DataStorePages:GetCurrentPage()
-	return Promise.new(function(resolve, reject)
+	return Promise.Async(function(resolve, reject)
 		local success, page = pcall(self.DSP.GetCurrentPage, self.DSP)
 		if (success) then resolve(page) else reject(page) end
-	end, true)
+	end)
 end
 ---------------------------------------------------------------------------------------------------------------------------
 
@@ -250,6 +263,7 @@ function Data.new(name, scope, ordered)
 		_dirty = {};
 		_ordered = ordered;
 		_destroyed = false;
+		_destroying = false;
 	}, Data)
 	
 	-- Data events:
@@ -257,6 +271,8 @@ function Data.new(name, scope, ordered)
 	self.Failed = self.Shared.Event.new()
 
 	dataPool[ds] = self
+
+	Log("Created new Data object:", tostring(self))
 
 	return self
 
@@ -288,19 +304,22 @@ end
 
 -- Load a given key from the DataStore:
 function Data:_load(key)
-	return Promise.new(function(resolve, reject)
+	Log("Loading " .. key .. "...")
+	return Promise.Async(function(resolve, reject)
 		-- Call GetAsync and cache the results:
 		local success, value = pcall(self._ds.GetAsync, self._ds, key)
 		if (success) then
+			Log("Succesfully loaded key " .. key .. ":", value)
 			self._cache[key] = value
 			self._dirty[key] = false
 			self.Success:Fire("GetAsync", key)
 			resolve(value)
 		else
+			Log("Failede to load key " .. key)
 			self.Failed:Fire("GetAsync", key, value)
 			reject(value)
 		end
-	end, true)
+	end)
 end
 
 
@@ -315,11 +334,13 @@ end
 
 -- Save the key/value to the DataStore:
 function Data:_save(key, value)
+	Log("Saving " .. key .. "...")
 	if (self._dirty[key] == false) then
 		-- If not dirty, the given key does not need to be saved:
+		Log("No save necessary; " .. key .. " not marked as dirty")
 		return Promise.Resolve()
 	end
-	return Promise.new(function(resolve, reject)
+	return Promise.Async(function(resolve, reject)
 		-- Call SetAsync and mark key as no longer dirty:
 		local valBeforeSave = self:_getCache(key)
 		local success, err = pcall(self._ds.SetAsync, self._ds, key, value)
@@ -328,49 +349,57 @@ function Data:_save(key, value)
 				self._dirty[key] = false
 			end
 			self.Success:Fire("SetAsync", key)
+			Log("Successfully saved " .. key .. ":", value)
 			resolve()
 		else
+			Log("Failed to save " .. key)
 			self.Failed:Fire("SetAsync", key, err)
 			reject(err)
 		end
-	end, true)
+	end)
 end
 
 
 function Data:_delete(key)
-	return Promise.new(function(resolve, reject)
+	Log("Deleting " .. key .. "...")
+	return Promise.Async(function(resolve, reject)
 		-- Call RemoveAsync and remove value from cache:
 		local success, err = pcall(self._ds.RemoveAsync, self._ds, key)
 		if (success) then
+			Log("Successfully deleted key " .. key)
 			self:_clearCache(key)
 			self.Success:Fire("RemoveAsync", key)
 			resolve()
 		else
+			Log("Failed to delete key " .. key)
 			self.Failed:Fire("RemoveAsync", key, err)
 			reject(err)
 		end
-	end, true)
+	end)
 end
 
 
 function Data:_update(key, transformFunc)
-	return Promise.new(function(resolve, reject)
+	Log("Updating " .. key .. "...")
+	return Promise.Async(function(resolve, reject)
 		-- Call UpdateAsync and update cache with returned value:
 		local success, value = pcall(self._ds.UpdateAsync, self._ds, key, transformFunc)
 		if (success) then
+			Log("Successfully updated key " .. key)
 			self:_setCache(key, value, true)
 			self.Success:Fire("UpdateAsync", key)
 			resolve(value)
 		else
+			Log("Failed to update key " .. key)
 			self.Failed:Fire("UpdateAsync", key, value)
 			reject(value)
 		end
-	end, true)
+	end)
 end
 
 
 function Data:_getSorted(isAscending, pageSize, minValue, maxValue)
-	return Promise.new(function(resolve, reject)
+	return Promise.Async(function(resolve, reject)
 		-- Call GetSortedAsync and return the custom DataStorePages object:
 		local success, dsp = pcall(self._ds.GetSortedAsync, self._ods, isAscending, pageSize, minValue, maxValue)
 		if (success) then
@@ -378,7 +407,7 @@ function Data:_getSorted(isAscending, pageSize, minValue, maxValue)
 		else
 			reject(dsp)
 		end
-	end, true)
+	end)
 end
 
 
@@ -522,7 +551,7 @@ function Data:OnUpdate(key, callback)
 	if (type(callback) ~= "function") then
 		return Promise.Reject("Callback must be a function")
 	end
-	return Promise.new(function(resolve, reject)
+	return Promise.Async(function(resolve, reject)
 		local success, err = pcall(self._ds.OnUpdate, self._ds, key, callback)
 		if (success) then
 			self.Success:Fire("OnUpdate", key)
@@ -577,11 +606,17 @@ function Data:Update(key, transformFunc)
 end
 
 
+function Data:MarkDirty(key)
+	self._dirty[key] = true
+end
+
+
 function Data:Destroy(save)
-	if (self._destroyed) then
+	Log("Destroying data object:", tostring(self))
+	if (self._destroyed or self._destroying) then
 		return Promise.Reject("Data already destroyed")
 	end
-	self._destroyed = true
+	self._destroying = true
 	local savePromise
 	if (save) then
 		savePromise = self:SaveAll(false, nil)
@@ -590,6 +625,8 @@ function Data:Destroy(save)
 	end
 	return savePromise:Then(function()
 		-- Clear and destroy objects:
+		Log("Data successfully destroyed")
+		self._destroyed = true
 		self._cache = {}
 		self._dirty = {}
 		self.Failed:Destroy()
@@ -597,7 +634,8 @@ function Data:Destroy(save)
 		dataPool[self._ds] = nil
 	end):Catch(function(err)
 		-- Failed to destroy, thus remark as not destroyed & rethrow error:
-		self._destroyed = false
+		Log("   Saving failed")
+		self._destroying = false
 		error(err)
 	end)
 end
@@ -727,6 +765,11 @@ end
 function Data:Init()
 	Promise = self.Shared.Promise
 	tableUtil = self.Shared.TableUtil
+end
+
+
+function Data:__tostring()
+	return ("Data (Name=%s, Scope=%s, Ordered=%s)"):format(self.Name, self.Scope, self._ordered and "Yes" or "No")
 end
 
 
