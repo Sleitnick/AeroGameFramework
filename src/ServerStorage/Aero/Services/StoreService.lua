@@ -4,6 +4,7 @@
 
 -- Updated: December 31, 2016
 -- Updated: March 2, 2017
+-- Updated: December 29, 2019
 
 --[[
 	
@@ -28,15 +29,12 @@
 
 
 
-local StoreService = {
-	Client = {};
-}
+local StoreService = {Client = {}}
 
 local PRODUCT_PURCHASES_KEY = "ProductPurchases"
 local PROMPT_PURCHASE_FINISHED_EVENT = "PromptPurchaseFinished"
 
 local marketplaceService = game:GetService("MarketplaceService")
-
 local dataStoreScope = "PlayerReceipts"
 
 local Data
@@ -70,29 +68,23 @@ local function ProcessReceipt(receiptInfo)
 	
 	local dataStoreName = tostring(receiptInfo.PlayerId)
 	local key = tostring(receiptInfo.PurchaseId)
+
+	local notProcessed = Enum.ProductPurchaseDecision.NotProcessedYet
 	
 	-- Check if unique purchase was already completed:
 	local data = Data.new(dataStoreName, dataStoreScope)
 	local alreadyPurchasedSuccess, alreadyPurchased = data:Get(key):Await()
-	if (not alreadyPurchasedSuccess) then
-		return Enum.ProductPurchaseDecision.NotProcessedYet
-	end
+	if (not alreadyPurchasedSuccess) then return notProcessed end
 
 	if (not alreadyPurchased) then
 		-- Mark as purchased and save immediately:
-		local success = data:Set(key, true):Then(function()
-			return data:Save(key)
-		end):Await()
-		if (not success) then
-			return Enum.ProductPurchaseDecision.NotProcessedYet
-		end
+		local success = data:Set(key, true):Then(function() return data:Save(key) end):Await()
+		if (not success) then return notProcessed end
 	end
 	
 	if (player) then
 		local incSuccess = IncrementPurchase(player, receiptInfo.ProductId):Await()
-		if (not incSuccess) then
-			return Enum.ProductPurchaseDecision.NotProcessedYet
-		end
+		if (not incSuccess) then return notProcessed end
 		StoreService:FireEvent(PROMPT_PURCHASE_FINISHED_EVENT, player, receiptInfo)
 		StoreService:FireClientEvent(PROMPT_PURCHASE_FINISHED_EVENT, player, receiptInfo)
 	end
@@ -109,9 +101,7 @@ end
 
 
 function StoreService:OwnsGamePass(player, gamePassId)
-	local success, owns = pcall(function()
-		return marketplaceService:UserOwnsGamePassAsync(player.UserId, gamePassId)
-	end)
+	local success, owns = pcall(marketplaceService.UserOwnsGamePassAsync, marketplaceService, player.UserId, gamePassId)
 	return (success and owns or false)
 end
 
