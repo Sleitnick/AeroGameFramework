@@ -29,7 +29,8 @@ if __name__ == "__main__":
 	print("Building file list...")
 
 	paths_data = []
-	all_files = check_output(["git", "ls-tree", "--name-only", "-r", "master", "src"])
+	cur_branch = check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).decode("utf-8").strip()
+	all_files = check_output(["git", "ls-tree", "--name-only", "-r", cur_branch, "src"]).decode("utf-8")
 	paths = all_files.split("\n")
 	for path in paths:
 		path_array = path.split("/")

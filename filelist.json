@@ -1,69 +1,73 @@
 {
-  "url": "https://raw.githubusercontent.com/Sleitnick/AeroGameFramework/master/", 
+  "url": "https://raw.githubusercontent.com/Sleitnick/AeroGameFramework/master/",
   "paths": {
-    "type": "directory", 
-    "name": "src", 
+    "type": "directory",
+    "name": "src",
     "children": [
       {
-        "type": "directory", 
-        "name": "ReplicatedFirst", 
+        "type": "directory",
+        "name": "ReplicatedFirst",
         "children": [
           {
-            "type": "directory", 
-            "name": "Aero", 
+            "type": "directory",
+            "name": "Aero",
             "children": [
               {
-                "type": "file", 
+                "type": "file",
                 "name": "AeroLoad.client.lua"
               }
             ]
           }
         ]
-      }, 
+      },
       {
-        "type": "directory", 
-        "name": "ReplicatedStorage", 
+        "type": "directory",
+        "name": "ReplicatedStorage",
         "children": [
           {
-            "type": "directory", 
-            "name": "Aero", 
+            "type": "directory",
+            "name": "Aero",
             "children": [
               {
-                "type": "directory", 
-                "name": "Internal", 
+                "type": "directory",
+                "name": "Internal",
                 "children": [
                   {
-                    "type": "file", 
+                    "type": "file",
                     "name": "FastSpawn.lua"
                   }
                 ]
-              }, 
+              },
               {
-                "type": "directory", 
-                "name": "Shared", 
+                "type": "directory",
+                "name": "Shared",
                 "children": [
                   {
-                    "type": "file", 
+                    "type": "file",
                     "name": "Base64.lua"
-                  }, 
+                  },
                   {
-                    "type": "file", 
+                    "type": "file",
                     "name": "Date.lua"
-                  }, 
+                  },
                   {
-                    "type": "file", 
+                    "type": "file",
                     "name": "Event.lua"
-                  }, 
+                  },
                   {
-                    "type": "file", 
+                    "type": "file",
                     "name": "ListenerList.lua"
-                  }, 
+                  },
                   {
-                    "type": "file", 
+                    "type": "file",
                     "name": "Promise.lua"
-                  }, 
+                  },
                   {
-                    "type": "file", 
+                    "type": "file",
+                    "name": "StringUtil.lua"
+                  },
+                  {
+                    "type": "file",
                     "name": "TableUtil.lua"
                   }
                 ]
@@ -71,21 +75,21 @@
             ]
           }
         ]
-      }, 
+      },
       {
-        "type": "directory", 
-        "name": "ServerScriptService", 
+        "type": "directory",
+        "name": "ServerScriptService",
         "children": [
           {
-            "type": "directory", 
-            "name": "Aero", 
+            "type": "directory",
+            "name": "Aero",
             "children": [
               {
-                "type": "directory", 
-                "name": "Internal", 
+                "type": "directory",
+                "name": "Internal",
                 "children": [
                   {
-                    "type": "file", 
+                    "type": "file",
                     "name": "AeroServer.server.lua"
                   }
                 ]
@@ -93,55 +97,69 @@
             ]
           }
         ]
-      }, 
+      },
       {
-        "type": "directory", 
-        "name": "ServerStorage", 
+        "type": "directory",
+        "name": "ServerStorage",
         "children": [
           {
-            "type": "directory", 
-            "name": "Aero", 
+            "type": "directory",
+            "name": "Aero",
             "children": [
               {
-                "type": "directory", 
-                "name": "Modules", 
+                "type": "directory",
+                "name": "Modules",
                 "children": [
                   {
-                    "type": "directory", 
-                    "name": "DataStoreCache", 
+                    "type": "directory",
+                    "name": "Data",
                     "children": [
                       {
-                        "type": "directory", 
-                        "name": "SafeDataStore", 
+                        "type": "file",
+                        "name": "MockDataStoreService.lua"
+                      },
+                      {
+                        "type": "file",
+                        "name": "init.lua"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "directory",
+                    "name": "DataStoreCache",
+                    "children": [
+                      {
+                        "type": "directory",
+                        "name": "SafeDataStore",
                         "children": [
                           {
-                            "type": "file", 
+                            "type": "file",
                             "name": "MockDataStoreService.lua"
-                          }, 
+                          },
                           {
-                            "type": "file", 
+                            "type": "file",
                             "name": "init.lua"
                           }
                         ]
-                      }, 
+                      },
                       {
-                        "type": "file", 
+                        "type": "file",
                         "name": "init.lua"
                       }
                     ]
                   }
                 ]
-              }, 
+              },
               {
-                "type": "directory", 
-                "name": "Services", 
+                "type": "directory",
+                "name": "Services",
                 "children": [
                   {
-                    "type": "file", 
+                    "type": "file",
                     "name": "DataService.lua"
-                  }, 
+                  },
                   {
-                    "type": "file", 
+                    "type": "file",
                     "name": "StoreService.lua"
                   }
                 ]
@@ -149,119 +167,119 @@
             ]
           }
         ]
-      }, 
+      },
       {
-        "type": "directory", 
-        "name": "StarterPlayer", 
+        "type": "directory",
+        "name": "StarterPlayer",
         "children": [
           {
-            "type": "directory", 
-            "name": "StarterPlayerScripts", 
+            "type": "directory",
+            "name": "StarterPlayerScripts",
             "children": [
               {
-                "type": "directory", 
-                "name": "Aero", 
+                "type": "directory",
+                "name": "Aero",
                 "children": [
                   {
-                    "type": "directory", 
-                    "name": "Controllers", 
+                    "type": "directory",
+                    "name": "Controllers",
                     "children": [
                       {
-                        "type": "file", 
+                        "type": "file",
                         "name": "Fade.lua"
-                      }, 
+                      },
                       {
-                        "type": "file", 
+                        "type": "file",
                         "name": "TaskScheduler.lua"
-                      }, 
+                      },
                       {
-                        "type": "directory", 
-                        "name": "UserInput", 
+                        "type": "directory",
+                        "name": "UserInput",
                         "children": [
                           {
-                            "type": "file", 
+                            "type": "file",
                             "name": "Gamepad.lua"
-                          }, 
+                          },
                           {
-                            "type": "file", 
+                            "type": "file",
                             "name": "Keyboard.lua"
-                          }, 
+                          },
                           {
-                            "type": "file", 
+                            "type": "file",
                             "name": "Mobile.lua"
-                          }, 
+                          },
                           {
-                            "type": "file", 
+                            "type": "file",
                             "name": "Mouse.lua"
-                          }, 
+                          },
                           {
-                            "type": "file", 
+                            "type": "file",
                             "name": "init.lua"
                           }
                         ]
                       }
                     ]
-                  }, 
+                  },
                   {
-                    "type": "directory", 
-                    "name": "Internal", 
+                    "type": "directory",
+                    "name": "Internal",
                     "children": [
                       {
-                        "type": "file", 
+                        "type": "file",
                         "name": "AeroClient.client.lua"
                       }
                     ]
-                  }, 
+                  },
                   {
-                    "type": "directory", 
-                    "name": "Modules", 
+                    "type": "directory",
+                    "name": "Modules",
                     "children": [
                       {
-                        "type": "directory", 
-                        "name": "CameraShaker", 
+                        "type": "directory",
+                        "name": "CameraShaker",
                         "children": [
                           {
-                            "type": "file", 
+                            "type": "file",
                             "name": "CameraShakeInstance.lua"
-                          }, 
+                          },
                           {
-                            "type": "file", 
+                            "type": "file",
                             "name": "CameraShakePresets.lua"
-                          }, 
+                          },
                           {
-                            "type": "file", 
+                            "type": "file",
                             "name": "init.lua"
                           }
                         ]
-                      }, 
+                      },
                       {
-                        "type": "file", 
+                        "type": "file",
                         "name": "PID.lua"
-                      }, 
+                      },
                       {
-                        "type": "directory", 
-                        "name": "Smooth", 
+                        "type": "directory",
+                        "name": "Smooth",
                         "children": [
                           {
-                            "type": "file", 
+                            "type": "file",
                             "name": "SmoothDamp.lua"
-                          }, 
+                          },
                           {
-                            "type": "file", 
+                            "type": "file",
                             "name": "init.lua"
                           }
                         ]
-                      }, 
+                      },
                       {
-                        "type": "directory", 
-                        "name": "Tween", 
+                        "type": "directory",
+                        "name": "Tween",
                         "children": [
                           {
-                            "type": "file", 
+                            "type": "file",
                             "name": "Easing.lua"
-                          }, 
+                          },
                           {
-                            "type": "file", 
+                            "type": "file",
                             "name": "init.lua"
                           }
                         ]
