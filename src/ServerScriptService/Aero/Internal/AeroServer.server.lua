@@ -15,7 +15,6 @@ local mt = {__index = AeroServer}
 local servicesFolder = game:GetService("ServerStorage").Aero.Services
 local modulesFolder = game:GetService("ServerStorage").Aero.Modules
 local sharedFolder = game:GetService("ReplicatedStorage").Aero.Shared
-local internalFolder = game:GetService("ReplicatedStorage").Aero.Internal
 
 local remoteServices = Instance.new("Folder")
 remoteServices.Name = "AeroRemoteServices"
@@ -23,7 +22,7 @@ remoteServices.Name = "AeroRemoteServices"
 local players = {}
 local modulesAwaitingStart = {}
 
-local FastSpawn = require(internalFolder.FastSpawn)
+local SpawnNow = require(sharedFolder.Thread:Clone()).SpawnNow
 
 local function PreventEventRegister()
 	error("Cannot register event after Init method")
@@ -117,7 +116,7 @@ function AeroServer:WrapModule(tbl)
 		if (modulesAwaitingStart) then
 			modulesAwaitingStart[#modulesAwaitingStart + 1] = tbl
 		else
-			FastSpawn(tbl.Start, tbl)
+			SpawnNow(tbl.Start, tbl)
 		end
 	end
 end
@@ -196,7 +195,7 @@ local function StartService(service)
 
 	-- Start services on separate threads:
 	if (type(service.Start) == "function") then
-		FastSpawn(service.Start, service)
+		SpawnNow(service.Start, service)
 	end
 
 end
@@ -289,7 +288,7 @@ local function Init()
 	-- Start modules that were already loaded:
 	local function StartLoadedModules()
 		for _,tbl in pairs(modulesAwaitingStart) do
-			FastSpawn(tbl.Start, tbl)
+			SpawnNow(tbl.Start, tbl)
 		end
 		modulesAwaitingStart = nil
 	end
