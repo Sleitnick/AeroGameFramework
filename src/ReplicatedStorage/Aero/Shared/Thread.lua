@@ -39,6 +39,18 @@
 			so the delay can be cancelled by disconnecting
 			the returned connection.
 
+	DelayRepeat(Number intervalTime, Function func, Arguments...)
+
+		>	The same as Thread.Delay, except it repeats
+			indefinitely.
+		
+		>	Returns the Heartbeat connection, thus the
+			repeated delay can be stopped by disconnecting
+			the returned connection.
+
+		>	Properly bound to the time interval, thus will
+			not experience drift.
+
 	
 	Examples:
 
@@ -58,6 +70,12 @@
 			print("Hello?")
 		end)
 		delayConnection:Disconnect()
+
+		local repeatConnection = Thread.DelayRepeat(1, function()
+			print("Hello again", tick())
+		end)
+		wait(5)
+		repeatConnection:Disconnect()
 
 
 	Why:
@@ -122,6 +140,20 @@ function Thread.Delay(waitTime, func, ...)
 	hb = heartbeat:Connect(function()
 		if (tick() >= executeTime) then
 			hb:Disconnect()
+			func(table.unpack(args))
+		end
+	end)
+	return hb
+end
+
+
+function Thread.DelayRepeat(intervalTime, func, ...)
+	local args = {...}
+	local nextExecuteTime = (tick() + intervalTime)
+	local hb
+	hb = heartbeat:Connect(function()
+		if (tick() >= nextExecuteTime) then
+			nextExecuteTime = (tick() + intervalTime)
 			func(table.unpack(args))
 		end
 	end)
