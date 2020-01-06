@@ -73,7 +73,7 @@
 
 			local tbl = {"hello", "there", "this", "is", "a", "test"}
 			TableUtil.FastRemove(tbl, 2)   -- Remove "there" in the array
-			print(table.concat(tbl, " "))  -- > hello this is a test
+			print(table.concat(tbl, " "))  -- > hello test is a
 
 
 		FastRemoveFirstValue:
@@ -180,9 +180,9 @@
 			to exist, but will point directly to table.find.
 
 			local tbl = {"Hello", 32, true, "abc"}
-			local abcIndex = TableUtil.IndexOf("abc")     -- > 4
-			local helloIndex = TableUtil.IndexOf("Hello") -- > 1
-			local numberIndex = TableUtil.IndexOf(64)     -- > nil
+			local abcIndex = TableUtil.IndexOf(tbl, "abc")     -- > 4
+			local helloIndex = TableUtil.IndexOf(tbl, "Hello") -- > 1
+			local numberIndex = TableUtil.IndexOf(tbl, 64)     -- > nil
 
 
 		Reverse:
