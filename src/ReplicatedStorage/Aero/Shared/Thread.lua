@@ -116,8 +116,9 @@ function Thread.SpawnNow(func, ...)
 			https://github.com/Quenty/NevermoreEngine/blob/version2/LICENSE.md
 	--]]
 	local args = {...}
+	local n = select("#", ...)
 	local bindable = Instance.new("BindableEvent")
-	bindable.Event:Connect(function() func(table.unpack(args)) end)
+	bindable.Event:Connect(function() func(table.unpack(args, 1, n)) end)
 	bindable:Fire()
 	bindable:Destroy()
 end
@@ -125,22 +126,24 @@ end
 
 function Thread.Spawn(func, ...)
 	local args = {...}
+	local n = select("#", ...)
 	local hb
 	hb = heartbeat:Connect(function()
 		hb:Disconnect()
-		func(table.unpack(args))
+		func(table.unpack(args, 1, n))
 	end)
 end
 
 
 function Thread.Delay(waitTime, func, ...)
 	local args = {...}
+	local n = select("#", ...)
 	local executeTime = (tick() + waitTime)
 	local hb
 	hb = heartbeat:Connect(function()
 		if (tick() >= executeTime) then
 			hb:Disconnect()
-			func(table.unpack(args))
+			func(table.unpack(args, 1, n))
 		end
 	end)
 	return hb
@@ -149,12 +152,13 @@ end
 
 function Thread.DelayRepeat(intervalTime, func, ...)
 	local args = {...}
+	local n = select("#", ...)
 	local nextExecuteTime = (tick() + intervalTime)
 	local hb
 	hb = heartbeat:Connect(function()
 		if (tick() >= nextExecuteTime) then
 			nextExecuteTime = (tick() + intervalTime)
-			func(table.unpack(args))
+			func(table.unpack(args, 1, n))
 		end
 	end)
 	return hb
