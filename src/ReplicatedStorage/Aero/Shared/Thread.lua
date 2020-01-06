@@ -78,7 +78,7 @@
 	Credit:
 	
 		evaera & buildthomas: https://devforum.roblox.com/t/coroutines-v-s-spawn-which-one-should-i-use/368966
-		Quenty: FastSpawn method using BindableEvent
+		Quenty: FastSpawn (AKA SpawnNow) method using BindableEvent
 
 --]]
 
