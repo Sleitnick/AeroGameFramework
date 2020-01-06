@@ -193,11 +193,10 @@ end
 
 local function HeartbeatSpawn(callback, ...)
 	local hb
-	local args = {...}
-	local n = select("#", ...)
+	local args = table.pack(...)
 	hb = game:GetService("RunService").Heartbeat:Connect(function()
 		hb:Disconnect()
-		callback(table.unpack(args, 1, n))
+		callback(table.unpack(args, 1, args.n))
 	end)
 end
 
