@@ -10,6 +10,16 @@ nav:
   - Controllers: controllers.md
   - Modules: modules.md
   - Execution Model: execution_model.md
+  - Module Docs:
+      - Shared Modules:
+        - Base64: module_docs/base64.md
+        - Date: module_docs/date.md
+        - Event: module_docs/event.md
+        - ListenerList: module_docs/listener_list.md
+        - Promise: module_docs/promise.md
+        - StringUtil: module_docs/string_util.md
+        - TableUtil: module_docs/table_util.md
+        - Thread: module_docs/thread.md
 
 theme:
   logo: "img/logo_64.png"
@@ -20,7 +30,6 @@ theme:
     accent: blue
   highlightjs: true
   hljs_languages:
-    - python
     - lua
 
 extra:
