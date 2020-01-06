@@ -123,30 +123,6 @@
                         "name": "init.lua"
                       }
                     ]
-                  },
-                  {
-                    "type": "directory",
-                    "name": "DataStoreCache",
-                    "children": [
-                      {
-                        "type": "directory",
-                        "name": "SafeDataStore",
-                        "children": [
-                          {
-                            "type": "file",
-                            "name": "MockDataStoreService.lua"
-                          },
-                          {
-                            "type": "file",
-                            "name": "init.lua"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "file",
-                        "name": "init.lua"
-                      }
-                    ]
                   }
                 ]
               },
@@ -154,10 +130,6 @@
                 "type": "directory",
                 "name": "Services",
                 "children": [
-                  {
-                    "type": "file",
-                    "name": "DataService.lua"
-                  },
                   {
                     "type": "file",
                     "name": "StoreService.lua"

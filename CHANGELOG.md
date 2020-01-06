@@ -14,6 +14,7 @@ As always, you can also check the commit history for a given version as well, an
 
 | Version | Date | Description |
 | ---|---|--- |
+| [1.5.0](#1.5.0) | 2020-01-05 | <ul><li>Added Data module</li><li><b>==[BC Break]==</b> Removed DataStoreService and its dependencies</li><li>Added Thread module</li></ul> |
 | [1.4.1](#1.4.1) | 2019-12-15 | <ul><li>Fixed execution order for modules to respect init/start lifecycle</li><li>Add ability to force `Init` execution order using `__aeroOrder` field</li></ul> |
 | [1.4.0](#1.4.0) | 2019-10-17 | <ul><li>Added `service:FireAllClientsEventExcept(eventName, player, ...)`</li><li>Dropped Roblox Studio plugin support in favor of VS Code extension</li><li>New documentation site</li></ul> |
 | [1.3.0](#1.3.0) | 2018-12-19 | <ul><li>Restructured source directory and installer to be compatible with Rojo</li></ul> |
@@ -24,6 +25,13 @@ As always, you can also check the commit history for a given version as well, an
 | [1.2.2](#1.2.2) | 2018-08-15 | <ul><li>Added Failed events for DataService.</li><li>Added Failed event for DataStoreCache.</li><li>Added Failed event for SafeDataStore.</li></ul> |
 
 ### Version History Notes
+
+#### <a name="1.5.0"></a> Version 1.5.0
+Added a new Data module, which replaces the older DataStoreService. The new Data module gives developers more robust control over data, including improved error handling due to the module using promises.
+
+<b>==[BC Break]==</b> The DataStoreService and its dependencies have been removed. The Data module is the official replacement. The DataStoreService had many flaws and could introduce developers into tricky situations that caused data losses due to unknown data failures.
+
+Added a Thread module under Shared. This module should be used instead of the built-in global functions `spawn` and `delay`. Both the `spawn` and `delay` functions are known to throttle unexpectedly. Such behavior is unacceptable, and thus the Thread module aims at giving alternatives to both functions. The use of the Thread's `Thread.Spawn` and `Thread.Delay` functions can easily be dropped in to replace any existing `spawn` and `delay` code. The module also contains a `Thread.SpawnNow` function, which will spawn a new thread immediately, as opposed to the next frame. In addition, the `Thread.Delay` returns the heartbeat connection, which means that the delay can be cancelled by disconnecting the connection.
 
 #### <a name="1.4.1"></a> Version 1.4.1
 Fixed an issue with lazy-loaded modules. Before, lazy-loaded modules could break the execution lifecycle rule if loaded within the `Init` method of a service or controller. When this happened, the `Init` _and_ `Start` method would execute within the loaded module. This is a problem, since `Start` should not be executed yet. This is now fixed. The `Start` method will be held off from execution until the proper time within the framework lifecycle.
