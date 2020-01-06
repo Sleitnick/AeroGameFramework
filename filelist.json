@@ -30,16 +30,6 @@
             "children": [
               {
                 "type": "directory",
-                "name": "Internal",
-                "children": [
-                  {
-                    "type": "file",
-                    "name": "FastSpawn.lua"
-                  }
-                ]
-              },
-              {
-                "type": "directory",
                 "name": "Shared",
                 "children": [
                   {
