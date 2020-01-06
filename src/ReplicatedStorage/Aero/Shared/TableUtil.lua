@@ -175,6 +175,10 @@
 			Returns the index of the given item in the table. If not found, this
 			will return nil.
 
+			This is the same as table.find, which Roblox added after this method
+			was written. To keep backwards compatibility, this method will continue
+			to exist, but will point directly to table.find.
+
 			local tbl = {"Hello", 32, true, "abc"}
 			local abcIndex = TableUtil.IndexOf("abc")     -- > 4
 			local helloIndex = TableUtil.IndexOf("Hello") -- > 1
@@ -205,6 +209,8 @@
 local TableUtil = {}
 
 local http = game:GetService("HttpService")
+
+local IndexOf = table.find
 
 
 local function CopyTable(t)
@@ -397,16 +403,6 @@ local function Print(tbl, label, deepPrint)
 	
 	print(table.concat(strTbl, ""))
 	
-end
-
-
-local function IndexOf(tbl, item)
-	for i = 1,#tbl do
-		if (tbl[i] == item) then
-			return i
-		end
-	end
-	return nil
 end
 
 
