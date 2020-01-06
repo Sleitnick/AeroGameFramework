@@ -11,15 +11,28 @@ nav:
   - Modules: modules.md
   - Execution Model: execution_model.md
   - Module Docs:
+      - Server Services:
+        - StoreService: module_docs/server_services/store_service.md
+      - Server Modules:
+        - Data: module_docs/server_modules/data.md
+      - Client Controllers:
+        - UserInput: module_docs/client_controllers/user_input.md
+        - Fade: module_docs/client_controllers/fade.md
+        - TaskScheduler: module_docs/client_controllers/task_scheduler.md
+      - Client Modules:
+        - CameraShaker: module_docs/client_modules/camera_shaker.md
+        - Smooth: module_docs/client_modules/smooth.md
+        - Tween: module_docs/client_modules/tween.md
+        - PID: module_docs/client_modules/pid.md
       - Shared Modules:
-        - Base64: module_docs/base64.md
-        - Date: module_docs/date.md
-        - Event: module_docs/event.md
-        - ListenerList: module_docs/listener_list.md
-        - Promise: module_docs/promise.md
-        - StringUtil: module_docs/string_util.md
-        - TableUtil: module_docs/table_util.md
-        - Thread: module_docs/thread.md
+        - Base64: module_docs/shared/base64.md
+        - Date: module_docs/shared/date.md
+        - Event: module_docs/shared/event.md
+        - ListenerList: module_docs/shared/listener_list.md
+        - Promise: module_docs/shared/promise.md
+        - StringUtil: module_docs/shared/string_util.md
+        - TableUtil: module_docs/shared/table_util.md
+        - Thread: module_docs/shared/thread.md
 
 theme:
   logo: "img/logo_64.png"
