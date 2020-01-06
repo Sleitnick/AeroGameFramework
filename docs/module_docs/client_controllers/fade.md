@@ -1,5 +1,7 @@
 The Fade controller allows for easy and simple fade-in and fade-out effects on the screen.
 
+For most cases, using just the `In` and `Out` methods is enough.
+
 ## Methods
 
 ### `In([Number duration [, Boolean async]])`
