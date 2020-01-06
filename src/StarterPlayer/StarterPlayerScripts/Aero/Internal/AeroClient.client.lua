@@ -17,11 +17,10 @@ local mt = {__index = Aero}
 local controllersFolder = script.Parent.Parent:WaitForChild("Controllers")
 local modulesFolder = script.Parent.Parent:WaitForChild("Modules")
 local sharedFolder = game:GetService("ReplicatedStorage"):WaitForChild("Aero"):WaitForChild("Shared")
-local internalFolder = game:GetService("ReplicatedStorage").Aero:WaitForChild("Internal")
 
 local modulesAwaitingStart = {}
 
-local FastSpawn = require(internalFolder:WaitForChild("FastSpawn"))
+local SpawnNow = require(sharedFolder:WaitForChild("Thread"):Clone()).SpawnNow
 
 local function PreventEventRegister()
 	error("Cannot register event after Init method")
@@ -61,7 +60,7 @@ function Aero:WrapModule(tbl)
 		if (modulesAwaitingStart) then
 			modulesAwaitingStart[#modulesAwaitingStart + 1] = tbl
 		else
-			FastSpawn(tbl.Start, tbl)
+			SpawnNow(tbl.Start, tbl)
 		end
 	end
 end
@@ -149,7 +148,7 @@ end
 local function StartController(controller)
 	-- Start controllers on separate threads:
 	if (type(controller.Start) == "function") then
-		FastSpawn(controller.Start, controller)
+		SpawnNow(controller.Start, controller)
 	end
 end
 
@@ -209,7 +208,7 @@ local function Init()
 	-- Start modules that were already loaded:
 	local function StartLoadedModules()
 		for _,tbl in pairs(modulesAwaitingStart) do
-			FastSpawn(tbl.Start, tbl)
+			SpawnNow(tbl.Start, tbl)
 		end
 		modulesAwaitingStart = nil
 	end
