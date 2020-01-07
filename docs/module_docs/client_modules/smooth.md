@@ -16,6 +16,8 @@ local smooth = Smooth.new(Vector3.new(), 0.1)
 !!! tip
 	Keep the `smoothTime` as low as possible. While smoothing effects are fun to make, the players will be annoyed by transitions and movements that are too slow.
 
+---------------------------
+
 ## Methods
 
 ### `Update([Vector3 goal])`
