@@ -80,6 +80,8 @@ local CameraShakeState = CameraShakeInstance.CameraShakeState
 local defaultPosInfluence = V3(0.15, 0.15, 0.15)
 local defaultRotInfluence = V3(1, 1, 1)
 
+local http = game:GetService("HttpService")
+
 
 CameraShaker.CameraShakeInstance = CameraShakeInstance
 CameraShaker.Presets = require(script.CameraShakePresets)
@@ -92,7 +94,7 @@ function CameraShaker.new(renderPriority, callback)
 	
 	local self = setmetatable({
 		_running = false;
-		_renderName = "CameraShaker";
+		_renderName = ("CameraShaker" .. http:GenerateGUID(false));
 		_renderPriority = renderPriority;
 		_posAddShake = v3Zero;
 		_rotAddShake = v3Zero;
