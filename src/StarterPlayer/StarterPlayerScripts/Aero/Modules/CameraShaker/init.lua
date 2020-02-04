@@ -5,6 +5,7 @@
 --[[
 	
 	CameraShaker.CameraShakeInstance
+	CameraShaker.Presets
 	
 	cameraShaker = CameraShaker.new(renderPriority, callbackFunction)
 	
