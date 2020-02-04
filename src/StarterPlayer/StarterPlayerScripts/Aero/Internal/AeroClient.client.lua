@@ -12,6 +12,8 @@ local Aero = {
 	Player = game:GetService("Players").LocalPlayer;
 }
 
+local NO_CACHE = {}
+
 local mt = {__index = Aero}
 
 local controllersFolder = script.Parent.Parent:WaitForChild("Controllers")
@@ -21,6 +23,8 @@ local sharedFolder = game:GetService("ReplicatedStorage"):WaitForChild("Aero"):W
 local modulesAwaitingStart = {}
 
 local SpawnNow = require(sharedFolder:WaitForChild("Thread"):Clone()).SpawnNow
+local Promise = require(sharedFolder:WaitForChild("Promise"):Clone())
+
 
 local function PreventEventRegister()
 	error("Cannot register event after Init method")
@@ -81,8 +85,47 @@ local function LoadService(serviceFolder, servicesTbl)
 			end)
 			service[v.Name] = event
 		elseif (v:IsA("RemoteFunction")) then
-			service[v.Name] = function(self, ...)
-				return v:InvokeServer(...)
+			local cacheTTL = v:FindFirstChild("Cache")
+			if (cacheTTL) then
+				cacheTTL = cacheTTL.Value
+				local methodName = v.Name
+				local cache = NO_CACHE
+				local lastCacheTime = 0
+				local fetchingPromise
+				service[methodName] = function(self, ...)
+					local now = tick()
+					if (fetchingPromise) then
+						local _,c = fetchingPromise:Await()
+						return table.unpack(c)
+					elseif (cache == NO_CACHE or (cacheTTL > 0 and (now - lastCacheTime) > cacheTTL)) then
+						lastCacheTime = now
+						local args = table.pack(...)
+						fetchingPromise = Promise.Async(function(resolve, reject)
+							resolve(table.pack(v:InvokeServer(table.unpack(args))))
+						end)
+						local success, _cache = fetchingPromise:Await()
+						if (success) then
+							cache = _cache
+						end
+						fetchingPromise = nil
+						return table.unpack(_cache)
+					end
+					return table.unpack(cache)
+				end
+			else
+				local fetchingPromise
+				service[v.Name] = function(self, ...)
+					if (fetchingPromise) then
+						return select(2, fetchingPromise:Await())
+					else
+						local args = table.pack(...)
+						fetchingPromise = Promise.Async(function(resolve, reject)
+							resolve(v:InvokeServer(table.unpack(args)))
+							fetchingPromise = nil
+						end)
+						return select(2, fetchingPromise:Await())
+					end
+				end
 			end
 		end
 	end
