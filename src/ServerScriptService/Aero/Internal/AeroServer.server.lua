@@ -68,13 +68,19 @@ function AeroServer:FireAllClientsEvent(eventName, ...)
 end
 
 
-function AeroServer:FireAllClientsEventExcept(eventName, client, ...)
+function AeroServer:FireOtherClients(eventName, client, ...)
 	local event = self._clientEvents[eventName]
 	for _,player in pairs(players) do
 		if (player ~= client) then
 			event:FireClient(player, ...)
 		end
 	end
+end
+
+
+function AeroServer:FireAllClientsEventExcept(eventName, client, ...)
+	warn("FireAllClientsEventExcept has been deprecated in favor of FireOtherClients")
+	self:FireOtherClients(eventName, client, ...)
 end
 
 
