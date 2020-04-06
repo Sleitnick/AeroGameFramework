@@ -63,6 +63,7 @@ function Keyboard:Init()
 	end)
 	
 	userInput.InputEnded:Connect(function(input, processed)
+		if (processed) then return end
 		if (input.UserInputType == Enum.UserInputType.Keyboard) then
 			self.KeyUp:Fire(input.KeyCode)
 		end
