@@ -46,6 +46,46 @@ The two flags are:
 
 --------------------------
 
+## External Use
+
+It is possible (but not recommended) to use AGF outside of the framework environment. In other words, a script within the workspace can access modules within the framework. This is useful if an existing script or system cannot be included into the framework, but needs to access items within the framework. In order to do this the `_G.Aero` global is exposed on both the server and the client.
+
+Accessing `_G.Aero` from the server will allow access to server-side services and modules, as well as shared modules.
+
+Accessing `_G.Aero` from the client will allow access to client-side controllers and modules, as well as shared modules.
+
+### Wait for External Aero
+Because `_G.Aero` is not assigned until the framework has fully initialized, external scripts must first check and wait for the global to be assigned before attempting to use it:
+```lua
+while (not _G.Aero) do wait() end
+local aero = _G.Aero
+```
+
+### Use External Aero from Server
+Once `aero` is referenced, it can be used the same way you would use `self` within a controller or service. For example, using `_G.Aero` from the server:
+```lua
+while (not _G.Aero) do wait() end
+local aero = _G.Aero
+
+aero.Services.MyService:Hello()
+local maid = aero.Shared.Maid.new()
+```
+
+### Use External Aero from Client
+Using `aero` from the client is the same as the server, except access will be granted to client-side modules:
+```lua
+while (not _G.Aero) do wait() end
+local aero = _G.Aero
+
+aero.Controllers.Fade:Out()
+local date = aero.Shared.Date.new()
+```
+
+!!! warning
+	Using AGF externally using `_G.Aero` is considered bad practice. The global is only provided so that edge-cases can be filled where it is not possible to include a script or system into the framework.
+
+--------------------------
+
 ## Notes and Best Practices
 
 - The `Init` and `Start` methods are always optional, but it is good practice to always include them.
