@@ -55,6 +55,7 @@
 		promise:ThenCall(callback, ...)
 		promise:ThenReturn(...)
 		promise:Cancel()
+		promise:Destroy()
 		promise:Finally(finallyHandler)
 		promise:FinallyCall(callback, ...)
 		promise:FinallyReturn(...)
@@ -800,6 +801,7 @@ function Promise.prototype:cancel()
 	self:_finalize()
 end
 Promise.prototype.Cancel = Promise.prototype.cancel
+Promise.prototype.Destroy = Promise.prototype.cancel
 
 --[[
 	Used to decrease the number of consumers by 1, and if there are no more,

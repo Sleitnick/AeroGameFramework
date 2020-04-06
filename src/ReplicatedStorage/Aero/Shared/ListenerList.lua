@@ -15,6 +15,9 @@
 	listeners:DisconnectEvents()
 	listeners:DisconnectRenderSteps()
 	listeners:DisconnectActions()
+
+	listeners:Destroy()
+		> Alias for DisconnectAll
 	
 --]]
 
@@ -94,6 +97,9 @@ function ListenerList:DisconnectAll()
 	self:DisconnectRenderSteps()
 	self:DisconnectActions()
 end
+
+
+ListenerList.Destroy = ListenerList.DisconnectAll
 
 
 return ListenerList
