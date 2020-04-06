@@ -101,7 +101,8 @@ end
 
 
 function Maid:GivePromise(promise)
-	if (promise:GetStatus() == Promise.Status.Started) then
+	if (promise:GetStatus() ~= Promise.Status.Started) then
+		print("Return promise")
 		return promise
 	end
 
@@ -110,6 +111,7 @@ function Maid:GivePromise(promise)
 
 	-- Ensure GC
 	newPromise:Finally(function()
+		print("Finally Remove")
 		self[id] = nil
 	end)
 
