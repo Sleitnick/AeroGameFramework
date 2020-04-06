@@ -335,6 +335,7 @@ local function Init()
 	-- Expose server framework to client and global scope:
 	remoteServices.Parent = game:GetService("ReplicatedStorage").Aero
 	_G.AeroServer = AeroServer
+	_G.Aero = AeroServer
 	
 end
 
