@@ -9,7 +9,7 @@
 	maid = Maid.new()
 
 	maid:GiveTask(task)
-		> task is an event, function, or instance/table with a 'Destroy' method
+		> task is an event connection, function, or instance/table with a 'Destroy' method
 
 	maid:GivePromise(promise)
 	
