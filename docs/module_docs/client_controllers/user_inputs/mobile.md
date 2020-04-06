@@ -31,7 +31,7 @@ local gravity = mobile:GetDeviceGravity()
 ### `GetDeviceRotation()`
 Get the rotation of the device.
 ```lua
-local rotation = mobile:GetDeviceRotation()
+local rotation, cframe = mobile:GetDeviceRotation()
 ```
 
 --------------------
