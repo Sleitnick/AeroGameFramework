@@ -113,18 +113,8 @@ local function LoadService(serviceFolder, servicesTbl)
 					return table.unpack(cache)
 				end
 			else
-				local fetchingPromise
 				service[v.Name] = function(self, ...)
-					if (fetchingPromise) then
-						return select(2, fetchingPromise:Await())
-					else
-						local args = table.pack(...)
-						fetchingPromise = Promise.Async(function(resolve, reject)
-							resolve(v:InvokeServer(table.unpack(args)))
-							fetchingPromise = nil
-						end)
-						return select(2, fetchingPromise:Await())
-					end
+					return v:InvokeServer(...)
 				end
 			end
 		end
