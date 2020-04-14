@@ -14,7 +14,8 @@ As always, you can also check the commit history for a given version as well, an
 
 | Version | Date | Description |
 | ---|---|--- |
-| [1.5.1](#1.5.1) | 2020-01-05 | <ul><li>Added Maid class</li></ul> |
+| [1.5.2](#1.5.2) | 2020-04-14 | <ul><li>Fix a breaking issue with back-to-back calls to a RemoteFunction incorrectly caching</li></ul> |
+| [1.5.1](#1.5.1) | 2020-04-06 | <ul><li>Added Maid class</li></ul> |
 | [1.5.0](#1.5.0) | 2020-01-05 | <ul><li>Added Data module</li><li><b>==[BC Break]==</b> Removed DataStoreService and its dependencies</li><li>Added Thread module</li></ul> |
 | [1.4.1](#1.4.1) | 2019-12-15 | <ul><li>Fixed execution order for modules to respect init/start lifecycle</li><li>Add ability to force `Init` execution order using `__aeroOrder` field</li></ul> |
 | [1.4.0](#1.4.0) | 2019-10-17 | <ul><li>Added `service:FireAllClientsEventExcept(eventName, player, ...)`</li><li>Dropped Roblox Studio plugin support in favor of VS Code extension</li><li>New documentation site</li></ul> |
@@ -26,6 +27,11 @@ As always, you can also check the commit history for a given version as well, an
 | [1.2.2](#1.2.2) | 2018-08-15 | <ul><li>Added Failed events for DataService.</li><li>Added Failed event for DataStoreCache.</li><li>Added Failed event for SafeDataStore.</li></ul> |
 
 ### Version History Notes
+
+#### <a name="1.5.2"></a> Version 1.5.2
+Fix a breaking issue regarding back-to-back invocations of RemoteFunctions within the internal client script. This issue was caused by an incorrect design decision that subsequent calls to a pending RemoteFunction should return the result of the first pending invocation. In other words, if a RemoteFunction was invoked 5 times at the exact same time, each invocation would return the result of the _first_ invocation.
+
+This faulty design has been reverted to the old behavior from before v1.5.1, which guarantees that each invocation of a RemoteFunction is unique.
 
 #### <a name="1.5.1"></a> Version 1.5.1
 Added [Quenty's](https://github.com/Quenty) Maid class. This class allows for easy cleanup of tasks.
