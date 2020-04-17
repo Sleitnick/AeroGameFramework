@@ -58,7 +58,7 @@ function UserInput:Init()
 		end
 	end
 	
-	local function setMouseIconEnabled(enabled)
+	local function SetMouseIconEnabled(enabled)
 		if (self.HideMouse) then
 			userInput.MouseIconEnabled = enabled
 		end
@@ -69,9 +69,9 @@ function UserInput:Init()
 			self._preferred = newPreferred
 			self.PreferredChanged:Fire(newPreferred)
 			if (newPreferred == self.Preferred.Mouse or newPreferred == self.Preferred.Keyboard) then
-				setMouseIconEnabled(true)
+				SetMouseIconEnabled(true)
 			else
-				setMouseIconEnabled(false)
+				SetMouseIconEnabled(false)
 			end
 		end
 	end
