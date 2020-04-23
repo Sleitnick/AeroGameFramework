@@ -41,6 +41,5 @@ function VectorUtil.AngleBetween(vector1, vector2)
 	return math.acos(math.clamp(vector1.Unit:Dot(vector2.Unit), -1, 1))
 end
 
--- clamp magnitude, find angle
 
 return VectorUtil

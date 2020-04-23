@@ -9,6 +9,7 @@
 
 	NumberUtil.Lerp(min, max, alpha)
 	NumberUtil.LerpClamp(min, max, alpha)
+	NumberUtil.InverseLerp(min, max, num)
 	NumberUtil.Map(num, inMin, inMax, outMin, outMax)
 	NumberUtil.Round(num)
 	NumberUtil.RoundTo(num, multiple)
@@ -38,6 +39,14 @@
 			LerpClamp(5, 15, 0.5) == 10
 			LerpClamp(5, 15, 2)   == 15  (alpha of 2 was clamped down to 1)
 
+
+		InverseLerp:
+
+			The inverse of the Lerp function. It returns the alpha value
+			between the range of [min, max] given the number.
+
+			InverseLerp(5, 15, 10) == 0.5
+			InverseLerp(5, 15, 12) == 0.7
 
 		Map:
 
@@ -85,6 +94,11 @@ end
 
 function NumberUtil.LerpClamp(min, max, alpha)
 	return NumberUtil.Lerp(min, max, math.clamp(alpha, 0, 1))
+end
+
+
+function NumberUtil.InverseLerp(min, max, num)
+	return ((num - min) / (max - min))
 end
 
 
