@@ -50,6 +50,10 @@
                   },
                   {
                     "type": "file",
+                    "name": "Maid.lua"
+                  },
+                  {
+                    "type": "file",
                     "name": "Promise.lua"
                   },
                   {
