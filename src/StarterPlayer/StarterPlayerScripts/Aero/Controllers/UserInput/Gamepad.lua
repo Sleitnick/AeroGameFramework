@@ -175,9 +175,9 @@ function Gamepad:ApplyDeadzone(value, deadzoneThreshold)
 	if (abs(value) < deadzoneThreshold) then
 		return 0
 	elseif (value > 0) then
-		return ((value - deadzoneThreshold) / (1 - deadzoneThreshold))
+		return self.Shared.NumberUtil.Map(value, 0, 1, deadzoneThreshold, 1)
 	else
-		return ((value + deadzoneThreshold) / (1 - deadzoneThreshold))
+		return self.Shared.NumberUtil.Map(value, 0, -1, deadzoneThreshold, -1)
 	end
 end
 
