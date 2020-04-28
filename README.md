@@ -9,10 +9,7 @@ AeroGameFramework is a Roblox game framework that makes development easy and fun
 Visit the [documentation site](https://sleitnick.github.io/AeroGameFramework).
 
 # Video Tutorial
-Learn how to use the framework in the video tutorial series:
-https://www.youtube.com/watch?v=8ta0cHX1ceE&index=1&list=PLk3R4TM3pnqv7doCTUHtn-wkydaA08npc
-
-**Note:** This tutorial series does not use the newer VS Code extension workflow. An updated series is in the works.
+Visit the [AGF Tutorial](https://www.youtube.com/playlist?list=PLk3R4TM3pnqvde1cqOIH_bGnCWwMKDqKL) playlist.
 
 # Example
 
