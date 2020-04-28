@@ -486,7 +486,10 @@ function Data:Get(key, defaultVal)
 	-- Load and return value since it was not in the cache:
 	return self:_load(key):Then(function(value)
 		if (value == nil and defaultVal ~= nil) then
-			value = (typeof(defaultVal) ~= "table" and defaultVal or tableUtil.Copy(defaultVal))
+			value = defaultVal
+			if (typeof(defaultVal) == "table") then
+				value = tableUtil.Copy(defaultVal)
+			end
 			return self:Set(key, value):Then(function()
 				return value
 			end)
