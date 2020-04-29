@@ -36,6 +36,8 @@ local userInput = game:GetService("UserInputService")
 local hapticService = game:GetService("HapticService")
 local abs = math.abs
 
+local InverseLerp
+
 
 function Gamepad.new(gamepad)
 	
@@ -175,9 +177,9 @@ function Gamepad:ApplyDeadzone(value, deadzoneThreshold)
 	if (abs(value) < deadzoneThreshold) then
 		return 0
 	elseif (value > 0) then
-		return self.Shared.NumberUtil.InverseLerp(value, deadzoneThreshold, 1)
+		return InverseLerp(value, deadzoneThreshold, 1)
 	else
-		return self.Shared.NumberUtil.InverseLerp(value, deadzoneThreshold, -1)
+		return InverseLerp(value, deadzoneThreshold, -1)
 	end
 end
 
@@ -188,7 +190,7 @@ end
 
 
 function Gamepad:Init()
-	
+	InverseLerp = self.Shared.NumberUtil.InverseLerp
 end
 
 
