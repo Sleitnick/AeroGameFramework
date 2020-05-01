@@ -32,6 +32,27 @@
                 "type": "directory",
                 "name": "Shared",
                 "children": [
+                  { "type": "directory",
+                    "name": "Util",
+                    "children": [
+                      {
+                        "type": "file",
+                        "name": "NumberUtil.lua"
+                      },
+                      {
+												"type": "file",
+												"name": "StringUtil.lua"
+											},
+											{
+												"type": "file",
+												"name": "TableUtil.lua"
+											},
+											{
+												"type": "file",
+												"name": "VectorUtil.lua"
+											}
+                    ]
+                  },
                   {
                     "type": "file",
                     "name": "Base64.lua"
@@ -52,29 +73,14 @@
                     "type": "file",
                     "name": "Maid.lua"
                   },
-                  {
-                    "type": "file",
-                    "name": "NumberUtil.lua"
-                  },
+                  
                   {
                     "type": "file",
                     "name": "Promise.lua"
                   },
                   {
                     "type": "file",
-                    "name": "StringUtil.lua"
-                  },
-                  {
-                    "type": "file",
-                    "name": "TableUtil.lua"
-                  },
-                  {
-                    "type": "file",
                     "name": "Thread.lua"
-                  },
-                  {
-                    "type": "file",
-                    "name": "VectorUtil.lua"
                   }
                 ]
               }
