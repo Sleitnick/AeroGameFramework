@@ -777,7 +777,7 @@ end
 
 function Data:Init()
 	Promise = self.Shared.Promise
-	tableUtil = self.Shared.TableUtil
+	tableUtil = self.Shared.Util.TableUtil
 end
 
 
