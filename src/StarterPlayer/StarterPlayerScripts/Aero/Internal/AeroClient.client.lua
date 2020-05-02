@@ -184,10 +184,10 @@ local function LoadService(serviceFolder, servicesTbl)
 				end
 
 				return table.unpack(cache)
-			else
-				service[v.Name] = function (self, ...)
-					return v:InvokeServer(...)
-				end
+			end
+		else
+			service[v.Name] = function (self, ...)
+				return v:InvokeServer(...)
 			end
 		end
 	end
