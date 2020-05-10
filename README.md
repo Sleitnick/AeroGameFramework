@@ -51,3 +51,7 @@ return MyService
 ```
 
 These are complete code examples. They could be put into the framework and work as-is.
+
+# Support
+
+Support AGF by [buying me a coffee](https://www.buymeacoffee.com/sleitnick) and keeping me energized to keep up the work on this project! Any support is very much appreciated.
