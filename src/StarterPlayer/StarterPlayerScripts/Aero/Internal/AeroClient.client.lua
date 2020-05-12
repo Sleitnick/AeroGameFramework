@@ -150,7 +150,7 @@ local function LazyLoadSetup(tbl, folder)
 				if (type(obj) == "table") then
 					-- only wrap module if it's actually a table, and not a table disguised as a function
 					local objMetatable = getmetatable(obj)
-					if not (objMetatable and objMetatable.__call) then
+					if (not (objMetatable and objMetatable.__call)) then
 						AeroServer:WrapModule(obj)
 					end
 				end
