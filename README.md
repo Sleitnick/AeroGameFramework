@@ -51,3 +51,8 @@ return MyService
 ```
 
 These are complete code examples. They could be put into the framework and work as-is.
+
+# Support
+
+Support AGF by [buying me a coffee](https://www.buymeacoffee.com/sleitnick) and keeping me energized to keep up the work on this project! Any support is very much appreciated.
+<link href="https://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext" rel="stylesheet"><a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/sleitnick"><img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a coffee"><span style="margin-left:15px;font-size:19px !important;">Buy me a coffee</span></a>
