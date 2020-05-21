@@ -111,7 +111,7 @@ end
 
 
 function PID:SetSampleTime(newSampleTime)
-	newSampleTime = math.clamp(newSampleTime, 0)
+	newSampleTime = math.max(newSampleTime, 0)
 	local ratio = newSampleTime / self.SampleTimeMillis
 	self.I = self.I * ratio
 	self.D = self.D / ratio

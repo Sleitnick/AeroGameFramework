@@ -144,7 +144,7 @@ function Mouse:Init()
 		end
 	end)
 	
-	userInput.InputEnded:Connect(function(input, processed)
+	userInput.InputEnded:Connect(function(input, _processed)
 		if (input.UserInputType == Enum.UserInputType.MouseButton1) then
 			self.LeftUp:Fire()
 		elseif (input.UserInputType == Enum.UserInputType.MouseButton2) then
