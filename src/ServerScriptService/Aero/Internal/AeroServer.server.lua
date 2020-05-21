@@ -157,7 +157,11 @@ local function LazyLoadSetup(tbl, folder)
 				local obj = require(child)
 				rawset(t, i, obj)
 				if (type(obj) == "table") then
-					AeroServer:WrapModule(obj)
+					-- only wrap module if it's actually a table, and not a table disguised as a function
+					local objMetatable = getmetatable(obj)
+					if (not (objMetatable and objMetatable.__call)) then
+						AeroServer:WrapModule(obj)
+					end
 				end
 				return obj
 			elseif (child:IsA("Folder")) then
