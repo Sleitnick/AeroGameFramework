@@ -57,7 +57,7 @@ theme:
 
 extra:
   social:
-    - type: github
+    - icon: fontawesome/brands/github-alt
       link: https://github.com/Sleitnick/AeroGameFramework
 
 markdown_extensions:
