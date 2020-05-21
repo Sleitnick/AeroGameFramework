@@ -14,6 +14,7 @@ As always, you can also check the commit history for a given version as well, an
 
 | Version | Date | Description |
 | ---|---|--- |
+| [1.6.1](#1.6.1) | 2020-04-23 | <ul><li>Switch to Selene for linting</li><li>Include GitHub Action to run Selene for new pull requests</li></ul> |
 | [1.6.0](#1.6.0) | 2020-04-23 | <ul><li>Add NumberUtil and VectorUtil libraries under Shared</li></ul> |
 | [1.5.2](#1.5.2) | 2020-04-14 | <ul><li>Fix a breaking issue with back-to-back calls to a RemoteFunction incorrectly caching</li></ul> |
 | [1.5.1](#1.5.1) | 2020-04-06 | <ul><li>Added Maid class</li></ul> |
@@ -28,6 +29,9 @@ As always, you can also check the commit history for a given version as well, an
 | [1.2.2](#1.2.2) | 2018-08-15 | <ul><li>Added Failed events for DataService.</li><li>Added Failed event for DataStoreCache.</li><li>Added Failed event for SafeDataStore.</li></ul> |
 
 ### Version History Notes
+
+#### <a name="1.6.1"></a> Version 1.6.1
+Added support for Selene.
 
 #### <a name="1.6.0"></a> Version 1.6.0
 Added NumberUtil and VectorUtil libraries. These libraries contain functions that are commonly used in game development but are not available out-of-the-box in Roblox's API.
