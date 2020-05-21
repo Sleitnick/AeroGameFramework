@@ -103,14 +103,14 @@ function Gamepad:ConnectAll()
 	end)
 	
 	-- Input Ended:
-	self._listeners:Connect(userInput.InputEnded, function(input, processed)
+	self._listeners:Connect(userInput.InputEnded, function(input, _processed)
 		if (input.UserInputType == self._gamepadInput) then
 			self.ButtonUp:Fire(input.KeyCode)
 		end
 	end)
 	
 	-- Input Changed:
-	self._listeners:Connect(userInput.InputChanged, function(input, processed)
+	self._listeners:Connect(userInput.InputChanged, function(input, _processed)
 		if (input.UserInputType == self._gamepadInput) then
 			self.Changed:Fire(input.KeyCode, input)
 		end
