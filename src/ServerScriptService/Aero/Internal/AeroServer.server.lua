@@ -53,25 +53,43 @@ function AeroServer:RegisterClientEvent(eventName)
 end
 
 
-function AeroServer:FireEvent(eventName, ...)
+function AeroServer:Fire(eventName, ...)
 	self._events[eventName]:Fire(...)
 end
 
 
-function AeroServer:FireClientEvent(eventName, client, ...)
+function AeroServer:FireEvent(eventName, ...)
+	warn("FireEvent has been deprecated in favor of Fire")
+	self:Fire(eventName, ...)
+end
+
+
+function AeroServer:FireClient(eventName, client, ...)
 	self._clientEvents[eventName]:FireClient(client, ...)
 end
 
 
-function AeroServer:FireAllClientsEvent(eventName, ...)
+function AeroServer:FireClientEvent(eventName, client, ...)
+	warn("FireClientEvent has been deprecated in favor of FireClient")
+	self:FireClient(eventName, client, ...)
+end
+
+
+function AeroServer:FireAllClients(eventName, ...)
 	self._clientEvents[eventName]:FireAllClients(...)
 end
 
 
-function AeroServer:FireOtherClients(eventName, client, ...)
+function AeroServer:FireAllClientsEvent(eventName, ...)
+	warn("FireAllClientsEvent has been deprecated in favor of FireAllClients")
+	self:FireAllClients(eventName, ...)
+end
+
+
+function AeroServer:FireOtherClients(eventName, clientIgnore, ...)
 	local event = self._clientEvents[eventName]
 	for _,player in ipairs(players) do
-		if (player ~= client) then
+		if (player ~= clientIgnore) then
 			event:FireClient(player, ...)
 		end
 	end
@@ -157,7 +175,7 @@ local function LazyLoadSetup(tbl, folder)
 				local obj = require(child)
 				rawset(t, i, obj)
 				if (type(obj) == "table") then
-					-- only wrap module if it's actually a table, and not a table disguised as a function
+					-- Only wrap module if it's actually a table, and not a table disguised as a function:
 					local objMetatable = getmetatable(obj)
 					if (not (objMetatable and objMetatable.__call)) then
 						AeroServer:WrapModule(obj)
