@@ -14,7 +14,7 @@ As always, you can also check the commit history for a given version as well, an
 
 | Version | Date | Description |
 | ---|---|--- |
-| [1.6.1](#1.6.1) | 2020-04-23 | <ul><li>Switch to Selene for linting</li><li>Include GitHub Action to run Selene for new pull requests</li></ul> |
+| [1.6.1](#1.6.1) | 2020-05-21 | <ul><li>Switch to Selene for linting</li><li>Include GitHub Action to run Selene for new pull requests</li><li>Less verbose method names for firing events</li><li>Various bug fixes and performance improvements</li></ul> |
 | [1.6.0](#1.6.0) | 2020-04-23 | <ul><li>Add NumberUtil and VectorUtil libraries under Shared</li></ul> |
 | [1.5.2](#1.5.2) | 2020-04-14 | <ul><li>Fix a breaking issue with back-to-back calls to a RemoteFunction incorrectly caching</li></ul> |
 | [1.5.1](#1.5.1) | 2020-04-06 | <ul><li>Added Maid class</li></ul> |
@@ -31,7 +31,15 @@ As always, you can also check the commit history for a given version as well, an
 ### Version History Notes
 
 #### <a name="1.6.1"></a> Version 1.6.1
-Added support for Selene.
+Added support for Selene. All pull requests are now required to pass through the Selene check before being merged into master.
+
+Implemented less verbose method names for firing events and deprecated the old versions.
+
+Modules are no longer wrapped with the Aero metatable if they already have a metatable and a `__call` metamethod. This adds easier support of third-party modules such as DataStore2.
+
+The mouse is no longer enabled/disabled by default based on user input. If developers wish to hide the mouse automatically when a gamepad is used, `UserInput.HideMouse` must be set to `true`.
+
+There were also various bug fixes and performance enhancements thanks to the implementation of Selene.
 
 #### <a name="1.6.0"></a> Version 1.6.0
 Added NumberUtil and VectorUtil libraries. These libraries contain functions that are commonly used in game development but are not available out-of-the-box in Roblox's API.
