@@ -36,6 +36,8 @@ local userInput = game:GetService("UserInputService")
 local hapticService = game:GetService("HapticService")
 local abs = math.abs
 
+local InverseLerp
+
 
 function Gamepad.new(gamepad)
 	
@@ -81,7 +83,7 @@ function Gamepad.new(gamepad)
 	end)
 	
 	-- Map InputObject states to corresponding KeyCodes:
-	for _,input in pairs(userInput:GetGamepadState(gamepad)) do
+	for _,input in ipairs(userInput:GetGamepadState(gamepad)) do
 		self._state[input.KeyCode] = input
 	end
 	
@@ -165,7 +167,7 @@ end
 
 
 function Gamepad:StopAllMotors()
-	for _,motor in pairs(Enum.VibrationMotor:GetEnumItems()) do
+	for _,motor in ipairs(Enum.VibrationMotor:GetEnumItems()) do
 		self:StopMotor(motor)
 	end
 end
@@ -175,9 +177,9 @@ function Gamepad:ApplyDeadzone(value, deadzoneThreshold)
 	if (abs(value) < deadzoneThreshold) then
 		return 0
 	elseif (value > 0) then
-		return ((value - deadzoneThreshold) / (1 - deadzoneThreshold))
+		return InverseLerp(value, deadzoneThreshold, 1)
 	else
-		return ((value + deadzoneThreshold) / (1 - deadzoneThreshold))
+		return InverseLerp(value, deadzoneThreshold, -1)
 	end
 end
 
@@ -188,7 +190,7 @@ end
 
 
 function Gamepad:Init()
-	
+	InverseLerp = self.Shared.NumberUtil.InverseLerp
 end
 
 

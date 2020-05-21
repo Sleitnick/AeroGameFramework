@@ -130,7 +130,7 @@ end
 
 
 function CameraShaker:StopSustained(duration)
-	for _,c in pairs(self._camShakeInstances) do
+	for _,c in ipairs(self._camShakeInstances) do
 		if (c.fadeOutDuration == 0) then
 			c:StartFadeOut(duration or c.fadeInDuration)
 		end
