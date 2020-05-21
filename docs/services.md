@@ -43,11 +43,10 @@ return MyService
 | `void` | `service:WrapModule(Table tbl)` |
 | `void` | `service:RegisterEvent(String eventName)` |
 | `void` | `service:RegisterClientEvent(String clientEventName)` |
-| `void` | `service:FireEvent(String eventName, ...)` |
-| `void` | `service:FireClientEvent(String clientEventName, Player player, ...)` |
-| `void` | `service:FireAllClientsEvent(String clientEventName, ...)` |
+| `void` | `service:Fire(String eventName, ...)` |
+| `void` | `service:FireClient(String clientEventName, Player player, ...)` |
+| `void` | `service:FireAllClients(String clientEventName, ...)` |
 | `void` | `service:FireOtherClients(String clientEventName, Player player, ...)` |
-| `void` | `service:FireAllClientsEventExcept(String clientEventName, Player player, ...)` [Deprecated in favor of FireOtherClients] |
 | `Connection` | `service:ConnectEvent(String eventName, Function handler)` |
 | `Connection` | `service:ConnectClientEvent(String clientEventName, Function handler)` |
 
@@ -100,7 +99,7 @@ end
 
 ## Server Events
 
-You can create and listen to events using the `RegisterEvent`, `ConnectEvent`, and `FireEvent` methods. All events should always be registered within the `Init` method. The `ConnectEvent` and `FireEvent` methods should never be used within an `Init` method.
+You can create and listen to events using the `RegisterEvent`, `ConnectEvent`, and `Fire` methods. All events should always be registered within the `Init` method. The `ConnectEvent` and `Fire` methods should never be used within an `Init` method.
 
 ```lua
 function MyService:Start()
@@ -109,7 +108,7 @@ function MyService:Start()
 		print(msg)
 	end)
 	-- Fire 'Hello' event:
-	self:FireEvent("Hello", "Hello world!")
+	self:Fire("Hello", "Hello world!")
 end
 
 function MyService:Init()
@@ -166,20 +165,20 @@ end
 
 ### Client Events
 
-To expose an event to the client, use the `RegisterClientEvent` method in the `Init` method. Use `FireClientEvent` and `FireAllClientsEvent` to fire the event:
+To expose an event to the client, use the `RegisterClientEvent` method in the `Init` method. Use `FireClient` and `FireAllClients` to fire the event:
 
 ```lua
 function MyService:Start()
 	-- Fire client event for a specific player:
-	self:FireClientEvent("MyClientEvent", somePlayer, "Hello")
+	self:FireClient("MyClientEvent", somePlayer, "Hello")
 
 	-- Fire client event for all players:
-	self:FireAllClientsEvent("MyClientEvent", "Hello")
+	self:FireAllClients("MyClientEvent", "Hello")
 end
 
 function MyService:Init()
 	-- Register client event:
-	self:RegisterClientEvent("MyClientMethod")
+	self:RegisterClient("MyClientMethod")
 end
 ```
 
