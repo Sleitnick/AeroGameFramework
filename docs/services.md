@@ -198,6 +198,38 @@ function MyService:Print(msg)
 end
 ```
 
+### Caching Results
+
+In some cases, it is nice for the client to cache the results returned from the server to reduce the server load. This is especially true in cases where the returned values do not change. To enable caching, the `CacheClientMethod` method must be invoked for each client method.
+
+When enabling caching, the TTL (time to live) period can be set. For instance, if TTL is set to `10`, then the client will only invoke the server if the current value returned is older than 10 seconds. If the TTL argument left blank, the first value cached will always be used and will never invoke the server again.
+
+```lua
+function MyService.Client:Hello(player)
+	return "Hello! " .. math.random()
+end
+
+function MyService.Client:Bye(player)
+	return "Bye! " .. math.random()
+end
+
+function MyService:Init()
+
+	-- The client will cache the result of 'Hello' forever:
+	self:CacheClientMethod("Hello")
+
+	-- The client will cache the result of 'Bye' for 60 seconds:
+	self:CacheClientMethod("Bye", 60)
+
+end
+```
+
+!!! note
+	No changes need to be done on the client. The client will automatically pick up on the caching rules defined in the service.
+
+!!! warning
+	The `CacheClientMethod` should only be invoked within the `Init` method of a service.
+
 --------------------------
 
 ## Forcing `Init` Order

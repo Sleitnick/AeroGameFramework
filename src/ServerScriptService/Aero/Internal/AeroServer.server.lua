@@ -32,6 +32,10 @@ local function PreventFunctionRegister()
 	error("Cannot register function after Init method")
 end
 
+local function PreventMethodCache()
+	error("Cannot mark method as cachable after Init method")
+end
+
 
 function AeroServer:RegisterEvent(eventName)
 	local event = self.Shared.Event.new()
@@ -94,11 +98,17 @@ function AeroServer:WaitForClientEvent(eventName)
 end
 
 
-function AeroServer:RegisterClientFunction(funcName, func)
+function AeroServer:RegisterClientFunction(funcName, func, cacheTTL)
 	local remoteFunc = Instance.new("RemoteFunction")
 	remoteFunc.Name = funcName
 	remoteFunc.OnServerInvoke = function(...)
 		return func(self.Client, ...)
+	end
+	if (cacheTTL ~= nil) then
+		local cache = Instance.new("NumberValue")
+		cache.Name = "Cache"
+		cache.Value = cacheTTL
+		cache.Parent = remoteFunc
 	end
 	remoteFunc.Parent = self._remoteFolder
 	return remoteFunc
@@ -119,6 +129,16 @@ function AeroServer:WrapModule(tbl)
 			SpawnNow(tbl.Start, tbl)
 		end
 	end
+end
+
+
+function AeroServer:CacheClientMethod(methodName, ttl)
+	assert(self._clientCaches, "CacheClientMethod must be called within Init method")
+	assert(type(methodName) == "string", "CacheClientMethod argument #1 must be a string")
+	assert(self.Client and type(self.Client[methodName]) == "function", "CacheClientMethod argument #1 must be a client method")
+	if (ttl == nil) then ttl = 0 end
+	assert(type(ttl) == "number" and ttl >= 0, "CacheClientMethod argument #2 must be a number >= 0")
+	self._clientCaches[methodName] = (ttl or 0)
 end
 
 
@@ -164,6 +184,7 @@ local function LoadService(module, servicesTbl, parentFolder)
 	
 	service._events = {}
 	service._clientEvents = {}
+	service._clientCaches = {}
 	service._remoteFolder = remoteFolder
 	
 end
@@ -179,7 +200,7 @@ local function InitService(service)
 	-- Client functions:
 	for funcName,func in pairs(service.Client) do
 		if (type(func) == "function") then
-			service:RegisterClientFunction(funcName, func)
+			service:RegisterClientFunction(funcName, func, service._clientCaches[funcName])
 		end
 	end
 
@@ -187,6 +208,7 @@ local function InitService(service)
 	service.RegisterEvent = PreventEventRegister
 	service.RegisterClientEvent = PreventEventRegister
 	service.RegisterClientFunction = PreventFunctionRegister
+	service.CacheClientMethod = PreventMethodCache
 	
 end
 
@@ -313,6 +335,7 @@ local function Init()
 	-- Expose server framework to client and global scope:
 	remoteServices.Parent = game:GetService("ReplicatedStorage").Aero
 	_G.AeroServer = AeroServer
+	_G.Aero = AeroServer
 	
 end
 

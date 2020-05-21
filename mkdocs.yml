@@ -1,7 +1,7 @@
 site_name: AeroGameFramework
 site_description: Documentation for the AeroGameFramework
 site_author: Stephen Leitnick
-site_url: https://github.com/Sleitnick/AeroGameFramework
+site_url: https://sleitnick.github.io/AeroGameFramework/
 
 nav:
   - Home: index.md
@@ -19,6 +19,11 @@ nav:
       - Client:
         - Controllers:
           - UserInput: module_docs/client_controllers/user_input.md
+          - UserInput (modules):
+              - Mouse: module_docs/client_controllers/user_inputs/mouse.md
+              - Keyboard: module_docs/client_controllers/user_inputs/keyboard.md
+              - Gamepad: module_docs/client_controllers/user_inputs/gamepad.md
+              - Mobile: module_docs/client_controllers/user_inputs/mobile.md
           - Fade: module_docs/client_controllers/fade.md
           - TaskScheduler: module_docs/client_controllers/task_scheduler.md
         - Modules:
@@ -31,10 +36,13 @@ nav:
         - Date: module_docs/shared/date.md
         - Event: module_docs/shared/event.md
         - ListenerList: module_docs/shared/listener_list.md
+        - Maid: module_docs/shared/maid.md
+        - NumberUtil: module_docs/shared/number_util.md
         - Promise: module_docs/shared/promise.md
         - StringUtil: module_docs/shared/string_util.md
         - TableUtil: module_docs/shared/table_util.md
         - Thread: module_docs/shared/thread.md
+        - VectorUtil: module_docs/shared/vector_util.md
 
 theme:
   logo: "img/logo_64.png"
