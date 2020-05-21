@@ -1,7 +1,6 @@
 ![Logo](/imgs/logo_github_readme.png)
 
 ![Lint](https://github.com/Sleitnick/AeroGameFramework/workflows/Lint/badge.svg?branch=master)
-![Deploy Docs](https://github.com/Sleitnick/AeroGameFramework/workflows/Deploy%20Docs/badge.svg?branch=master)
 
 # AeroGameFramework
 A powerful game framework for the Roblox platform.
