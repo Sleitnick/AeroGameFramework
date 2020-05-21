@@ -48,7 +48,7 @@ end
 
 function UserInput:Init()
 
-	for _,obj in pairs(script:GetChildren()) do
+	for _,obj in ipairs(script:GetChildren()) do
 		if (obj:IsA("ModuleScript")) then
 			local module = require(obj)
 			self:WrapModule(module)
