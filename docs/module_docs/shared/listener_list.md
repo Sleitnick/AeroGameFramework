@@ -66,3 +66,8 @@ Only unbind any bound RenderSteps.
 
 ### `DisconnectActions()`
 Only unbind any bound actions.
+
+--------------------
+
+### `Destroy()`
+Alias for `DisconnectAll`.

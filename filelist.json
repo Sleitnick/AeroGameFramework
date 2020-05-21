@@ -50,6 +50,14 @@
                   },
                   {
                     "type": "file",
+                    "name": "Maid.lua"
+                  },
+                  {
+                    "type": "file",
+                    "name": "NumberUtil.lua"
+                  },
+                  {
+                    "type": "file",
                     "name": "Promise.lua"
                   },
                   {
@@ -63,6 +71,10 @@
                   {
                     "type": "file",
                     "name": "Thread.lua"
+                  },
+                  {
+                    "type": "file",
+                    "name": "VectorUtil.lua"
                   }
                 ]
               }

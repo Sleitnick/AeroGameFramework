@@ -9,7 +9,7 @@ The preferred editor for the AeroGameFramework is [Visual Studio Code](https://c
 | Name | Description | Required |
 | ---- | ----------- | -------- |
 | [AeroGameFramework](https://marketplace.visualstudio.com/items?itemName=aerogameframework-vsce.aerogameframework) | Main VS Code extension | Yes |
-| [Rojo](https://rojo.space/docs/latest/guide/installation/) | Sync files between VS Code and Roblox Studio | Yes |
+| [Rojo](https://rojo.space/docs/installation/) | Sync files between VS Code and Roblox Studio | Yes |
 | [Rojo for VS Code](https://marketplace.visualstudio.com/items?itemName=evaera.vscode-rojo) | Use and manage Rojo directly from VS Code | No |
 | [Luacheck](https://github.com/mpeterv/luacheck) | Static analyzer and linter for Lua | No (Yes if using vscode-lua) |
 | [vscode-lua](https://marketplace.visualstudio.com/items?itemName=trixnz.vscode-lua) | Intellisense and linting for Lua (utilizes Luacheck) | No |
