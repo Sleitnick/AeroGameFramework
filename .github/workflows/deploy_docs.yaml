@@ -24,4 +24,4 @@ jobs:
         pip install mkdocs mkdocs-material
     - name: Deploy
       run: |
-        mkdocs gh-deploy
+        mkdocs gh-deploy --clean
