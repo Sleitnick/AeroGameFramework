@@ -35,6 +35,5 @@ jobs:
       run: |
         cargo install selene
     - name: Lint
-      working-directory: ./src
       run: |
-        selene .
+        selene ./src
