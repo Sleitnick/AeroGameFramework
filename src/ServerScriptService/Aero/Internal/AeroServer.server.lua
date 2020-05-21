@@ -68,13 +68,19 @@ function AeroServer:FireAllClientsEvent(eventName, ...)
 end
 
 
-function AeroServer:FireAllClientsEventExcept(eventName, client, ...)
+function AeroServer:FireOtherClients(eventName, client, ...)
 	local event = self._clientEvents[eventName]
-	for _,player in pairs(players) do
+	for _,player in ipairs(players) do
 		if (player ~= client) then
 			event:FireClient(player, ...)
 		end
 	end
+end
+
+
+function AeroServer:FireAllClientsEventExcept(eventName, client, ...)
+	warn("FireAllClientsEventExcept has been deprecated in favor of FireOtherClients")
+	self:FireOtherClients(eventName, client, ...)
 end
 
 
@@ -245,7 +251,7 @@ local function Init()
 	
 	-- Load service modules:
 	local function LoadAllServices(parent, servicesTbl, parentFolder)
-		for _,child in pairs(parent:GetChildren()) do
+		for _,child in ipairs(parent:GetChildren()) do
 			if (child:IsA("ModuleScript")) then
 				LoadService(child, servicesTbl, parentFolder)
 			elseif (child:IsA("Folder")) then
@@ -287,7 +293,7 @@ local function Init()
 
 	-- Remove unused folders:
 	local function ScanRemoteFoldersForEmpty(parent)
-		for _,child in pairs(parent:GetChildren()) do
+		for _,child in ipairs(parent:GetChildren()) do
 			if (child:IsA("Folder")) then
 				local remoteFunction = child:FindFirstChildWhichIsA("RemoteFunction", true)
 				local remoteEvent = child:FindFirstChildWhichIsA("RemoteEvent", true)

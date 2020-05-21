@@ -29,6 +29,8 @@
 
 local UserInput = {}
 
+UserInput.HideMouse = false
+
 UserInput.Preferred = {
 	Keyboard = 0;
 	Mouse = 1;
@@ -48,11 +50,17 @@ end
 
 function UserInput:Init()
 
-	for _,obj in pairs(script:GetChildren()) do
+	for _,obj in ipairs(script:GetChildren()) do
 		if (obj:IsA("ModuleScript")) then
 			local module = require(obj)
 			self:WrapModule(module)
 			modules[obj.Name] = module
+		end
+	end
+	
+	local function SetMouseIconEnabled(enabled)
+		if (self.HideMouse) then
+			userInput.MouseIconEnabled = enabled
 		end
 	end
 
@@ -61,9 +69,9 @@ function UserInput:Init()
 			self._preferred = newPreferred
 			self.PreferredChanged:Fire(newPreferred)
 			if (newPreferred == self.Preferred.Mouse or newPreferred == self.Preferred.Keyboard) then
-				userInput.MouseIconEnabled = true
+				SetMouseIconEnabled(true)
 			else
-				userInput.MouseIconEnabled = false
+				SetMouseIconEnabled(false)
 			end
 		end
 	end

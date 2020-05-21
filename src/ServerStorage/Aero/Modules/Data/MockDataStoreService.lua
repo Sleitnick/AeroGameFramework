@@ -65,7 +65,7 @@ function API:GetDataStore(name, scope)
 		assert(v ~= nil, "Value cannot be nil")
 		data[k] = v
 		if (updateListeners[k]) then
-			for _,f in pairs(updateListeners[k]) do
+			for _,f in ipairs(updateListeners[k]) do
 				spawn(function() f(v) end)
 			end
 		end
@@ -75,7 +75,7 @@ function API:GetDataStore(name, scope)
 		assert(v ~= nil, "Value cannot be nil")
 		data[k] = v
 		if (updateListeners[k]) then
-			for _,f in pairs(updateListeners[k]) do
+			for _,f in ipairs(updateListeners[k]) do
 				spawn(function() f(v) end)
 			end
 		end
@@ -86,7 +86,7 @@ function API:GetDataStore(name, scope)
 	function d.RemoveAsync(_s, k)
 		data[k] = nil
 		if (updateListeners[k]) then
-			for _,f in pairs(updateListeners[k]) do
+			for _,f in ipairs(updateListeners[k]) do
 				spawn(function() f(nil) end)
 			end
 		end
