@@ -385,15 +385,15 @@ local function Print(tbl, label, deepPrint)
 		end
 		table.sort(nonTbls, AlphaKeySort)
 		table.sort(tbls, AlphaKeySort)
-		for _,v in pairs(nonTbls) do
+		for _,v in ipairs(nonTbls) do
 			Insert(tostring(v.k) .. ":" .. (" "):rep(keySpaces - #tostring(v.k)) .. v.v, lvl)
 		end
 		if (deepPrint) then
-			for _,v in pairs(tbls) do
+			for _,v in ipairs(tbls) do
 				PrintTable(v.v, lvl + 1, tostring(v.k) .. (" "):rep(keySpaces - #tostring(v.k)) .. " [Table]")
 			end
 		else
-			for _,v in pairs(tbls) do
+			for _,v in ipairs(tbls) do
 				Insert(tostring(v.k) .. ":" .. (" "):rep(keySpaces - #tostring(v.k)) .. "[Table]", lvl)
 			end
 		end

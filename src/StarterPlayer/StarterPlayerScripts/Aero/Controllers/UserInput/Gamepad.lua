@@ -83,7 +83,7 @@ function Gamepad.new(gamepad)
 	end)
 	
 	-- Map InputObject states to corresponding KeyCodes:
-	for _,input in pairs(userInput:GetGamepadState(gamepad)) do
+	for _,input in ipairs(userInput:GetGamepadState(gamepad)) do
 		self._state[input.KeyCode] = input
 	end
 	
@@ -167,7 +167,7 @@ end
 
 
 function Gamepad:StopAllMotors()
-	for _,motor in pairs(Enum.VibrationMotor:GetEnumItems()) do
+	for _,motor in ipairs(Enum.VibrationMotor:GetEnumItems()) do
 		self:StopMotor(motor)
 	end
 end
