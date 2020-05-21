@@ -37,10 +37,12 @@ nav:
         - Event: module_docs/shared/event.md
         - ListenerList: module_docs/shared/listener_list.md
         - Maid: module_docs/shared/maid.md
+        - NumberUtil: module_docs/shared/number_util.md
         - Promise: module_docs/shared/promise.md
         - StringUtil: module_docs/shared/string_util.md
         - TableUtil: module_docs/shared/table_util.md
         - Thread: module_docs/shared/thread.md
+        - VectorUtil: module_docs/shared/vector_util.md
 
 theme:
   logo: "img/logo_64.png"

@@ -9,10 +9,7 @@ AeroGameFramework is a Roblox game framework that makes development easy and fun
 Visit the [documentation site](https://sleitnick.github.io/AeroGameFramework).
 
 # Video Tutorial
-Learn how to use the framework in the video tutorial series:
-https://www.youtube.com/watch?v=8ta0cHX1ceE&index=1&list=PLk3R4TM3pnqv7doCTUHtn-wkydaA08npc
-
-**Note:** This tutorial series does not use the newer VS Code extension workflow. An updated series is in the works.
+Visit the [AGF Tutorial](https://www.youtube.com/watch?v=0T-slvWfYkc&list=PLk3R4TM3pnqvde1cqOIH_bGnCWwMKDqKL) playlist.
 
 # Example
 
@@ -54,3 +51,8 @@ return MyService
 ```
 
 These are complete code examples. They could be put into the framework and work as-is.
+
+# Support
+
+Support AGF by [buying me a coffee](https://www.buymeacoffee.com/sleitnick) and keeping me energized to keep up the work on this project! Any support is very much appreciated.
+<link href="https://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext" rel="stylesheet"><a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/sleitnick"><img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a coffee"><span style="margin-left:15px;font-size:19px !important;">Buy me a coffee</span></a>
