@@ -61,7 +61,7 @@ function API:GetDataStore(name, scope)
 	local data = {}
 	local d = {}
 	local updateListeners = {}
-	function d:SetAsync(k, v)
+	function d.SetAsync(_s, k, v)
 		assert(v ~= nil, "Value cannot be nil")
 		data[k] = v
 		if (updateListeners[k]) then
@@ -70,7 +70,7 @@ function API:GetDataStore(name, scope)
 			end
 		end
 	end
-	function d:UpdateAsync(k, func)
+	function d.UpdateAsync(_s, k, func)
 		local v = func(data[k])
 		assert(v ~= nil, "Value cannot be nil")
 		data[k] = v
@@ -80,10 +80,10 @@ function API:GetDataStore(name, scope)
 			end
 		end
 	end
-	function d:GetAsync(k)
+	function d.GetAsync(_s, k)
 		return data[k]
 	end
-	function d:RemoveAsync(k)
+	function d.RemoveAsync(_s, k)
 		data[k] = nil
 		if (updateListeners[k]) then
 			for _,f in pairs(updateListeners[k]) do
@@ -91,10 +91,10 @@ function API:GetDataStore(name, scope)
 			end
 		end
 	end
-	function d:IncrementAsync(k, delta)
+	function d.IncrementAsync(_s, k, delta)
 		if (delta == nil) then delta = 1 end
 		assert(type(delta) == "number", "Can only increment numbers")
-		self:UpdateAsync(k, function(num)
+		_s:UpdateAsync(k, function(num)
 			if (num == nil) then
 				return num
 			end
@@ -102,7 +102,7 @@ function API:GetDataStore(name, scope)
 			return (num + delta)
 		end)
 	end
-	function d:OnUpdate(k, onUpdateFunc)
+	function d.OnUpdate(_s, k, onUpdateFunc)
 		assert(type(onUpdateFunc) == "function", "Update function argument must be a function")
 		if (not updateListeners[k]) then
 			updateListeners[k] = {onUpdateFunc}
@@ -127,15 +127,15 @@ function API:GetOrderedDataStore(name, scope)
 	local dataStore = self:GetDataStore(name, scope)
 	local allData = {}
 	local d = {}
-	function d:GetAsync(k)
+	function d.GetAsync(_s, k)
 		return dataStore:GetAsync(k)
 	end
-	function d:SetAsync(k, v)
+	function d.SetAsync(_s, k, v)
 		assert(type(v) == "number", "Value must be a number")
 		dataStore:SetAsync(k, v)
 		allData[k] = v
 	end
-	function d:UpdateAsync(k, func)
+	function d.UpdateAsync(_s, k, func)
 		dataStore:UpdateAsync(k, function(oldValue)
 			local v = func(oldValue)
 			assert(type(v) == "number", "Value must be a number")
@@ -143,15 +143,15 @@ function API:GetOrderedDataStore(name, scope)
 			return v
 		end)
 	end
-	function d:IncrementAsync(k, delta)
+	function d.IncrementAsync(_s, k, delta)
 		dataStore:IncrementAsync(k, delta)
 		allData[k] = ((allData[k] or 0) + delta)
 	end
-	function d:RemoveAsync(k)
+	function d.RemoveAsync(_s, k)
 		dataStore:RemoveAsync(k)
 		allData[k] = nil
 	end
-	function d:GetSortedAsync(isAscending, pageSize, minValue, maxValue)
+	function d.GetSortedAsync(_s, isAscending, pageSize, minValue, maxValue)
 		assert(type(pageSize) == "number" and math.floor(pageSize) > 0, "PageSize must be an integer and greater than 0")
 		assert(minValue == nil or type(minValue) == "number", "MinValue must be a number")
 		assert(maxValue == nil or type(maxValue) == "number", "MaxValue must be a number")
@@ -186,15 +186,15 @@ function API:GetOrderedDataStore(name, scope)
 		end
 		do
 			local currentPage = 1
-			function pages:GetCurrentPage()
-				return self[currentPage]
+			function pages.GetCurrentPage(p)
+				return p[currentPage]
 			end
-			function pages:AdvanceToNextPageAsync()
+			function pages.AdvanceToNextPageAsync(p)
 				local numPages = #pages
 				if (currentPage < numPages) then
 					currentPage = (currentPage + 1)
 				end
-				self.IsFinished = (currentPage >= numPages)
+				p.IsFinished = (currentPage >= numPages)
 			end
 		end
 		return pages
@@ -212,7 +212,7 @@ end
 -- Metatable:
 
 MT.__metatable = true
-MT.__index = function(tbl, index)
+MT.__index = function(_tbl, index)
 	return (API[index] or realDataStoreService[index])
 end
 MT.__newindex = function()
