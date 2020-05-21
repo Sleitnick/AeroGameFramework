@@ -106,7 +106,7 @@ local CameraShakePresets = {
 
 
 return setmetatable({}, {
-	__index = function(t, i)
+	__index = function(_t, i)
 		local f = CameraShakePresets[i]
 		if (type(f) == "function") then
 			return f()

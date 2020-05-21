@@ -113,12 +113,12 @@ function TaskScheduler:CreateScheduler(targetFps)
 		updateFrameTableEvent = nil
 	end
 
-	function scheduler:Pause()
+	function scheduler.Pause(_s)
 		paused = true
 		sleeping = true
 	end
 	
-	function scheduler:Resume()
+	function scheduler.Resume(_s)
 		if (paused) then
 			paused = false
 			sleeping = false
@@ -126,7 +126,7 @@ function TaskScheduler:CreateScheduler(targetFps)
 		end
 	end
 	
-	function scheduler:Destroy()
+	function scheduler.Destroy(_s)
 		scheduler:Pause()
 		for i in pairs(scheduler) do
 			scheduler[i] = nil
@@ -141,7 +141,7 @@ function TaskScheduler:CreateScheduler(targetFps)
 		})
 	end
 	
-	function scheduler:QueueTask(callback)
+	function scheduler.QueueTask(_s, callback)
 		queue[#queue + 1] = callback
 		if (sleeping and not paused) then
 			sleeping = false
