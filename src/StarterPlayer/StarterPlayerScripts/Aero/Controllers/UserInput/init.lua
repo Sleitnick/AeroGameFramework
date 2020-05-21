@@ -29,6 +29,8 @@
 
 local UserInput = {}
 
+UserInput.HideMouse = false
+
 UserInput.Preferred = {
 	Keyboard = 0;
 	Mouse = 1;
@@ -55,15 +57,21 @@ function UserInput:Init()
 			modules[obj.Name] = module
 		end
 	end
+	
+	local function SetMouseIconEnabled(enabled)
+		if (self.HideMouse) then
+			userInput.MouseIconEnabled = enabled
+		end
+	end
 
 	local function ChangePreferred(newPreferred)
 		if (self._preferred ~= newPreferred) then
 			self._preferred = newPreferred
 			self.PreferredChanged:Fire(newPreferred)
 			if (newPreferred == self.Preferred.Mouse or newPreferred == self.Preferred.Keyboard) then
-				userInput.MouseIconEnabled = true
+				SetMouseIconEnabled(true)
 			else
-				userInput.MouseIconEnabled = false
+				SetMouseIconEnabled(false)
 			end
 		end
 	end
