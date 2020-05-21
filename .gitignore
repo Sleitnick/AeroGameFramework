@@ -2,3 +2,6 @@ imgs/*.psd
 roblox.toml
 node_modules/
 site/
+aws/**/*.zip
+aws/**/*_deploy/
+aws/**/*out.yaml
