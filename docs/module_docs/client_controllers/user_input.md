@@ -19,6 +19,14 @@ Preferred inputs refer to the type of input last used by the user, and this is a
 
 --------------------
 
+### `HideMouse`
+
+Defaults to `false`. If set to `true`, the mouse will be automatically hidden when the preferred user input is switched away from mouse or keyboard. For instance, if the user starts using a gamepad, the mouse will be hidden automatically if this property is set to `true`.
+
+This is off by default because it will conflict with setting the mouse visibility via the Mouse module.
+
+--------------------
+
 ## Methods
 
 ### `Get(inputModuleName)`
