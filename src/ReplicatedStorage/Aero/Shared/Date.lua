@@ -16,7 +16,7 @@
 
 		local Date = require(thisModule)
 
-	
+
 	CONSTRUCTORS:
 
 		local date = Date.new([seconds [, useUtc]])
@@ -68,17 +68,19 @@
 			local myDateSeconds = dataStore:GetAsync("myDate")
 			local date = Date.new(myDateSeconds)
 
-	
 
 --]=]
 
+
+local HttpService = game:GetService("HttpService")
+local RunService = game:GetService("RunService")
 
 
 local Date = {}
 Date.__index = Date
 
 
-local useUTC = game:GetService("RunService"):IsServer()
+local useUTC = RunService:IsServer()
 
 
 local WEEKDAYS = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}
@@ -136,7 +138,7 @@ end
 function Date.fromJSON(jsonStr)
 	assert(type(jsonStr) == "string", "'jsonStr' argument #1 must be a string")
 	local success, data = pcall(function()
-		return game:GetService("HttpService"):JSONDecode(jsonStr)
+		return HttpService:JSONDecode(jsonStr)
 	end)
 	if (not success) then
 		error("Failed to decode JSON string: " .. tostring(data))
@@ -171,7 +173,8 @@ end
 function Date:ToISOString()
 	local utc = self:ToUTC()
 	local d = utc._d
-	return ("%.2i-%.2i-%.2iT%.2i:%.2i:%.2i.%.3i"):format(
+	return string.format(
+		"%.2i-%.2i-%.2iT%.2i:%.2i:%.2i.%.3i",
 		d.year,
 		d.month,
 		d.day,
@@ -185,7 +188,8 @@ end
 
 function Date:ToDateString()
 	local d = self._d
-	return ("%s %s %i %i"):format(
+	return string.format(
+		"%s %s %i %i",
 		WEEKDAYS_SHORT[d.wday],
 		MONTHS_SHORT[d.month],
 		d.day,
@@ -196,7 +200,8 @@ end
 
 function Date:ToTimeString()
 	local d = self._d
-	return ("%.2i:%.2i:%.2i"):format(
+	return string.format(
+		"%.2i:%.2i:%.2i",
 		d.hour,
 		d.min,
 		d.sec
@@ -230,35 +235,36 @@ function Date:Format(str)
 	if (h12 == 0) then
 		h12 = 0
 	end
-	str = str
-		:gsub("%%a", WEEKDAYS_SHORT[d.wday])
-		:gsub("%%A", WEEKDAYS[d.wday])
-		:gsub("%%b", MONTHS_SHORT[d.month])
-		:gsub("%%B", MONTHS[d.month])
-		:gsub("%%c", self:ToString())
-		:gsub("%%C", ((d.year - (d.year % 1000)) / 100) + 1)
-		:gsub("%%d", ("%.2i"):format(d.day))
-		:gsub("%%D", ("%.2i/%.2i/%s"):format(d.month, d.day, tostring(d.year):sub(-2)))
-		:gsub("%%F", ("%i-%.2i-%.2i"):format(d.year, d.month, d.day))
-		:gsub("%%H", ("%.2i"):format(d.hour))
-		:gsub("%%k", ("%.2i"):format(d.hour))
-		:gsub("%%I", ("%.2i"):format(h12))
-		:gsub("%%l", ("%.2i"):format(h12))
-		:gsub("%%j", ("%.3i"):format(d.yday))
-		:gsub("%%m", ("%.2i"):format(d.month))
-		:gsub("%%M", ("%.2i"):format(d.min))
-		:gsub("%%n", "\n")
-		:gsub("%%p", (d.hour >= 12 and "PM" or "AM"))
-		:gsub("%%P", (d.hour >= 12 and "pm" or "am"))
-		:gsub("%%r", ("%.2i:%.2i:%.2i %s"):format(h12, d.min, d.sec, (d.hour >= 12 and "PM" or "AM")))
-		:gsub("%%R", ("%.2i:%.2i"):format(d.hour, d.min))
-		:gsub("%%s", math.floor(self._s))
-		:gsub("%%S", ("%.2i"):format(d.sec))
-		:gsub("%%t", "\t")
-		:gsub("%%T", ("%.2i:%.2i:%.2i"):format(d.hour, d.min, d.sec))
-		:gsub("%%w", ("%.2i"):format(d.wday))
-		:gsub("%%y", tostring(d.year):sub(-2))
-		:gsub("%%Y", tostring(d.year))
+	str = string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(str,
+		"%%a", WEEKDAYS_SHORT[d.wday]),
+		"%%A", WEEKDAYS[d.wday]),
+		"%%b", MONTHS_SHORT[d.month]),
+		"%%B", MONTHS[d.month]),
+		"%%c", self:ToString()),
+		"%%C", ((d.year - (d.year % 1000)) / 100) + 1),
+		"%%d", string.format("%.2i", d.day)),
+		"%%D", string.format("%.2i/%.2i/%s", d.month, d.day, string.sub(tostring(d.year), -2))),
+		"%%F", string.format("%i-%.2i-%.2i", d.year, d.month, d.day)),
+		"%%H", string.format("%.2i", d.hour)),
+		"%%k", string.format("%.2i", d.hour)),
+		"%%I", string.format("%.2i", h12)),
+		"%%l", string.format("%.2i", h12)),
+		"%%j", string.format("%.3i", d.yday)),
+		"%%m", string.format("%.2i", d.month)),
+		"%%M", string.format("%.2i", d.min)),
+		"%%n", "\n"),
+		"%%p", (d.hour >= 12 and "PM" or "AM")),
+		"%%P", (d.hour >= 12 and "pm" or "am")),
+		"%%r", string.format("%.2i:%.2i:%.2i %s", h12, d.min, d.sec, (d.hour >= 12 and "PM" or "AM"))),
+		"%%R", string.format("%.2i:%.2i", d.hour, d.min)),
+		"%%s", math.floor(self._s)),
+		"%%S", string.format("%.2i", d.sec)), "%%t", "\t"),
+		"%%T", string.format("%.2i:%.2i:%.2i", d.hour, d.min, d.sec)),
+		"%%w", string.format("%.2i", d.wday)),
+		"%%y", string.sub(tostring(d.year), -2)),
+		"%%Y", tostring(d.year)
+	)
+
 	return str
 
 end

@@ -3,13 +3,16 @@
 -- July 21, 2017
 
 
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 
 local Aero = {
 	Controllers = {};
 	Modules = {};
 	Shared = {};
 	Services = {};
-	Player = game:GetService("Players").LocalPlayer;
+	Player = Players.LocalPlayer;
 }
 
 local NO_CACHE = {}
@@ -18,7 +21,7 @@ local mt = {__index = Aero}
 
 local controllersFolder = script.Parent.Parent:WaitForChild("Controllers")
 local modulesFolder = script.Parent.Parent:WaitForChild("Modules")
-local sharedFolder = game:GetService("ReplicatedStorage"):WaitForChild("Aero"):WaitForChild("Shared")
+local sharedFolder = ReplicatedStorage:WaitForChild("Aero"):WaitForChild("Shared")
 
 local modulesAwaitingStart = {}
 
@@ -92,7 +95,7 @@ local function LoadService(serviceFolder, servicesTbl)
 				local cache = NO_CACHE
 				local lastCacheTime = 0
 				local fetchingPromise
-				service[methodName] = function(self, ...)
+				service[methodName] = function(_, ...)
 					local now = tick()
 					if (fetchingPromise) then
 						local _,c = fetchingPromise:Await()
@@ -100,7 +103,7 @@ local function LoadService(serviceFolder, servicesTbl)
 					elseif (cache == NO_CACHE or (cacheTTL > 0 and (now - lastCacheTime) > cacheTTL)) then
 						lastCacheTime = now
 						local args = table.pack(...)
-						fetchingPromise = Promise.Async(function(resolve, _reject)
+						fetchingPromise = Promise.Async(function(resolve)
 							resolve(table.pack(v:InvokeServer(table.unpack(args))))
 						end)
 						local success, _cache = fetchingPromise:Await()
@@ -113,7 +116,7 @@ local function LoadService(serviceFolder, servicesTbl)
 					return table.unpack(cache)
 				end
 			else
-				service[v.Name] = function(self, ...)
+				service[v.Name] = function(_, ...)
 					return v:InvokeServer(...)
 				end
 			end
@@ -124,7 +127,7 @@ end
 
 
 local function LoadServices()
-	local remoteServices = game:GetService("ReplicatedStorage"):WaitForChild("Aero"):WaitForChild("AeroRemoteServices")
+	local remoteServices = ReplicatedStorage:WaitForChild("Aero"):WaitForChild("AeroRemoteServices")
 	local function LoadAllServices(folder, servicesTbl)
 		for _,serviceFolder in ipairs(folder:GetChildren()) do
 			if (serviceFolder:IsA("Folder")) then
@@ -191,7 +194,7 @@ end
 
 
 local function Init()
-	
+
 	-- Load controllers:
 	local function LoadAllControllers(parent, controllersTbl)
 		for _,child in ipairs(parent:GetChildren()) do
@@ -204,7 +207,7 @@ local function Init()
 			end
 		end
 	end
-	
+
 	-- Initialize controllers:
 	local function InitAllControllers(controllers)
 		-- Collect all controllers:
@@ -230,7 +233,7 @@ local function Init()
 			InitController(controller)
 		end
 	end
-	
+
 	-- Start controllers:
 	local function StartAllControllers(controllers)
 		for _,controller in pairs(controllers) do
@@ -251,11 +254,11 @@ local function Init()
 	end
 
 	------------------------------------------------------
-	
+
 	-- Lazy load modules:
 	LazyLoadSetup(Aero.Modules, modulesFolder)
 	LazyLoadSetup(Aero.Shared, sharedFolder)
-	
+
 	-- Load server-side services:
 	LoadServices()
 
@@ -267,7 +270,7 @@ local function Init()
 
 	-- Expose client framework globally:
 	_G.Aero = Aero
-	
+
 end
 
 

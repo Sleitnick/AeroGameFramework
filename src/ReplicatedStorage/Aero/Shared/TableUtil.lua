@@ -3,7 +3,7 @@
 -- September 13, 2017
 
 --[[
-	
+
 	TableUtil.Copy(Table tbl)
 	TableUtil.CopyShallow(Table tbl)
 	TableUtil.Sync(Table tbl, Table templateTbl)
@@ -89,7 +89,7 @@
 				print("Did not find value")
 			end
 
-		
+
 		Map:
 
 			This allows you to construct a new table by calling the given function
@@ -201,7 +201,7 @@
 			local tbl = {1, 2, 3, 4, 5, 6, 7, 8, 9}
 			TableUtil.Shuffle(tbl)
 			print(table.concat(tbl, ", "))  -- e.g. > 3, 6, 9, 2, 8, 4, 1, 7, 5
-	
+
 --]]
 
 
@@ -209,8 +209,6 @@
 local TableUtil = {}
 
 local http = game:GetService("HttpService")
-
-local IndexOf = table.find
 
 
 local function CopyTable(t)
@@ -229,7 +227,9 @@ end
 
 local function CopyTableShallow(t)
 	local tCopy = table.create(#t)
-	for k,v in pairs(t) do tCopy[k] = v end
+	for k,v in pairs(t) do
+		tCopy[k] = v
+	end
 	return tCopy
 end
 
@@ -238,18 +238,18 @@ local function Sync(tbl, templateTbl)
 
 	assert(type(tbl) == "table", "First argument must be a table")
 	assert(type(templateTbl) == "table", "Second argument must be a table")
-	
+
 	-- If 'tbl' has something 'templateTbl' doesn't, then remove it from 'tbl'
 	-- If 'tbl' has something of a different type than 'templateTbl', copy from 'templateTbl'
 	-- If 'templateTbl' has something 'tbl' doesn't, then add it to 'tbl'
 	for k,v in pairs(tbl) do
-		
+
 		local vTemplate = templateTbl[k]
-		
+
 		-- Remove keys not within template:
 		if (vTemplate == nil) then
 			tbl[k] = nil
-			
+
 		-- Synchronize data types:
 		elseif (type(v) ~= type(vTemplate)) then
 			if (type(vTemplate) == "table") then
@@ -257,19 +257,19 @@ local function Sync(tbl, templateTbl)
 			else
 				tbl[k] = vTemplate
 			end
-		
+
 		-- Synchronize sub-tables:
 		elseif (type(v) == "table") then
 			Sync(v, vTemplate)
 		end
-		
+
 	end
-	
+
 	-- Add any missing keys:
 	for k,vTemplate in pairs(templateTbl) do
-		
+
 		local v = tbl[k]
-		
+
 		if (v == nil) then
 			if (type(vTemplate) == "table") then
 				tbl[k] = CopyTable(vTemplate)
@@ -277,9 +277,9 @@ local function Sync(tbl, templateTbl)
 				tbl[k] = vTemplate
 			end
 		end
-		
+
 	end
-	
+
 end
 
 
@@ -307,8 +307,7 @@ local function Filter(t, f)
 	local newT = table.create(#t)
 	if (#t > 0) then
 		local n = 0
-		for i = 1,#t do
-			local v = t[i]
+		for i,v in ipairs(t) do
 			if (f(v, i, t)) then
 				n = (n + 1)
 				newT[n] = v
@@ -352,21 +351,21 @@ local function Print(tbl, label, deepPrint)
 
 	assert(type(tbl) == "table", "First argument must be a table")
 	assert(label == nil or type(label) == "string", "Second argument must be a string or nil")
-	
+
 	label = (label or "TABLE")
-	
+
 	local strTbl = {}
 	local indent = " - "
-	
+
 	-- Insert(string, indentLevel)
 	local function Insert(s, l)
-		strTbl[#strTbl + 1] = (indent:rep(l) .. s .. "\n")
+		strTbl[#strTbl + 1] = (string.rep(indent, l) .. s .. "\n")
 	end
-	
+
 	local function AlphaKeySort(a, b)
 		return (tostring(a.k) < tostring(b.k))
 	end
-	
+
 	local function PrintTable(t, lvl, lbl)
 		Insert(lbl .. ":", lvl - 1)
 		local nonTbls = {}
@@ -386,23 +385,23 @@ local function Print(tbl, label, deepPrint)
 		table.sort(nonTbls, AlphaKeySort)
 		table.sort(tbls, AlphaKeySort)
 		for _,v in ipairs(nonTbls) do
-			Insert(tostring(v.k) .. ":" .. (" "):rep(keySpaces - #tostring(v.k)) .. v.v, lvl)
+			Insert(tostring(v.k) .. ":" .. string.rep(" ", keySpaces - #tostring(v.k)) .. v.v, lvl)
 		end
 		if (deepPrint) then
 			for _,v in ipairs(tbls) do
-				PrintTable(v.v, lvl + 1, tostring(v.k) .. (" "):rep(keySpaces - #tostring(v.k)) .. " [Table]")
+				PrintTable(v.v, lvl + 1, tostring(v.k) .. string.rep(" ", keySpaces - #tostring(v.k)) .. " [Table]")
 			end
 		else
 			for _,v in ipairs(tbls) do
-				Insert(tostring(v.k) .. ":" .. (" "):rep(keySpaces - #tostring(v.k)) .. "[Table]", lvl)
+				Insert(tostring(v.k) .. ":" .. string.rep(" ", keySpaces - #tostring(v.k)) .. "[Table]", lvl)
 			end
 		end
 	end
-	
+
 	PrintTable(tbl, 1, label)
-	
-	print(table.concat(strTbl, ""))
-	
+
+	print(table.concat(strTbl))
+
 end
 
 
@@ -442,7 +441,7 @@ end
 
 
 local function FastRemoveFirstValue(t, v)
-	local index = IndexOf(t, v)
+	local index = table.find(t, v)
 	if (index) then
 		FastRemove(t, index)
 		return true, index
@@ -461,7 +460,7 @@ TableUtil.Map = Map
 TableUtil.Filter = Filter
 TableUtil.Reduce = Reduce
 TableUtil.Assign = Assign
-TableUtil.IndexOf = IndexOf
+TableUtil.IndexOf = table.find
 TableUtil.Reverse = Reverse
 TableUtil.Shuffle = Shuffle
 TableUtil.IsEmpty = IsEmpty

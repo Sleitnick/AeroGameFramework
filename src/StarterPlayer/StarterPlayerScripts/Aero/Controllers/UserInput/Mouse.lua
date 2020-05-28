@@ -3,7 +3,7 @@
 -- December 28, 2017
 
 --[[
-	
+
 	Vector2   Mouse:GetPosition()
 	Vector2   Mouse:GetDelta()
 	Void      Mouse:Lock()
@@ -18,7 +18,7 @@
 	Many      Mouse:Cast(ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
 	Many      Mouse:CastWithIgnoreList(ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
 	Many      Mouse:CastWithWhitelist(whitelistDescendantsTable, ignoreWater)
-	
+
 	Mouse.LeftDown()
 	Mouse.LeftUp()
 	Mouse.RightDown()
@@ -27,16 +27,18 @@
 	Mouse.MiddleUp()
 	Mouse.Moved()
 	Mouse.Scrolled(amount)
-	
+
 --]]
 
 
+local Workspace = game:GetService("Workspace")
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
 
 local Mouse = {}
 
-local playerMouse = game:GetService("Players").LocalPlayer:GetMouse()
-local userInput = game:GetService("UserInputService")
-local cam = workspace.CurrentCamera
+local playerMouse = Players.LocalPlayer:GetMouse()
+local cam = Workspace.CurrentCamera
 
 local workspace = workspace
 local RAY = Ray.new
@@ -44,97 +46,160 @@ local RAY = Ray.new
 local RAY_DISTANCE = 999
 
 
-function Mouse:GetPosition()
-	return userInput:GetMouseLocation()
+function Mouse.GetPosition()
+	return UserInputService:GetMouseLocation()
 end
 
 
-function Mouse:GetDelta()
-	return userInput:GetMouseDelta()
+function Mouse.GetDelta()
+	return UserInputService:GetMouseDelta()
 end
 
 
-function Mouse:Lock()
-	userInput.MouseBehavior = Enum.MouseBehavior.LockCurrentPosition
+function Mouse.Lock()
+	UserInputService.MouseBehavior = Enum.MouseBehavior.LockCurrentPosition
 end
 
 
-function Mouse:LockCenter()
-	userInput.MouseBehavior = Enum.MouseBehavior.LockCenter
+function Mouse.LockCenter()
+	UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
 end
 
 
-function Mouse:Unlock()
-	userInput.MouseBehavior = Enum.MouseBehavior.Default
+function Mouse.Unlock()
+	UserInputService.MouseBehavior = Enum.MouseBehavior.Default
 end
 
 
-function Mouse:SetMouseIcon(iconId)
+function Mouse.SetMouseIcon(_, iconId)
 	playerMouse.Icon = (iconId and ("rbxassetid://" .. iconId) or "")
 end
 
 
-function Mouse:SetMouseIconEnabled(enabled)
-	userInput.MouseIconEnabled = enabled
+function Mouse.SetMouseIconEnabled(_, enabled)
+	UserInputService.MouseIconEnabled = enabled
 end
 
 
-function Mouse:IsMouseIconEnabled()
-	return userInput.MouseIconEnabled
+function Mouse.IsMouseIconEnabled()
+	return UserInputService.MouseIconEnabled
 end
 
 
-function Mouse:IsButtonPressed(mouseButton)
-	return userInput:IsMouseButtonPressed(mouseButton)
+function Mouse.IsButtonPressed(_, mouseButton)
+	return UserInputService:IsMouseButtonPressed(mouseButton)
 end
 
 
-function Mouse:GetRay(distance)
-	local mousePos = userInput:GetMouseLocation()
+function Mouse.GetRay(_, distance)
+	local mousePos = UserInputService:GetMouseLocation()
 	local viewportMouseRay = cam:ViewportPointToRay(mousePos.X, mousePos.Y)
 	return RAY(viewportMouseRay.Origin, viewportMouseRay.Direction * distance)
 end
 
 
-function Mouse:GetRayFromXY(x, y)
+function Mouse.GetRayFromXY(_, x, y)
 	local viewportMouseRay = cam:ViewportPointToRay(x, y)
 	return RAY(viewportMouseRay.Origin, viewportMouseRay.Direction)
 end
 
 
-function Mouse:Cast(ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
-	return workspace:FindPartOnRay(self:GetRay(RAY_DISTANCE), ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
+function Mouse.GetOriginAndDirection(_, distance)
+	local mousePos = UserInputService:GetMouseLocation()
+	local viewportMouseRay = cam:ViewportPointToRay(mousePos.X, mousePos.Y)
+	return viewportMouseRay.Origin, viewportMouseRay.Direction * distance
 end
 
 
-function Mouse:CastWithIgnoreList(ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
-	return workspace:FindPartOnRayWithIgnoreList(self:GetRay(RAY_DISTANCE), ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
+function Mouse.GetOriginAndDirectionFromXY(_, x, y)
+	local viewportMouseRay = cam:ViewportPointToRay(x, y)
+	return viewportMouseRay.Origin, viewportMouseRay.Direction
 end
 
+
+function Mouse:CastLegacy(ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
+	return Workspace:FindPartOnRay(self:GetRay(RAY_DISTANCE), ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
+end
+
+
+function Mouse:CastWithIgnoreListLegacy(ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
+	return Workspace:FindPartOnRayWithIgnoreList(self:GetRay(RAY_DISTANCE), ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
+end
+
+
+function Mouse:CastWithWhitelistLegacy(whitelistDescendantsTable, ignoreWater)
+	return Workspace:FindPartOnRayWithWhitelist(self:GetRay(RAY_DISTANCE), whitelistDescendantsTable, ignoreWater)
+end
+
+
+local castParameters = RaycastParams.new()
+castParameters.FilterType = Enum.RaycastFilterType.Blacklist
+
+function Mouse:Cast(ignoreDescendantsInstance, _, ignoreWater)
+	castParameters.FilterDescendantsInstances = table.create(1, ignoreDescendantsInstance)
+	castParameters.IgnoreWater = ignoreWater
+
+	local raycastResults = Workspace:Raycast(self:GetOriginAndDirection(RAY_DISTANCE), castParameters)
+	if raycastResults then
+		return raycastResults.Instance, raycastResults.Position, raycastResults.Normal, raycastResults.Material
+	else
+		return nil, nil, nil, nil
+	end
+end
+
+
+local ignoreListParameters = RaycastParams.new()
+ignoreListParameters.FilterType = Enum.RaycastFilterType.Blacklist
+
+function Mouse:CastWithIgnoreList(ignoreDescendantsTable, _, ignoreWater)
+	ignoreListParameters.FilterDescendantsInstances = ignoreDescendantsTable
+	ignoreListParameters.IgnoreWater = ignoreWater
+
+	local raycastResults = Workspace:Raycast(self:GetOriginAndDirection(RAY_DISTANCE), ignoreListParameters)
+	if raycastResults then
+		return raycastResults.Instance, raycastResults.Position, raycastResults.Normal, raycastResults.Material
+	else
+		return nil, nil, nil, nil
+	end
+end
+
+
+local whitelistParameters = RaycastParams.new()
+whitelistParameters.FilterType = Enum.RaycastFilterType.Whitelist
 
 function Mouse:CastWithWhitelist(whitelistDescendantsTable, ignoreWater)
-	return workspace:FindPartOnRayWithWhitelist(self:GetRay(RAY_DISTANCE), whitelistDescendantsTable, ignoreWater)
+	ignoreListParameters.FilterDescendantsInstances = whitelistDescendantsTable
+	ignoreListParameters.IgnoreWater = ignoreWater
+
+	local raycastResults = Workspace:Raycast(self:GetOriginAndDirection(RAY_DISTANCE), whitelistParameters)
+	if raycastResults then
+		return raycastResults.Instance, raycastResults.Position, raycastResults.Normal, raycastResults.Material
+	else
+		return nil, nil, nil, nil
+	end
 end
 
 
-function Mouse:Start()
-	
+function Mouse.Start()
+
 end
 
 
 function Mouse:Init()
-	
-	self.LeftDown   = self.Shared.Event.new()
-	self.LeftUp     = self.Shared.Event.new()
-	self.RightDown  = self.Shared.Event.new()
-	self.RightUp    = self.Shared.Event.new()
+
+	self.LeftDown = self.Shared.Event.new()
+	self.LeftUp = self.Shared.Event.new()
+	self.RightDown = self.Shared.Event.new()
+	self.RightUp = self.Shared.Event.new()
 	self.MiddleDown = self.Shared.Event.new()
-	self.MiddleUp   = self.Shared.Event.new()
-	self.Moved      = self.Shared.Event.new()
-	self.Scrolled   = self.Shared.Event.new()
-	
-	userInput.InputBegan:Connect(function(input, processed)
-		if (processed) then return end
+	self.MiddleUp = self.Shared.Event.new()
+	self.Moved = self.Shared.Event.new()
+	self.Scrolled = self.Shared.Event.new()
+
+	UserInputService.InputBegan:Connect(function(input, processed)
+		if (processed) then
+			return
+		end
 		if (input.UserInputType == Enum.UserInputType.MouseButton1) then
 			self.LeftDown:Fire()
 		elseif (input.UserInputType == Enum.UserInputType.MouseButton2) then
@@ -143,8 +208,8 @@ function Mouse:Init()
 			self.MiddleDown:Fire()
 		end
 	end)
-	
-	userInput.InputEnded:Connect(function(input, _processed)
+
+	UserInputService.InputEnded:Connect(function(input)
 		if (input.UserInputType == Enum.UserInputType.MouseButton1) then
 			self.LeftUp:Fire()
 		elseif (input.UserInputType == Enum.UserInputType.MouseButton2) then
@@ -153,8 +218,8 @@ function Mouse:Init()
 			self.MiddleUp:Fire()
 		end
 	end)
-	
-	userInput.InputChanged:Connect(function(input, processed)
+
+	UserInputService.InputChanged:Connect(function(input, processed)
 		if (input.UserInputType == Enum.UserInputType.MouseMovement) then
 			self.Moved:Fire()
 		elseif (input.UserInputType == Enum.UserInputType.MouseWheel) then
@@ -163,7 +228,7 @@ function Mouse:Init()
 			end
 		end
 	end)
-	
+
 end
 
 

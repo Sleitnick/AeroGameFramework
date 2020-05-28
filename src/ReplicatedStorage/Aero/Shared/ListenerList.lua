@@ -3,9 +3,9 @@
 -- November 1, 2015
 
 --[[
-	
+
 	local listeners = ListenerList.new()
-	
+
 	listeners:Connect(event, func)
 	listeners:BindToRenderStep(name, priority, func)
 	listeners:BindAction(actionName, funcToBind, createTouchBtn [, inputTypes...])
@@ -18,9 +18,12 @@
 
 	listeners:Destroy()
 		> Alias for DisconnectAll
-	
+
 --]]
 
+
+local ContextActionService = game:GetService("ContextActionService")
+local RunService = game:GetService("RunService")
 
 
 local ListenerList = {}
@@ -47,19 +50,19 @@ end
 
 function ListenerList:BindToRenderStep(name, ...)
 	table.insert(self._renderStepNames, name)
-	game:GetService("RunService"):BindToRenderStep(name, ...)
+	RunService:BindToRenderStep(name, ...)
 end
 
 
 function ListenerList:BindAction(name, ...)
 	table.insert(self._actionNames, name)
-	game:GetService("ContextActionService"):BindAction(name, ...)
+	ContextActionService:BindAction(name, ...)
 end
 
 
 function ListenerList:BindActionAtPriority(name, ...)
 	table.insert(self._actionNames, name)
-	game:GetService("ContextActionService"):BindActionAtPriority(name, ...)
+	ContextActionService:BindActionAtPriority(name, ...)
 end
 
 
@@ -74,18 +77,16 @@ end
 
 
 function ListenerList:DisconnectRenderSteps()
-	local runService = game:GetService("RunService")
 	for _,n in ipairs(self._renderStepNames) do
-		runService:UnbindFromRenderStep(n)
+		RunService:UnbindFromRenderStep(n)
 	end
 	self._renderStepNames = {}
 end
 
 
 function ListenerList:DisconnectActions()
-	local ctxService = game:GetService("ContextActionService")
 	for _,n in ipairs(self._actionNames) do
-		ctxService:UnbindAction(n)
+		ContextActionService:UnbindAction(n)
 	end
 	self._actionNames = {}
 end

@@ -3,22 +3,22 @@
 -- March 17, 2017
 
 --[[
-	
+
 	event = Event.new()
-	
+
 	event:Fire(...)
 	event:Wait()
 	event:Connect(functionHandler)
 	event:DisconnectAll()
 	event:Destroy()
-	
-	
+
+
 	Using 'Connect':
 
 		connection = event:Connect(func)
 			connection.Connected
 			connection:Disconnect()
-	
+
 
 	-----------------------------------------------------------------------------
 
@@ -32,15 +32,8 @@
 		In other words, BindableEvents will create a copy of whatever is passed
 		rather than the original value itself. This becomes difficult when dealing
 		with tables, where passing by reference is usually most ideal.
-	
+
 --]]
-
-
-
-local ASSERT  = assert
-local SELECT  = select
-local UNPACK  = unpack
-local TYPE    = type
 
 
 local Event = {}
@@ -48,37 +41,37 @@ Event.__index = Event
 
 
 function Event.new()
-	
+
 	local self = setmetatable({
 		_connections = {};
 		_destroyed = false;
 		_firing = false;
 		_bindable = Instance.new("BindableEvent");
 	}, Event)
-	
+
 	return self
-	
+
 end
 
 
 function Event:Fire(...)
 	self._args = {...}
-	self._numArgs = SELECT("#", ...)
+	self._numArgs = select("#", ...)
 	self._bindable:Fire()
 end
 
 
 function Event:Wait()
 	self._bindable.Event:Wait()
-	return UNPACK(self._args, 1, self._numArgs)
+	return table.unpack(self._args, 1, self._numArgs)
 end
 
 
 function Event:Connect(func)
-	ASSERT(not self._destroyed, "Cannot connect to destroyed event")
-	ASSERT(TYPE(func) == "function", "Argument must be function")
+	assert(not self._destroyed, "Cannot connect to destroyed event")
+	assert(type(func) == "function", "Argument must be function")
 	return self._bindable.Event:Connect(function()
-		func(UNPACK(self._args, 1, self._numArgs))
+		func(table.unpack(self._args, 1, self._numArgs))
 	end)
 end
 
@@ -90,7 +83,10 @@ end
 
 
 function Event:Destroy()
-	if (self._destroyed) then return end
+	if (self._destroyed) then
+		return
+	end
+
 	self._destroyed = true
 	self._bindable:Destroy()
 end

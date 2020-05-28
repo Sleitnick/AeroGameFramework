@@ -3,31 +3,30 @@
 -- December 28, 2017
 
 --[[
-	
+
 	Boolean   Keyboard:IsDown(keyCode)
 	Boolean   Keyboard:AreAllDown(keyCodes...)
 	Boolean   Keyboard:AreAnyDown(keyCodes...)
-	
+
 	Keyboard.KeyDown(keyCode)
 	Keyboard.KeyUp(keyCode)
-	
+
 --]]
 
 
+local UserInputService = game:GetService("UserInputService")
 
 local Keyboard = {}
 
-local userInput = game:GetService("UserInputService")
 
-
-function Keyboard:IsDown(keyCode)
-	return userInput:IsKeyDown(keyCode)
+function Keyboard.IsDown(_, keyCode)
+	return UserInputService:IsKeyDown(keyCode)
 end
 
 
-function Keyboard:AreAllDown(...)
-	for _,keyCode in pairs{...} do
-		if (not userInput:IsKeyDown(keyCode)) then
+function Keyboard.AreAllDown(_, ...)
+	for _,keyCode in ipairs{...} do
+		if (not UserInputService:IsKeyDown(keyCode)) then
 			return false
 		end
 	end
@@ -35,9 +34,9 @@ function Keyboard:AreAllDown(...)
 end
 
 
-function Keyboard:AreAnyDown(...)
-	for _,keyCode in pairs{...} do
-		if (userInput:IsKeyDown(keyCode)) then
+function Keyboard.AreAnyDown(_, ...)
+	for _,keyCode in ipairs{...} do
+		if (UserInputService:IsKeyDown(keyCode)) then
 			return true
 		end
 	end
@@ -45,30 +44,34 @@ function Keyboard:AreAnyDown(...)
 end
 
 
-function Keyboard:Start()
-	
+function Keyboard.Start()
+
 end
 
 
 function Keyboard:Init()
-	
+
 	self.KeyDown = self.Shared.Event.new()
 	self.KeyUp = self.Shared.Event.new()
-	
-	userInput.InputBegan:Connect(function(input, processed)
-		if (processed) then return end
+
+	UserInputService.InputBegan:Connect(function(input, processed)
+		if (processed) then
+			return
+		end
 		if (input.UserInputType == Enum.UserInputType.Keyboard) then
 			self.KeyDown:Fire(input.KeyCode)
 		end
 	end)
-	
-	userInput.InputEnded:Connect(function(input, processed)
-		if (processed) then return end
+
+	UserInputService.InputEnded:Connect(function(input, processed)
+		if (processed) then
+			return
+		end
 		if (input.UserInputType == Enum.UserInputType.Keyboard) then
 			self.KeyUp:Fire(input.KeyCode)
 		end
 	end)
-	
+
 end
 
 

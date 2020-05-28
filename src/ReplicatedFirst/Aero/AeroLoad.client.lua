@@ -1,20 +1,20 @@
 --[[
-	
+
 	At its heart, the way to wait for the AeroGameFramework to
 	load is to simply wait for it to exist in the _G table:
-	
+
 		while (not _G.Aero) do wait() end
 		local aero = _G.Aero
-	
-	
+
+
 	The following code shows how to do this with a custom GUI,
 	but you will have to fill in some of the code yourself.
 
-	IF YOU USE THIS CODE, MAKE SURE TO PUT IT IN A FILE NAMED 
-	SOMETHING OTHER THAN 'AeroLoad' SO FUTURE FRAMEWORK UPDATES 
-	DO NOT OVERWRITE YOUR CUSTOM 'AeroLoad' SCRIPT. YOU CAN NAME 
+	IF YOU USE THIS CODE, MAKE SURE TO PUT IT IN A FILE NAMED
+	SOMETHING OTHER THAN 'AeroLoad' SO FUTURE FRAMEWORK UPDATES
+	DO NOT OVERWRITE YOUR CUSTOM 'AeroLoad' SCRIPT. YOU CAN NAME
 	IT ANYTHING, LIKE 'MyCustomAeroLoad'
-	
+
 ]]
 
 --[[  UNCOMMENT TO USE THIS TEMPLATE (BUT BE SURE TO ADD YOUR OWN GUI ON LINE 47)

@@ -7,7 +7,7 @@
 	Mobile:GetDeviceAcceleration()
 	Mobile:GetDeviceGravity()
 	Mobile:GetDeviceRotation()
-	
+
 	Mobile.TouchStarted(position)
 	Mobile.TouchEnded(position)
 	Mobile.TouchMoved(position, delta)
@@ -21,48 +21,99 @@
 	Mobile.DeviceAccelerationChanged(acceleration)
 	Mobile.DeviceGravityChanged(gravity)
 	Mobile.DeviceRotationChanged(rotation, cframe)
-	
+
 --]]
 
-
+local Workspace = game:GetService("Workspace")
+local UserInputService = game:GetService("UserInputService")
 
 local Mobile = {}
 
-local RAY = Ray.new
-local workspace = workspace
-
-local userInput = game:GetService("UserInputService")
-local cam = workspace.CurrentCamera
+local cam = Workspace.CurrentCamera
 
 
-function Mobile:GetRay(position)
+function Mobile.GetRay(_, position)
 	local viewportMouseRay = cam:ViewportPointToRay(position.X, position.Y)
-	return RAY(viewportMouseRay.Origin, viewportMouseRay.Direction * 999)
+	return Ray.new(viewportMouseRay.Origin, viewportMouseRay.Direction * 999)
 end
 
 
-function Mobile:Cast(position, ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
-	return workspace:FindPartOnRay(self:GetRay(position), ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
+function Mobile.GetOriginAndDirection(_, position)
+	local viewportMouseRay = cam:ViewportPointToRay(position.X, position.Y)
+	return viewportMouseRay.Origin, viewportMouseRay.Direction * 999
 end
 
 
-function Mobile:CastWithIgnoreList(position, ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
-	return workspace:FindPartOnRayWithIgnoreList(self:GetRay(position), ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
+function Mobile:CastLegacy(position, ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
+	return Workspace:FindPartOnRay(self:GetRay(position), ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
 end
 
+
+function Mobile:CastWithIgnoreListLegacy(position, ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
+	return Workspace:FindPartOnRayWithIgnoreList(self:GetRay(position), ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
+end
+
+
+function Mobile:CastWithWhitelistLegacy(position, whitelistDescendantsTable, ignoreWater)
+	return Workspace:FindPartOnRayWithWhitelist(self:GetRay(position), whitelistDescendantsTable, ignoreWater)
+end
+
+
+local castParameters = RaycastParams.new()
+castParameters.FilterType = Enum.RaycastFilterType.Blacklist
+
+function Mobile:Cast(position, ignoreDescendantsInstance, _, ignoreWater)
+	castParameters.FilterDescendantsInstances = table.create(1, ignoreDescendantsInstance)
+	castParameters.IgnoreWater = ignoreWater
+
+	local raycastResults = Workspace:Raycast(self:GetOriginAndDirection(position), castParameters)
+	if raycastResults then
+		return raycastResults.Instance, raycastResults.Position, raycastResults.Normal, raycastResults.Material
+	else
+		return nil, nil, nil, nil
+	end
+end
+
+
+local ignoreListParameters = RaycastParams.new()
+ignoreListParameters.FilterType = Enum.RaycastFilterType.Blacklist
+
+function Mobile:CastWithIgnoreList(position, ignoreDescendantsTable, _, ignoreWater)
+	ignoreListParameters.FilterDescendantsInstances = ignoreDescendantsTable
+	ignoreListParameters.IgnoreWater = ignoreWater
+
+	local raycastResults = Workspace:Raycast(self:GetOriginAndDirection(position), ignoreListParameters)
+	if raycastResults then
+		return raycastResults.Instance, raycastResults.Position, raycastResults.Normal, raycastResults.Material
+	else
+		return nil, nil, nil, nil
+	end
+end
+
+
+local whitelistParameters = RaycastParams.new()
+whitelistParameters.FilterType = Enum.RaycastFilterType.Whitelist
 
 function Mobile:CastWithWhitelist(position, whitelistDescendantsTable, ignoreWater)
-	return workspace:FindPartOnRayWithWhitelist(self:GetRay(position), whitelistDescendantsTable, ignoreWater)
+	whitelistParameters.FilterDescendantsInstances = whitelistDescendantsTable
+	whitelistParameters.IgnoreWater = ignoreWater
+
+	local raycastResults = Workspace:Raycast(self:GetOriginAndDirection(position), whitelistParameters)
+	if raycastResults then
+		return raycastResults.Instance, raycastResults.Position, raycastResults.Normal, raycastResults.Material
+	else
+		return nil, nil, nil, nil
+	end
 end
 
 
-function Mobile:Start()
-	
+function Mobile.Start()
+
 end
 
 
 function Mobile:Init()
-	
+
 	self.TouchStarted = self.Shared.Event.new()
 	self.TouchEnded = self.Shared.Event.new()
 	self.TouchMoved = self.Shared.Event.new()
@@ -73,63 +124,81 @@ function Mobile:Init()
 	self.TouchRotate = self.Shared.Event.new()
 	self.TouchSwipe = self.Shared.Event.new()
 	self.TouchTap = self.Shared.Event.new()
-	
-	userInput.TouchStarted:Connect(function(input, processed)
-		if (processed) then return end
+
+	UserInputService.TouchStarted:Connect(function(input, processed)
+		if (processed) then
+			return
+		end
 		self.TouchStarted:Fire(input.Position)
 	end)
-	
-	userInput.TouchEnded:Connect(function(input, _processed)
+
+	UserInputService.TouchEnded:Connect(function(input)
 		self.TouchEnded:Fire(input.Position)
 	end)
-	
-	userInput.TouchMoved:Connect(function(input, processed)
-		if (processed) then return end
+
+	UserInputService.TouchMoved:Connect(function(input, processed)
+		if (processed) then
+			return
+		end
 		self.TouchMoved:Fire(input.Position, input.Delta)
 	end)
-	
-	userInput.TouchTapInWorld:Connect(function(position, processed)
-		if (processed) then return end
+
+	UserInputService.TouchTapInWorld:Connect(function(position, processed)
+		if (processed) then
+			return
+		end
 		self.TouchTapInWorld:Fire(position)
 	end)
-	
-	userInput.TouchPinch:Connect(function(touchPositions, scale, velocity, state, processed)
-		if (processed) then return end
+
+	UserInputService.TouchPinch:Connect(function(touchPositions, scale, velocity, state, processed)
+		if (processed) then
+			return
+		end
 		self.TouchPinch:Fire(touchPositions, scale, velocity, state)
 	end)
 
-	userInput.TouchLongPress:Connect(function(touchPositions, state, processed)
-		if (processed) then return end
+	UserInputService.TouchLongPress:Connect(function(touchPositions, state, processed)
+		if (processed) then
+			return
+		end
 		self.TouchLongPress:Fire(touchPositions, state)
 	end)
 
-	userInput.TouchPan:Connect(function(touchPositions, totalTranslation, velocity, state, processed)
-		if (processed) then return end
+	UserInputService.TouchPan:Connect(function(touchPositions, totalTranslation, velocity, state, processed)
+		if (processed) then
+			return
+		end
 		self.TouchPan:Fire(touchPositions, totalTranslation, velocity, state)
 	end)
 
-	userInput.TouchRotate:Connect(function(touchPositions, rotation, velocity, state, processed)
-		if (processed) then return end
+	UserInputService.TouchRotate:Connect(function(touchPositions, rotation, velocity, state, processed)
+		if (processed) then
+			return
+		end
 		self.TouchRotate:Fire(touchPositions, rotation, velocity, state)
 	end)
 
-	userInput.TouchSwipe:Connect(function(swipeDirection, numberOfTouches, processed)
-		if (processed) then return end
+	UserInputService.TouchSwipe:Connect(function(swipeDirection, numberOfTouches, processed)
+		if (processed) then
+			return
+		end
 		self.TouchSwipe:Fire(swipeDirection, numberOfTouches)
 	end)
 
-	userInput.TouchTap:Connect(function(touchPositions, processed)
-		if (processed) then return end
+	UserInputService.TouchTap:Connect(function(touchPositions, processed)
+		if (processed) then
+			return
+		end
 		self.TouchTap:Fire(touchPositions)
 	end)
 
-	self.GetDeviceAcceleration = userInput.GetDeviceAcceleration
-	self.GetDeviceGravity = userInput.GetDeviceGravity
-	self.GetDeviceRotation = userInput.GetDeviceRotation
-	self.DeviceAccelerationChanged = userInput.DeviceAccelerationChanged
-	self.DeviceGravityChanged = userInput.DeviceGravityChanged
-	self.DeviceRotationChanged = userInput.DeviceRotationChanged
-	
+	self.GetDeviceAcceleration = UserInputService.GetDeviceAcceleration
+	self.GetDeviceGravity = UserInputService.GetDeviceGravity
+	self.GetDeviceRotation = UserInputService.GetDeviceRotation
+	self.DeviceAccelerationChanged = UserInputService.DeviceAccelerationChanged
+	self.DeviceGravityChanged = UserInputService.DeviceGravityChanged
+	self.DeviceRotationChanged = UserInputService.DeviceRotationChanged
+
 end
 
 

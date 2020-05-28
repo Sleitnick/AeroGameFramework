@@ -35,8 +35,6 @@
 -- a = amplitude
 -- p = period
 
-local sin, cos, asin = math.sin, math.cos, math.asin
-
 local function Linear(t, b, c, d)
 	return c * t / d + b
 end
@@ -54,23 +52,23 @@ end
 -- Arceusinator's Easing Functions
 local function RevBack(t, b, c, d)
 	t = 1 - t / d
-	return c * (1 - (sin(t * 1.5707963267948965579989817342720925807952880859375) + (sin(t * 3.14159265358979311599796346854418516159057617187) * (cos(t * 3.14159265358979311599796346854418516159057617187) + 1) * 0.5))) + b
+	return c * (1 - (math.sin(t * 1.5707963267949) + (math.sin(t * 3.1415926535898) * (math.cos(t * 3.1415926535898) + 1) * 0.5))) + b
 end
 
 local function RidiculousWiggle(t, b, c, d)
 	t = t / d
-	return c * sin(sin(t * 3.14159265358979311599796346854418516159057617187) * 1.5707963267948965579989817342720925807952880859375) + b
+	return c * math.sin(math.sin(t * 3.1415926535898) * 1.5707963267949) + b
 end
 
 -- YellowTide's Easing Functions
 local function Spring(t, b, c, d)
 	t = t / d
-	return (1 + (-2.72 ^ (-6.9 * t) * cos(-20.1061929829746759423869661986827850341796875 * t))) * c + b
+	return (1 + (-2.72 ^ (-6.9 * t) * math.cos(-20.106192982975 * t))) * c + b
 end
 
 local function SoftSpring(t, b, c, d)
 	t = t / d
-	return (1 + (-2.72 ^ (-7.5 * t) * cos(-10.05309649148733797119348309934139251708984375 * t))) * c + b
+	return (1 + (-2.72 ^ (-7.5 * t) * math.cos(-10.053096491487 * t))) * c + b
 end
 -- End of YellowTide's functions
 
@@ -190,20 +188,20 @@ local function OutInQuint(t, b, c, d)
 end
 
 local function InSine(t, b, c, d)
-	return -c * cos(t / d * 1.5707963267948965579989817342720925807952880859375) + c + b
+	return -c * math.cos(t / d * 1.5707963267949) + c + b
 end
 
 local function OutSine(t, b, c, d)
-	return c * sin(t / d * 1.5707963267948965579989817342720925807952880859375) + b
+	return c * math.sin(t / d * 1.5707963267949) + b
 end
 
 local function InOutSine(t, b, c, d)
-	return -c * 0.5 * (cos(3.14159265358979311599796346854418516159057617187 * t / d) - 1) + b
+	return -c * 0.5 * (math.cos(3.1415926535898 * t / d) - 1) + b
 end
 
 local function OutInSine(t, b, c, d)
 	c = c * 0.5
-	return t < d * 0.5 and c * sin(t * 2 / d * 1.5707963267948965579989817342720925807952880859375) + b or -c * cos(((t * 2) - d) / d * 1.5707963267948965579989817342720925807952880859375) + 2 * c + b
+	return t < d * 0.5 and c * math.sin(t * 2 / d * 1.5707963267949) + b or -c * math.cos(((t * 2) - d) / d * 1.5707963267949) + 2 * c + b
 end
 
 local function InExpo(t, b, c, d)
@@ -258,13 +256,13 @@ end
 local function InElastic(t, b, c, d, a, p)
 	t = t / d - 1
 	p = p or d * 0.3
-	return t == -1 and b or t == 0 and b + c or (not a or a < (c >= 0 and c or 0 - c)) and -(c * 2 ^ (10 * t) * sin((t * d - p * 0.25) * 6.28318530717958623199592693708837032318115234375 / p)) + b or -(a * 2 ^ (10 * t) * sin((t * d - p / 6.28318530717958623199592693708837032318115234375 * asin(c / a)) * 6.28318530717958623199592693708837032318115234375 / p)) + b
+	return t == -1 and b or t == 0 and b + c or (not a or a < (c >= 0 and c or 0 - c)) and -(c * 2 ^ (10 * t) * math.sin((t * d - p * 0.25) * 6.2831853071796 / p)) + b or -(a * 2 ^ (10 * t) * math.sin((t * d - p / 6.2831853071796 * math.asin(c / a)) * 6.2831853071796 / p)) + b
 end
 
 local function OutElastic(t, b, c, d, a, p)
 	t = t / d
 	p = p or d * 0.3
-	return t == 0 and b or t == 1 and b + c or (not a or a < (c >= 0 and c or 0 - c)) and c * 2 ^ (-10 * t) * sin((t * d - p * 0.25) * 6.28318530717958623199592693708837032318115234375 / p) + c + b or a * 2 ^ (-10 * t) * sin((t * d - p / 6.28318530717958623199592693708837032318115234375 * asin(c / a)) * 6.28318530717958623199592693708837032318115234375 / p) + c + b
+	return t == 0 and b or t == 1 and b + c or (not a or a < (c >= 0 and c or 0 - c)) and c * 2 ^ (-10 * t) * math.sin((t * d - p * 0.25) * 6.2831853071796 / p) + c + b or a * 2 ^ (-10 * t) * math.sin((t * d - p / 6.2831853071796 * math.asin(c / a)) * 6.2831853071796 / p) + c + b
 end
 
 local function InOutElastic(t, b, c, d, a, p)
@@ -287,13 +285,13 @@ local function InOutElastic(t, b, c, d, a, p)
 		a = c
 		s = p * 0.25
 	else
-		s = p / 6.28318530717958623199592693708837032318115234375 * asin(c / a)
+		s = p / 6.2831853071796 * math.asin(c / a)
 	end
 
 	if t < 1 then
-		return -0.5 * a * 2 ^ (10 * t) * sin((t * d - s) * 6.28318530717958623199592693708837032318115234375 / p) + b
+		return -0.5 * a * 2 ^ (10 * t) * math.sin((t * d - s) * 6.2831853071796 / p) + b
 	else
-		return a * 2 ^ (-10 * t) * sin((t * d - s) * 6.28318530717958623199592693708837032318115234375 / p ) * 0.5 + c + b
+		return a * 2 ^ (-10 * t) * math.sin((t * d - s) * 6.2831853071796 / p ) * 0.5 + c + b
 	end
 end
 

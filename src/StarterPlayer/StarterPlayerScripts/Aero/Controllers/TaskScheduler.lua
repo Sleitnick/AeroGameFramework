@@ -8,14 +8,14 @@
 	-- Styled code in consistency with the rest of the AeroGameFramework codebase
 
 --[[
-	
+
 	local scheduler = TaskScheduler:CreateScheduler(targetedMinimumFPS)
-	
+
 	scheduler:QueueTask(function)
 	scheduler:Pause()
 	scheduler:Resume()
 	scheduler:Destroy()
-	
+
 --]]
 
 
@@ -33,22 +33,22 @@ local runService = game:GetService("RunService")
 					 (WARNING) this only holds true if it is used properly. If you try to complete 10 union operations
 					 at once in a single task then of course your FPS is going to drop -- queue the union operations
 					 up one at a time so the task scheduler can do its job.
-					
-					
+
+
 	returns scheduler
 		method Pause      Pauses the scheduler so it won't run tasks. Tasks may still be added while the scheduler is
 						  paused. They just won't be touched until it's resumed. Performance efficient -- disables
 						  execution loop entirely until scheduler is resumed.
-		
+
 		method Resume     Resumes the paused scheduler.
-		
+
 		method Destroy    Destroys the scheduler so it can't be used anymore.
-		
+
 		method QueueTask  Queues a task for automatic execution.
 			param callback  function (task) to be run.
-	
+
 	Example usage:
-	
+
 	local scheduler = TaskScheduler:CreateScheduler(60)
 	local totalOperations = 0
 	local paused
@@ -65,25 +65,25 @@ local runService = game:GetService("RunService")
 			end
 		end)
 	end
-	
+
 	repeat wait() until paused
 	wait(2)
 	scheduler:Resume()
 --]]
 
 
-function TaskScheduler:CreateScheduler(targetFps)
-	
+function TaskScheduler.CreateScheduler(_, targetFps)
+
 	local scheduler = {}
 	local queue = {}
 	local sleeping = true
 	local paused
-	
+
 	local updateFrameTableEvent = nil
-	
+
 	local start = tick()
 	runService.RenderStepped:Wait()
-	
+
 	local function UpdateFrameTable()
 		lastIteration = tick()
 		for i = #frameUpdateTable,1,-1 do
@@ -113,20 +113,20 @@ function TaskScheduler:CreateScheduler(targetFps)
 		updateFrameTableEvent = nil
 	end
 
-	function scheduler.Pause(_s)
+	function scheduler.Pause()
 		paused = true
 		sleeping = true
 	end
-	
-	function scheduler.Resume(_s)
+
+	function scheduler.Resume()
 		if (paused) then
 			paused = false
 			sleeping = false
 			Loop()
 		end
 	end
-	
-	function scheduler.Destroy(_s)
+
+	function scheduler.Destroy()
 		scheduler:Pause()
 		for i in pairs(scheduler) do
 			scheduler[i] = nil
@@ -140,17 +140,17 @@ function TaskScheduler:CreateScheduler(targetFps)
 			end;
 		})
 	end
-	
-	function scheduler.QueueTask(_s, callback)
+
+	function scheduler.QueueTask(_, callback)
 		queue[#queue + 1] = callback
 		if (sleeping and not paused) then
 			sleeping = false
 			Loop()
 		end
 	end
-	
+
 	return scheduler
-	
+
 end
 
 

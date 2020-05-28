@@ -110,21 +110,21 @@
 
 
 		ToCamelCase:
-		
+
 			Returns a string in camelCase.
 
 			StringUtil.ToCamelCase("Hello_world-abc") == "helloWorldAbc"
 
 
 		ToPascalCase:
-		
+
 			Returns a string in PascalCase.
 
 			StringUtil.ToPascalCase("Hello_world-abc") == "HelloWorldAbc"
 
 
 		ToSnakeCase:
-		
+
 			Returns a string in snake_case or SNAKE_CASE.
 
 			StringUtil.ToPascalCase("Hello_world-abc") == "hello_world_abc"
@@ -132,7 +132,7 @@
 
 
 		ToKebabCase:
-		
+
 			Returns a string in kebab-case or KEBAB-CASE.
 
 			StringUtil.ToKebabCase("Hello_world-abc") == "hello-world-abc"
@@ -172,64 +172,64 @@ local MAX_TUPLE = 7997
 
 
 function StringUtil.Escape(str)
-	local escaped = str:gsub("([%.%$%^%(%)%[%]%+%-%*%?%%])", "%%%1")
+	local escaped = string.gsub(str, "([%.%$%^%(%)%[%]%+%-%*%?%%])", "%%%1")
 	return escaped
 end
 
 
 function StringUtil.Trim(str)
-	return str:match("^%s*(.-)%s*$")
+	return string.match(str, "^%s*(.-)%s*$")
 end
 
 
 function StringUtil.TrimStart(str)
-	return str:match("^%s*(.+)")
+	return string.match(str, "^%s*(.+)")
 end
 
 
 function StringUtil.TrimEnd(str)
-	return str:match("(.-)%s*$")
+	return string.match(str, "(.-)%s*$")
 end
 
 
 function StringUtil.RemoveExcessWhitespace(str)
-	return str:gsub("%s+", " ")
+	return string.gsub(str, "%s+", " ")
 end
 
 
 function StringUtil.RemoveWhitespace(str)
-	return str:gsub("%s+", "")
+	return string.gsub(str, "%s+", "")
 end
 
 
 function StringUtil.EndsWith(str, ends)
-	return str:match(StringUtil.Escape(ends) .. "$") ~= nil
+	return string.match(str, StringUtil.Escape(ends) .. "$") ~= nil
 end
 
 
 function StringUtil.StartsWith(str, starts)
-	return str:match("^" .. StringUtil.Escape(starts)) ~= nil
+	return string.match(str, "^" .. StringUtil.Escape(starts)) ~= nil
 end
 
 
 function StringUtil.Contains(str, contains)
-	return str:find(contains) ~= nil
+	return string.find(str, contains) ~= nil
 end
 
 
 function StringUtil.StringBuilder()
 	local sb = {}
 	local str = {}
-	function sb:Append(s)
+	function sb.Append(_, s)
 		str[#str + 1] = s
 	end
-	function sb:Prepend(s)
+	function sb.Prepend(_, s)
 		table.insert(str, 1, s)
 	end
-	function sb:ToString()
+	function sb.ToString()
 		return table.concat(str, "")
 	end
-	setmetatable(sb, {__tostring=sb.ToString})
+	setmetatable(sb, {__tostring = sb.ToString})
 	return sb
 end
 
@@ -238,7 +238,7 @@ function StringUtil.ToCharArray(str)
 	local len = #str
 	local chars = table.create(len)
 	for i = 1,len do
-		chars[i] = str:sub(i, i)
+		chars[i] = string.sub(str, i, i)
 	end
 	return chars
 end
@@ -246,13 +246,15 @@ end
 
 function StringUtil.ToByteArray(str)
 	local len = #str
-	if (len == 0) then return {} end
+	if (len == 0) then
+		return {}
+	end
 	if (len <= MAX_TUPLE) then
-		return table.pack(str:byte(1, #str))
+		return table.pack(string.byte(str, 1, #str))
 	end
 	local bytes = table.create(len)
-	for i = 1,len do
-		bytes[i] = str:sub(i, i):byte()
+	for i = 1, len do
+		bytes[i] = string.byte(str, i, i)
 	end
 	return bytes
 end
@@ -269,37 +271,55 @@ function StringUtil.ByteArrayToString(bytes)
 		local chunk = string.char(table.unpack(bytes, ((i - 1) * MAX_TUPLE) + 1, math.min(size, ((i - 1) * MAX_TUPLE) + MAX_TUPLE)))
 		stringBuild[i] = chunk
 	end
-	return table.concat(stringBuild, "")
+	return table.concat(stringBuild)
 end
 
 
 function StringUtil.EqualsIgnoreCase(str1, str2)
-	return (str1:lower() == str2:lower())
+	return (string.lower(str1) == string.lower(str2))
 end
 
 
 function StringUtil.ToCamelCase(str)
-	str = str:gsub("[%-_]+([^%-_])", function(s) return s:upper() end)
-	return str:sub(1, 1):lower() .. str:sub(2)
+	str = string.gsub(str, "[%-_]+([^%-_])", string.upper)
+	return string.lower(string.sub(str, 1, 1)) .. string.sub(str, 2)
 end
 
 
 function StringUtil.ToPascalCase(str)
 	str = StringUtil.ToCamelCase(str)
-	return str:sub(1, 1):upper() .. str:sub(2)
+	return string.upper(string.sub(str, 1, 1)) .. string.sub(str, 2)
+end
+
+
+local function SnakeCaseReplacement(s1, s2)
+	return s1 .. "_" .. string.lower(s2)
 end
 
 
 function StringUtil.ToSnakeCase(str, uppercase)
-	str = str:gsub("[%-_]+", "_"):gsub("([^%u%-_])(%u)", function(s1, s2) return s1 .. "_" .. s2:lower() end)
-	if (uppercase) then str = str:upper() else str = str:lower() end
+	str = string.gsub(string.gsub(str, "[%-_]+", "_"), "([^%u%-_])(%u)", SnakeCaseReplacement)
+	if (uppercase) then
+		str = string.upper(str)
+	else
+		str = string.lower(str)
+	end
 	return str
 end
 
 
+local function KebabCaseReplacement(s1, s2)
+	return s1 .. "-" .. string.lower(s2)
+end
+
+
 function StringUtil.ToKebabCase(str, uppercase)
-	str = str:gsub("[%-_]+", "-"):gsub("([^%u%-_])(%u)", function(s1, s2) return s1 .. "-" .. s2:lower() end)
-	if (uppercase) then str = str:upper() else str = str:lower() end
+	str = string.gsub(string.gsub(str, "[%-_]+", "-"), "([^%u%-_])(%u)", KebabCaseReplacement)
+	if (uppercase) then
+		str = string.upper(str)
+	else
+		str = string.lower(str)
+	end
 	return str
 end
 

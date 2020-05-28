@@ -3,7 +3,7 @@
 -- February 26, 2018
 
 --[[
-	
+
 	CameraShakePresets.Bump
 	CameraShakePresets.Explosion
 	CameraShakePresets.Earthquake
@@ -12,7 +12,7 @@
 	CameraShakePresets.HandheldCamera
 	CameraShakePresets.Vibration
 	CameraShakePresets.RoughDriving
-	
+
 --]]
 
 
@@ -20,8 +20,8 @@
 local CameraShakeInstance = require(script.Parent.CameraShakeInstance)
 
 local CameraShakePresets = {
-	
-	
+
+
 	-- A high-magnitude, short, yet smooth shake.
 	-- Should happen once.
 	Bump = function()
@@ -30,8 +30,8 @@ local CameraShakePresets = {
 		c.RotationInfluence = Vector3.new(1, 1, 1)
 		return c
 	end;
-	
-	
+
+
 	-- An intense and rough shake.
 	-- Should happen once.
 	Explosion = function()
@@ -40,8 +40,8 @@ local CameraShakePresets = {
 		c.RotationInfluence = Vector3.new(4, 1, 1)
 		return c
 	end;
-	
-	
+
+
 	-- A continuous, rough shake
 	-- Sustained.
 	Earthquake = function()
@@ -50,8 +50,8 @@ local CameraShakePresets = {
 		c.RotationInfluence = Vector3.new(1, 1, 4)
 		return c
 	end;
-	
-	
+
+
 	-- A gentle left/right/up/down sway. Good for intro screens/landscapes.
 	-- Sustained.
 	GentleSway = function()
@@ -60,8 +60,8 @@ local CameraShakePresets = {
 		c.RotationInfluence = Vector3.new(0.02, 0.02, 0.02)
 		return c
 	end;
-	
-	
+
+
 	-- A bizarre shake with a very high magnitude and low roughness.
 	-- Sustained.
 	BadTrip = function()
@@ -70,8 +70,8 @@ local CameraShakePresets = {
 		c.RotationInfluence = Vector3.new(2, 1, 4)
 		return c
 	end;
-	
-	
+
+
 	-- A subtle, slow shake.
 	-- Sustained.
 	HandheldCamera = function()
@@ -80,8 +80,8 @@ local CameraShakePresets = {
 		c.RotationInfluence = Vector3.new(1, 0.5, 0.5)
 		return c
 	end;
-	
-	
+
+
 	-- A very rough, yet low magnitude shake.
 	-- Sustained.
 	Vibration = function()
@@ -90,8 +90,8 @@ local CameraShakePresets = {
 		c.RotationInfluence = Vector3.new(1.25, 0, 4)
 		return c
 	end;
-	
-	
+
+
 	-- A slightly rough, medium magnitude shake.
 	-- Sustained.
 	RoughDriving = function()
@@ -100,13 +100,13 @@ local CameraShakePresets = {
 		c.RotationInfluence = Vector3.new(1, 1, 1)
 		return c
 	end;
-	
-	
+
+
 }
 
 
 return setmetatable({}, {
-	__index = function(_t, i)
+	__index = function(_, i)
 		local f = CameraShakePresets[i]
 		if (type(f) == "function") then
 			return f()

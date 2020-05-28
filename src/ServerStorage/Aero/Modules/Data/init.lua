@@ -4,7 +4,7 @@
 
 
 --[[
-	
+
 	CONSTRUCTORS:
 		data = Data.new(name, scope [, ordered])              [Creates or gets existing Data object for given name and scope]
 		data = Data.ForPlayer(userId | player [, ordered])    [Creates or gets existing Data object for given player OR UserId]
@@ -35,7 +35,7 @@
 		Promise<Void>           data:Destroy([Boolean saveAll])
 		Number                  data:GetRequestBudget(DataStoreRequestType requestType)
 		Void                    data:MarkDirty(String key)
-		
+
 	EVENTS:
 		data.Success         data.Success:Connect(String method, String key)
 		data.Failed          data.Failed:Connect(String method, String key, String err)
@@ -103,7 +103,7 @@
 			Marks the key as dirty, which means that it will be forced to save the
 			next time a save invocation occurs. This is necessary when making changes
 			to tables.
-	
+
 
 	EXAMPLES:
 
@@ -156,7 +156,9 @@
 
 --]]
 
-
+local Players = game:GetService("Players")
+local DataStoreService = game:GetService("DataStoreService")
+local RunService = game:GetService("RunService")
 
 local Data = {}
 Data.__index = Data
@@ -176,17 +178,17 @@ local KEY_MAX_LEN = 49
 local KEY_MAX_LEN_ERR = "Key must be a string less or equal to " .. KEY_MAX_LEN .. " characters"
 local PLAYER_DATA_NAME = "PlayerData"
 
-local dataStoreService = game:GetService("DataStoreService")
 Data.IsUsingMockService = false
 
 local dataPool = {}
-local assert = assert
 local tableUtil
 local Promise
 
 
 local function Log(...)
-	if (not Data.Log) then return end
+	if (not Data.Log) then
+		return
+	end
 	print("Data ->", ...)
 end
 
@@ -194,7 +196,7 @@ end
 local function HeartbeatSpawn(callback, ...)
 	local hb
 	local args = table.pack(...)
-	hb = game:GetService("RunService").Heartbeat:Connect(function()
+	hb = RunService.Heartbeat:Connect(function()
 		hb:Disconnect()
 		callback(table.unpack(args, 1, args.n))
 	end)
@@ -208,7 +210,7 @@ end
 
 -- Retrieve cached DataStore from name and scope:
 local function GetDataFromNameAndScope(name, scope)
-	local ds = dataStoreService:GetDataStore(name, scope)
+	local ds = DataStoreService:GetDataStore(name, scope)
 	return dataPool[ds]
 end
 
@@ -229,14 +231,22 @@ function DataStorePages:AdvanceToNextPage()
 	return Promise.Async(function(resolve, reject)
 		local success, err = pcall(self.DSP.AdvanceToNextPageAsync, self.DSP)
 		self.IsFinished = self.DSP.IsFinished
-		if (success) then resolve() else reject(err) end
+		if (success) then
+			resolve()
+		else
+			reject(err)
+		end
 	end)
 end
 
 function DataStorePages:GetCurrentPage()
 	return Promise.Async(function(resolve, reject)
 		local success, page = pcall(self.DSP.GetCurrentPage, self.DSP)
-		if (success) then resolve(page) else reject(page) end
+		if (success) then
+			resolve(page)
+		else
+			reject(page)
+		end
 	end)
 end
 ---------------------------------------------------------------------------------------------------------------------------
@@ -258,9 +268,11 @@ function Data.new(name, scope, ordered)
 	ordered = (not not ordered)
 
 	-- Get cached 'data' object if available:
-	local ds = (ordered and dataStoreService:GetOrderedDataStore(name, scope) or dataStoreService:GetDataStore(name, scope))
+	local ds = (ordered and DataStoreService:GetOrderedDataStore(name, scope) or DataStoreService:GetDataStore(name, scope))
 	local self = dataPool[ds]
-	if (self and not self._destroyed) then return self end
+	if (self and not self._destroyed) then
+		return self
+	end
 
 	-- Create new 'data' object:
 	self = setmetatable({
@@ -275,7 +287,7 @@ function Data.new(name, scope, ordered)
 		_destroyed = false;
 		_destroying = false;
 	}, Data)
-	
+
 	-- Data events:
 	self.Success = self.Shared.Event.new()
 	self.Failed = self.Shared.Event.new()
@@ -295,7 +307,7 @@ function Data.ForPlayer(userId, ordered)
 		assert(userId:IsA("Player"), "Expected Player; got " .. userId.ClassName)
 		userId = userId.UserId
 	else
-		assert(type(userId) == "number" and userId >= 0 and math.floor(userId) == userId, "Expected integer >= 0")
+		assert(type(userId) == "number" and userId >= 0 and userId % 1 == 0, "Expected integer >= 0")
 	end
 	local scope = tostring(userId)
 	local data = Data.new(PLAYER_DATA_NAME, scope, ordered)
@@ -463,12 +475,12 @@ end
 -- PUBLIC METHODS:
 
 
-function Data:GetRequestBudget(reqType)
+function Data.GetRequestBudget(_, reqType)
 	-- See:
 		-- https://developer.roblox.com/api-reference/function/DataStoreService/GetRequestBudgetForRequestType
 		-- https://developer.roblox.com/api-reference/enum/DataStoreRequestType
 		-- https://developer.roblox.com/articles/Datastore-Errors
-	return dataStoreService:GetRequestBudgetForRequestType(reqType)
+	return DataStoreService:GetRequestBudgetForRequestType(reqType)
 end
 
 
@@ -487,7 +499,7 @@ function Data:Get(key, defaultVal)
 	return self:_load(key):Then(function(value)
 		if (value == nil and defaultVal ~= nil) then
 			value = defaultVal
-			if (typeof(defaultVal) == "table") then
+			if (type(defaultVal) == "table") then
 				value = tableUtil.Copy(defaultVal)
 			end
 			return self:Set(key, value):Then(function()
@@ -675,17 +687,17 @@ function Data:Start()
 
 	if (game.GameId == 0) then
 		Data.IsUsingMockService = true
-	elseif (game:GetService("RunService"):IsStudio()) then
+	elseif (RunService:IsStudio()) then
 		if (not Data.SaveInStudio) then
 			Data.IsUsingMockService = true
 		else
 			-- Verify status of the DataStoreService on startup:
 			local success, err = pcall(function()
-				dataStoreService:GetDataStore("__aero"):UpdateAsync("dss_api_check", function(v) return v == nil and true or v end)
+				DataStoreService:GetDataStore("__aero"):UpdateAsync("dss_api_check", function(v) return v == nil and true or v end)
 			end)
 			if (not success) then
 				-- Error codes: https://developer.roblox.com/articles/Datastore-Errors
-				local errCode = tonumber(err:match("^%d+"))
+				local errCode = tonumber(string.match(err, "^%d+"))
 				if (errCode == 502 or errCode == 403) then
 					Data.IsUsingMockService = true
 				elseif (errCode == 304) then
@@ -696,10 +708,12 @@ function Data:Start()
 			end
 		end
 	end
-	
+
 	local function FireBoundToCloseCallbacks()
 		local numBinded = #self._onCloseHandlers
-		if (numBinded == 0) then return end
+		if (numBinded == 0) then
+			return
+		end
 		local bindable = Instance.new("BindableEvent")
 		local numCompleted = 0
 		for _,func in ipairs(self._onCloseHandlers) do
@@ -717,9 +731,11 @@ function Data:Start()
 		bindable.Event:Wait()
 		bindable:Destroy()
 	end
-	
+
 	local function AutoSaveAllData()
-		if (autoSaving) then return end
+		if (autoSaving) then
+			return
+		end
 		autoSaving = true
 		local promises = {}
 		for _,data in pairs(dataPool) do
@@ -744,7 +760,7 @@ function Data:Start()
 
 	if (self.IsUsingMockService) then
 		-- Use mock DataStoreService:
-		dataStoreService = require(script.MockDataStoreService)
+		DataStoreService = require(script.MockDataStoreService)
 	else
 		-- Auto-save all data before server closes:
 		game:BindToClose(function()
@@ -755,11 +771,15 @@ function Data:Start()
 	end
 
 	-- Destroy player data when player leaves:
-	game:GetService("Players").PlayerRemoving:Connect(function(player)
+	Players.PlayerRemoving:Connect(function(player)
 		local data = GetDataFromNameAndScope(PLAYER_DATA_NAME, tostring(player.UserId))
-		if (not data) then return end
+		if (not data) then
+			return
+		end
 		wait(self.PlayerLeftSaveInterval)
-		if (gameClosing or not data.DestroyOnLeave) then return end
+		if (gameClosing or not data.DestroyOnLeave) then
+			return
+		end
 		data:Destroy(true)
 	end)
 
@@ -767,7 +787,9 @@ function Data:Start()
 	HeartbeatSpawn(function()
 		while (true) do
 			wait(self.AutoSaveInterval)
-			if (gameClosing) then break end
+			if (gameClosing) then
+				break
+			end
 			AutoSaveAllData()
 		end
 	end)
@@ -782,7 +804,7 @@ end
 
 
 function Data:__tostring()
-	return ("Data (Name=%s, Scope=%s, Ordered=%s)"):format(self.Name, self.Scope, self._ordered and "Yes" or "No")
+	return string.format("Data (Name=%s, Scope=%s, Ordered=%s)", self.Name, self.Scope, self._ordered and "Yes" or "No")
 end
 
 

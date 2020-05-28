@@ -3,18 +3,15 @@
 -- February 26, 2018
 
 --[[
-	
+
 	cameraShakeInstance = CameraShakeInstance.new(magnitude, roughness, fadeInTime, fadeOutTime)
-	
+
 --]]
 
 
 
 local CameraShakeInstance = {}
 CameraShakeInstance.__index = CameraShakeInstance
-
-local V3 = Vector3.new
-local NOISE = math.noise
 
 
 CameraShakeInstance.CameraShakeState = {
@@ -26,20 +23,25 @@ CameraShakeInstance.CameraShakeState = {
 
 
 function CameraShakeInstance.new(magnitude, roughness, fadeInTime, fadeOutTime)
-	
-	if (fadeInTime == nil) then fadeInTime = 0 end
-	if (fadeOutTime == nil) then fadeOutTime = 0 end
-	
+
+	if (fadeInTime == nil) then
+		fadeInTime = 0
+	end
+
+	if (fadeOutTime == nil) then
+		fadeOutTime = 0
+	end
+
 	assert(type(magnitude) == "number", "Magnitude must be a number")
 	assert(type(roughness) == "number", "Roughness must be a number")
 	assert(type(fadeInTime) == "number", "FadeInTime must be a number")
 	assert(type(fadeOutTime) == "number", "FadeOutTime must be a number")
-	
+
 	local self = setmetatable({
 		Magnitude = magnitude;
 		Roughness = roughness;
-		PositionInfluence = V3();
-		RotationInfluence = V3();
+		PositionInfluence = Vector3.new();
+		RotationInfluence = Vector3.new();
 		DeleteOnInactive = true;
 		roughMod = 1;
 		magnMod = 1;
@@ -50,23 +52,23 @@ function CameraShakeInstance.new(magnitude, roughness, fadeInTime, fadeOutTime)
 		tick = Random.new():NextNumber(-100, 100);
 		_camShakeInstance = true;
 	}, CameraShakeInstance)
-	
+
 	return self
-	
+
 end
 
 
 function CameraShakeInstance:UpdateShake(dt)
-	
+
 	local _tick = self.tick
 	local currentFadeTime = self.currentFadeTime
-	
-	local offset = V3(
-		NOISE(_tick, 0) * 0.5,
-		NOISE(0, _tick) * 0.5,
-		NOISE(_tick, _tick) * 0.5
+
+	local offset = Vector3.new(
+		math.noise(_tick, 0) * 0.5,
+		math.noise(0, _tick) * 0.5,
+		math.noise(_tick, _tick) * 0.5
 	)
-	
+
 	if (self.fadeInDuration > 0 and self.sustain) then
 		if (currentFadeTime < 1) then
 			currentFadeTime = currentFadeTime + (dt / self.fadeInDuration)
@@ -74,21 +76,21 @@ function CameraShakeInstance:UpdateShake(dt)
 			self.sustain = false
 		end
 	end
-	
+
 	if (not self.sustain) then
 		currentFadeTime = currentFadeTime - (dt / self.fadeOutDuration)
 	end
-	
+
 	if (self.sustain) then
 		self.tick = _tick + (dt * self.Roughness * self.roughMod)
 	else
 		self.tick = _tick + (dt * self.Roughness * self.roughMod * currentFadeTime)
 	end
-	
+
 	self.currentFadeTime = currentFadeTime
-	
+
 	return offset * self.Magnitude * self.magnMod * currentFadeTime
-	
+
 end
 
 

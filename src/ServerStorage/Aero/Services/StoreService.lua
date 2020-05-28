@@ -7,34 +7,33 @@
 -- Updated: December 29, 2019
 
 --[[
-	
+
 	Server:
-		
+
 		StoreService:HasPurchased(player, productId)
 		StoreService:OwnsGamePass(player, gamePassId)
 		StoreService:GetNumberPurchased(player, productId)
-		
+
 		StoreService.PromptPurchaseFinished(player, receiptInfo)
-	
-	
+
+
 	Client:
-		
+
 		StoreService:HasPurchased(productId)
 		StoreService:OwnsGamePass(gamePassId)
 		StoreService:GetNumberPurchased(productId)
-	
+
 		StoreService.PromptPurchaseFinished(receiptInfo)
-	
+
 --]]
 
-
+local Players = game:GetService("Players")
+local MarketplaceService = game:GetService("MarketplaceService")
 
 local StoreService = {Client = {}}
 
 local PRODUCT_PURCHASES_KEY = "ProductPurchases"
 local PROMPT_PURCHASE_FINISHED_EVENT = "PromptPurchaseFinished"
-
-local marketplaceService = game:GetService("MarketplaceService")
 local dataStoreScope = "PlayerReceipts"
 
 local Data
@@ -53,7 +52,7 @@ end
 
 
 local function ProcessReceipt(receiptInfo)
-	
+
 	--[[
 		ReceiptInfo:
 			PlayerId               [Number]
@@ -63,51 +62,59 @@ local function ProcessReceipt(receiptInfo)
 			CurrencyType           [CurrencyType Enum]
 			CurrencySpent          [Number]
 	--]]
-	
-	local player = game:GetService("Players"):GetPlayerByUserId(receiptInfo.PlayerId)
-	
+
+	local player = Players:GetPlayerByUserId(receiptInfo.PlayerId)
+
 	local dataStoreName = tostring(receiptInfo.PlayerId)
 	local key = tostring(receiptInfo.PurchaseId)
 
 	local notProcessed = Enum.ProductPurchaseDecision.NotProcessedYet
-	
+
 	-- Check if unique purchase was already completed:
 	local data = Data.new(dataStoreName, dataStoreScope)
 	local alreadyPurchasedSuccess, alreadyPurchased = data:Get(key):Await()
-	if (not alreadyPurchasedSuccess) then return notProcessed end
+	if (not alreadyPurchasedSuccess) then
+		return notProcessed
+	end
 
 	if (not alreadyPurchased) then
 		-- Mark as purchased and save immediately:
-		local success = data:Set(key, true):Then(function() return data:Save(key) end):Await()
-		if (not success) then return notProcessed end
+		local success = data:Set(key, true):Then(function()
+			return data:Save(key)
+		end):Await()
+		if (not success) then
+			return notProcessed
+		end
 	end
-	
+
 	if (player) then
 		local incSuccess = IncrementPurchase(player, receiptInfo.ProductId):Await()
-		if (not incSuccess) then return notProcessed end
+		if (not incSuccess) then
+			return notProcessed
+		end
 		StoreService:FireEvent(PROMPT_PURCHASE_FINISHED_EVENT, player, receiptInfo)
 		StoreService:FireClientEvent(PROMPT_PURCHASE_FINISHED_EVENT, player, receiptInfo)
 	end
-	
+
 	return Enum.ProductPurchaseDecision.PurchaseGranted
-	
+
 end
 
 
-function StoreService:HasPurchased(player, productId)
+function StoreService.HasPurchased(_, player, productId)
 	local success, productPurchases = Data.ForPlayer(player):Get(PRODUCT_PURCHASES_KEY, {}):Await()
 	return (success and productPurchases[tostring(productId)] ~= nil)
 end
 
 
-function StoreService:OwnsGamePass(player, gamePassId)
-	local success, owns = pcall(marketplaceService.UserOwnsGamePassAsync, marketplaceService, player.UserId, gamePassId)
+function StoreService.OwnsGamePass(_, player, gamePassId)
+	local success, owns = pcall(MarketplaceService.UserOwnsGamePassAsync, MarketplaceService, player.UserId, gamePassId)
 	return (success and owns or false)
 end
 
 
 -- Get the number of productId's purchased:
-function StoreService:GetNumberPurchased(player, productId)
+function StoreService.GetNumberPurchased(_, player, productId)
 	local n = 0
 	local success, productPurchases = Data.ForPlayer(player):Get(PRODUCT_PURCHASES_KEY, {}):Await()
 	if (success) then
@@ -134,8 +141,8 @@ function StoreService.Client:HasPurchased(player, productId)
 end
 
 
-function StoreService:Start()
-	marketplaceService.ProcessReceipt = ProcessReceipt
+function StoreService.Start()
+	MarketplaceService.ProcessReceipt = ProcessReceipt
 end
 
 

@@ -3,28 +3,31 @@
 -- January 2, 2018
 
 --[[
-	
+
 	UserInput simply encapsulates all user input modules.
-	
+
 	UserInput.Preferred
 		- Keyboard
 		- Mouse
 		- Gamepad
 		- Touch
-	
+
 	UserInput:Get(inputModuleName)
 	UserInput:GetPreferred()
 
 	UserInput.PreferredChanged(preferred)
-	
-	
+
+
 	Example:
-	
+
 	local keyboard = userInput:Get("Keyboard")
 	keyboard.KeyDown:Connect(function(key) end)
-	
+
 --]]
 
+
+local GuiService = game:GetService("GuiService")
+local UserInputService = game:GetService("UserInputService")
 
 
 local UserInput = {}
@@ -40,10 +43,9 @@ UserInput.Preferred = {
 UserInput._preferred = nil
 
 local modules = {}
-local userInput = game:GetService("UserInputService")
 
 
-function UserInput:Get(moduleName)
+function UserInput.Get(_, moduleName)
 	return modules[moduleName]
 end
 
@@ -57,10 +59,10 @@ function UserInput:Init()
 			modules[obj.Name] = module
 		end
 	end
-	
+
 	local function SetMouseIconEnabled(enabled)
 		if (self.HideMouse) then
-			userInput.MouseIconEnabled = enabled
+			UserInputService.MouseIconEnabled = enabled
 		end
 	end
 
@@ -77,7 +79,7 @@ function UserInput:Init()
 	end
 
 	local function LastInputTypeChanged(lastInputType)
-		if (lastInputType.Name:match("^Mouse")) then
+		if (string.match(lastInputType.Name, "^Mouse")) then
 			ChangePreferred(self.Preferred.Mouse)
 		elseif (lastInputType == Enum.UserInputType.Keyboard or lastInputType == Enum.UserInputType.TextInput) then
 			ChangePreferred(self.Preferred.Keyboard)
@@ -88,12 +90,12 @@ function UserInput:Init()
 		end
 	end
 
-	userInput.LastInputTypeChanged:Connect(LastInputTypeChanged)
+	UserInputService.LastInputTypeChanged:Connect(LastInputTypeChanged)
 	self.PreferredChanged = self.Shared.Event.new()
 
-	if (game:GetService("GuiService"):IsTenFootInterface()) then
+	if (GuiService:IsTenFootInterface()) then
 		ChangePreferred(self.Preferred.Gamepad)
-	elseif (userInput.TouchEnabled) then
+	elseif (UserInputService.TouchEnabled) then
 		ChangePreferred(self.Preferred.Touch)
 	else
 		ChangePreferred(self.Preferred.Keyboard)

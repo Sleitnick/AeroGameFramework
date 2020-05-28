@@ -3,38 +3,38 @@
 -- July 14, 2018
 
 --[[
-	
+
 	PID stands for Proportional-Integral-Derivative. It is common practice to use
 	a "PID Controller" (like this one) to calculate the desired output to meet a
 	certain setpoint or target. For instance, a car's cruise control setting
 	might use a PID Controller to calculate the necessary acceleration needed
 	to go from the current speed to the desired speed.
-	
-	
+
+
 	pid = PID.new(kp, ki, kd)
-	
+
 		VOID    pid:SetInput(input [, clampToMinMax])
 		VOID    pid:SetTarget(target [, clampToMinMax])
-		
+
 		NUMBER  pid:Compute()
-		
+
 		VOID    pid:SetTunings(kp, ki, kd)
 		VOID    pid:SetSampleTime(sampleTimeMillis)
 		VOID    pid:SetOutputLimits(min, max)
 		VOID    pid:ClearOutputLimits()
-		
+
 		VOID    pid:Run(callbackBefore, callbackAfter)
 		VOID    pid:Stop()
 		VOID    pid:Pause()
 		VOID    pid:Resume()
-		
+
 		VOID    pid:Clone()
-		
-	
+
+
 	EXAMPLE:
-	
+
 		pid = PID.new(0.01, 0.01, -0.01)
-		
+
 		pid:Run(
 			function()
 				pid:SetInput(currentSpeed)
@@ -44,23 +44,24 @@
 				car:SetAcceleration(output)
 			end
 		)
-	
+
 --]]
 
+
+local RunService = game:GetService("RunService")
 
 
 local PID = {}
 PID.__index = PID
 
 
-local tick = tick
 local function millis()
 	return tick() * 1000
 end
 
 
 function PID.new(kp, ki, kd)
-	
+
 	local self = setmetatable({
 		Input = 0;
 		Target = 0;
@@ -77,11 +78,11 @@ function PID.new(kp, ki, kd)
 		OutMax = math.huge;
 		_paused = false;
 	}, PID)
-	
+
 	self:SetTunings(kp, ki, kd)
-	
+
 	return self
-	
+
 end
 
 
@@ -141,31 +142,31 @@ end
 
 
 function PID:Compute()
-	
+
 	local now = millis()
 	local timeChange = (now - self.LastTime)
-	
+
 	if (timeChange > self.SampleTimeMillis) then
-	
+
 		local err = self.Target - self.Input
 		self.ITerm = math.clamp((self.ITerm + (self.I * err)), self.OutMin, self.OutMax)
 		local dInput = (self.Input - self.LastInput)
-		
+
 		self.Output = math.clamp((self.P * err) + (self.ITerm) - (self.D * dInput), self.OutMin, self.OutMax)
-		
+
 		self.LastError = err
 		self.LastInput = self.Input
 		self.LastTime = now
-		
+
 	end
-	
+
 	return self.Output
-	
+
 end
 
 
 function PID:_hookupHeartbeat()
-	self._heartbeat = game:GetService("RunService").Heartbeat:Connect(self._callback)
+	self._heartbeat = RunService.Heartbeat:Connect(self._callback)
 end
 
 
@@ -185,7 +186,9 @@ end
 
 
 function PID:Stop()
-	if (not self._running) then return end
+	if (not self._running) then
+		return
+	end
 	self._heartbeat:Disconnect()
 	self._heartbeat = nil
 	self._callback = nil

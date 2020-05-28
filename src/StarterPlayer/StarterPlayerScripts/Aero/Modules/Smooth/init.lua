@@ -3,18 +3,18 @@
 -- June 3, 2018
 
 --[[
-	
+
 	This is a wrapper for the SmoothDamp module. It stores
 	all needed variables internally for ease of use.
-	
+
 	-------------------------------------------------------------------------
 
 	local smooth = Smooth.new(Vector3 initialValue, Number smoothTime)
-	
+
 	smooth.Value
 	smooth.Goal
 	smooth.SmoothTime
-	
+
 	smooth:Update([Vector goal])
 	smooth:UpdateAngle([Vector goal])
 	smooth:SetMaxSpeed(Number speed)
@@ -44,19 +44,19 @@ local SmoothDamp = require(script:WaitForChild("SmoothDamp"))
 function Smooth.new(initialValue, smoothTime)
 
 	assert(typeof(initialValue) == "Vector3", "initialValue should be Vector3")
-	assert(typeof(smoothTime) == "number", "smoothTime should be a number")
+	assert(type(smoothTime) == "number", "smoothTime should be a number")
 	assert(smoothTime >= 0, "smoothTime must be a positive number")
-	
+
 	local self = setmetatable({
 		Value = initialValue;
 		Goal = initialValue;
 		SmoothTime = smoothTime;
 	}, Smooth)
-	
+
 	self._smoothDamp = SmoothDamp.new()
-	
+
 	return self
-	
+
 end
 
 

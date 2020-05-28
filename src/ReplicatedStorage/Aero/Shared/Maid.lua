@@ -12,10 +12,10 @@
 		> task is an event connection, function, or instance/table with a 'Destroy' method
 
 	maid:GivePromise(promise)
-	
+
 	maid:DoCleaning()
 		> Alias for Destroy
-	
+
 	maid:Destroy()
 		> Goes through each task & disconnects events, destroys instances, and calls functions
 

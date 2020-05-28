@@ -18,7 +18,7 @@
 			ClampMagnitude(Vector3.new(100, 0, 0), 15) == Vector3.new(15, 0, 0)
 			ClampMagnitude(Vector3.new(10, 0, 0), 20)  == Vector3.new(10, 0, 0)
 
-		
+
 		AngleBetween:
 
 			Finds the angle (in radians) between two vectors.
@@ -27,7 +27,7 @@
 			v2 = Vector3.new(0, 10, 0)
 			AngleBetween(v1, v2) == math.rad(90)
 
-		
+
 		AngleBetweenSigned:
 
 			Same as AngleBetween, but returns a signed value.
