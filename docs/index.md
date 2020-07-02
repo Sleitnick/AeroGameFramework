@@ -11,7 +11,7 @@ This is the main documentation page for AGF and is the single point of informati
 ## Collaborate
 AeroGameFramework is an open-source project, and your support is much appreciated. Feel free to report bugs, suggest features, and make pull requests. Please visit the [GitHub repository](https://github.com/Sleitnick/AeroGameFramework) for more information.
 
-Join the public [AeroGameFramework Discord server](https://discord.gg/2EkVhBB) to participate in discussions about the framework.
+Join the public [AeroGameFramework Discord server](https://discord.gg/GUdNjJs) to participate in discussions about the framework.
 
 The framework was built and is supported primary by [Stephen Leitnick](https://github.com/Sleitnick).
 
