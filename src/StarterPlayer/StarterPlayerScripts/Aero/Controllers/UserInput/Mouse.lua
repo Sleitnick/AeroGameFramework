@@ -14,7 +14,7 @@
 	Void      Mouse:SetMouseIcon(iconId)
 	Void      Mouse:SetMouseIconEnabled(isEnabled)
 	Boolean   Mouse:IsMouseIconEnabled()
-	Booleam   Mouse:IsButtonPressed(mouseButton)
+	Boolean   Mouse:IsButtonPressed(mouseButton)
 	Many      Mouse:Cast(ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
 	Many      Mouse:CastWithIgnoreList(ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
 	Many      Mouse:CastWithWhitelist(whitelistDescendantsTable, ignoreWater)
