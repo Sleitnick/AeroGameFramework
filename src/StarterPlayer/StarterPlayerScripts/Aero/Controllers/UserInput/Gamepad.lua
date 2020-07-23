@@ -176,10 +176,8 @@ end
 function Gamepad:ApplyDeadzone(value, deadzoneThreshold)
 	if (abs(value) < deadzoneThreshold) then
 		return 0
-	elseif (value > 0) then
-		return InverseLerp(value, deadzoneThreshold, 1)
 	else
-		return InverseLerp(value, deadzoneThreshold, -1)
+		return InverseLerp(deadzoneThreshold, 1, abs(value)) * (value > 0 and 1 or -1)
 	end
 end
 
