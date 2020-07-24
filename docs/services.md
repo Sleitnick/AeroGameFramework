@@ -40,13 +40,13 @@ return MyService
 
 | Returns | Method |
 | -------- | ----------- |
-| `void` | `service:WrapModule(Table tbl)` |
 | `void` | `service:RegisterEvent(String eventName)` |
 | `void` | `service:RegisterClientEvent(String clientEventName)` |
 | `void` | `service:Fire(String eventName, ...)` |
 | `void` | `service:FireClient(String clientEventName, Player player, ...)` |
 | `void` | `service:FireAllClients(String clientEventName, ...)` |
 | `void` | `service:FireOtherClients(String clientEventName, Player player, ...)` |
+| `Table` | `service:WrapModule(Table tbl)` |
 | `Connection` | `service:ConnectEvent(String eventName, Function handler)` |
 | `Connection` | `service:ConnectClientEvent(String clientEventName, Function handler)` |
 
@@ -139,10 +139,18 @@ function MyService:Start()
 	-- Transform 'thisThing' into a framework object:
 	self:WrapModule(thisThing)
 
+	-- Another example where an external module is loaded:
+	local anotherThing = require(someModule)
+	self:WrapModule(anotherThing)
+
+	-- Wrapping and requiring an external module in one line:
+	local otherModuleWrapped = self:WrapModule(require(otherModule))
+
 end
 ```
 
-This can be useful if you are requiring other non-framework modules in which you want to expose the framework.
+!!! tip
+	This can be useful if you are requiring other non-framework modules in which you want to expose the framework.
 
 --------------------------
 

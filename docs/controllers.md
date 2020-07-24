@@ -43,10 +43,10 @@ return MyController
 
 | Returns | Method |
 | -------- | ----------- |
-| `void` | `controller:WrapModule(Table tbl)` |
 | `void` | `controller:RegisterEvent(String eventName)` |
 | `void` | `controller:FireEvent(String eventName, ...)` |
 | `void` | `controller:ConnectEvent(String eventName, Function handler)` |
+| `Table` | `controller:WrapModule(Table tbl)` |
 
 --------------------------
 
@@ -143,9 +143,11 @@ The `WrapModule` method can be used to transform a table into a framework-like m
 function MyController:Start()
 
 	local thisThing = {}
+
 	function thisThing:Start()
 		print("thisThing started")
 	end
+
 	function thisThing:Init()
 		print("thisThing initialized")
 	end
@@ -156,6 +158,9 @@ function MyController:Start()
 	-- Another example where an external module is loaded:
 	local anotherThing = require(someModule)
 	self:WrapModule(anotherThing)
+
+	-- Wrapping and requiring an external module in one line:
+	local otherModuleWrapped = self:WrapModule(require(otherModule))
 
 end
 ```
