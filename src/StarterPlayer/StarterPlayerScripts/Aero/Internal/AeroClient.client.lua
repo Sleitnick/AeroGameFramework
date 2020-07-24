@@ -67,6 +67,7 @@ function Aero:WrapModule(tbl)
 			SpawnNow(tbl.Start, tbl)
 		end
 	end
+	return tbl
 end
 
 
