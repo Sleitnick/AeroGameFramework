@@ -25,7 +25,7 @@ Services and Controllers act as singletons. In other words, only one instance ex
 
 The order of which `Init` is invoked for services and controllers can be explicitly set. This is done through the `__aeroOrder` field.
 
-Simply set the service or controller `__aeroOrder` field to a number. The `Init` process will execute based on ascending order. Services and controllers without an `__aeroOrder` field set will be executed last (technically, the default order is set to `math.huge`).
+Simply set the service or controller `__aeroOrder` field to a number. The `Init` process will execute based on ascending order. Services and controllers without an `__aeroOrder` field have it set to `4096` by default, meaning that a module with a greater `__aeroOrder` than `4096` will have `Init` called after all unset modules have loaded.
 
 !!! note
 	The `__aeroOrder` field can be any valid number, including negatives and non-whole numbers. See the examples under the [Services](services.md#forcing-init-order) and [Controllers](controllers.md#forcing-init-order) page.
