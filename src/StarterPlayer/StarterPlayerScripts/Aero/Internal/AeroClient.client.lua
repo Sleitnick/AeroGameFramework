@@ -221,8 +221,8 @@ local function Init()
 		CollectControllers(controllers)
 		-- Sort controllers by optional __aeroOrder field:
 		table.sort(controllerTables, function(a, b)
-			local aOrder = (type(a.__aeroOrder) == "number" and a.__aeroOrder or math.huge)
-			local bOrder = (type(b.__aeroOrder) == "number" and b.__aeroOrder or math.huge)
+			local aOrder = (type(a.__aeroOrder) == "number" and a.__aeroOrder or 4096)
+			local bOrder = (type(b.__aeroOrder) == "number" and b.__aeroOrder or 4096)
 			return (aOrder < bOrder)
 		end)
 		-- Initialize controllers:
