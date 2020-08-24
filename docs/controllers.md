@@ -264,7 +264,7 @@ end
 
 -- Server service:
 function CustomService:Start()
-	self.Services:ConnectClientEvent("Hello", function(player, msg)
+	self:ConnectClientEvent("Hello", function(player, msg)
 		print(player.Name .. " says: " .. msg)
 	end)
 end
