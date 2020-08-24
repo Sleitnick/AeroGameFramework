@@ -32,7 +32,7 @@ end
 
 
 function Aero:RegisterEvent(eventName)
-	local event = self.Shared.Event.new()
+	local event = self.Shared.Signal.new()
 	self._events[eventName] = event
 	return event
 end
@@ -76,7 +76,7 @@ local function LoadService(serviceFolder, servicesTbl)
 	servicesTbl[serviceFolder.Name] = service
 	for _,v in ipairs(serviceFolder:GetChildren()) do
 		if (v:IsA("RemoteEvent")) then
-			local event = Aero.Shared.Event.new()
+			local event = Aero.Shared.Signal.new()
 			local fireEvent = event.Fire
 			function event:Fire(...)
 				v:FireServer(...)

@@ -4,10 +4,10 @@ Allows the creation of custom events.
 
 ## Constructor
 
-### Event.new()
-Creates a new Event object.
+### Signal.new()
+Creates a new Signal object.
 ```lua
-local event = Event.new()
+local signal = Signal.new()
 ```
 
 --------------------
@@ -17,7 +17,7 @@ local event = Event.new()
 ### `Fire(Variant args...)`
 Fire the event with any number of arguments.
 ```lua
-event:Fire("Hello world")
+signal:Fire("Hello world")
 ```
 
 --------------------
@@ -25,7 +25,17 @@ event:Fire("Hello world")
 ### `Wait()`
 Yields until the next time the event is fired, and returns anything that the fired event passed.
 ```lua
-local message = event:Wait()
+local message = signal:Wait()
+```
+
+--------------------
+
+### `WaitPromise()`
+Returns a Promise that resolves when the event fires next.
+```lua
+signal:WaitPromise():Then(function(message)
+	print(message)
+end)
 ```
 
 --------------------
@@ -35,7 +45,7 @@ Connects a function to the event. The function will be called every time the eve
 
 **Returns:** [Connection](https://developer.roblox.com/en-us/api-reference/datatype/RBXScriptConnection)
 ```lua
-event:Connect(function(message)
+signal:Connect(function(message)
 	print("Event fired! Got message:", message)
 end)
 ```
@@ -45,7 +55,7 @@ end)
 ### `DisconnectAll()`
 Disconnects all connected functions.
 ```lua
-event:DisconnectAll()
+signal:DisconnectAll()
 ```
 
 --------------------
@@ -53,5 +63,5 @@ event:DisconnectAll()
 ### `Destroy()`
 Destroys the event, which also disconnects all connections.
 ```lua
-event:Destroy()
+signal:Destroy()
 ```

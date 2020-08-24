@@ -277,8 +277,8 @@ function Data.new(name, scope, ordered)
 	}, Data)
 	
 	-- Data events:
-	self.Success = self.Shared.Event.new()
-	self.Failed = self.Shared.Event.new()
+	self.Success = self.Shared.Signal.new()
+	self.Failed = self.Shared.Signal.new()
 
 	dataPool[ds] = self
 

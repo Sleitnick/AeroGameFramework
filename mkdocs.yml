@@ -32,11 +32,11 @@ nav:
       - Shared Modules:
         - Base64: module_docs/shared/base64.md
         - Date: module_docs/shared/date.md
-        - Event: module_docs/shared/event.md
         - ListenerList: module_docs/shared/listener_list.md
         - Maid: module_docs/shared/maid.md
         - NumberUtil: module_docs/shared/number_util.md
         - Promise: module_docs/shared/promise.md
+        - Signal: module_docs/shared/signal.md
         - StringUtil: module_docs/shared/string_util.md
         - TableUtil: module_docs/shared/table_util.md
         - Thread: module_docs/shared/thread.md

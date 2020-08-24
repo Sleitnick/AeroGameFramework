@@ -42,7 +42,7 @@
                   },
                   {
                     "type": "file",
-                    "name": "Event.lua"
+                    "name": "Signal.lua"
                   },
                   {
                     "type": "file",

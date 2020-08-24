@@ -79,8 +79,8 @@ function MyClass.new()
 	local self = setmetatable({}, MyClass)
 
 	-- Create events:
-	self.Start = self.Shared.Event.new()
-	self.Stop = self.Shared.Event.new()
+	self.Start = self.Shared.Signal.new()
+	self.Stop = self.Shared.Signal.new()
 
 	-- Create maid:
 	self.Maid = self.Shared.Maid.new()

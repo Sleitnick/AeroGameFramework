@@ -89,7 +89,7 @@ function UserInput:Init()
 	end
 
 	userInput.LastInputTypeChanged:Connect(LastInputTypeChanged)
-	self.PreferredChanged = self.Shared.Event.new()
+	self.PreferredChanged = self.Shared.Signal.new()
 
 	if (game:GetService("GuiService"):IsTenFootInterface()) then
 		ChangePreferred(self.Preferred.Gamepad)

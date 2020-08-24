@@ -63,16 +63,16 @@ end
 
 function Mobile:Init()
 	
-	self.TouchStarted = self.Shared.Event.new()
-	self.TouchEnded = self.Shared.Event.new()
-	self.TouchMoved = self.Shared.Event.new()
-	self.TouchTapInWorld = self.Shared.Event.new()
-	self.TouchPinch = self.Shared.Event.new()
-	self.TouchLongPress = self.Shared.Event.new()
-	self.TouchPan = self.Shared.Event.new()
-	self.TouchRotate = self.Shared.Event.new()
-	self.TouchSwipe = self.Shared.Event.new()
-	self.TouchTap = self.Shared.Event.new()
+	self.TouchStarted = self.Shared.Signal.new()
+	self.TouchEnded = self.Shared.Signal.new()
+	self.TouchMoved = self.Shared.Signal.new()
+	self.TouchTapInWorld = self.Shared.Signal.new()
+	self.TouchPinch = self.Shared.Signal.new()
+	self.TouchLongPress = self.Shared.Signal.new()
+	self.TouchPan = self.Shared.Signal.new()
+	self.TouchRotate = self.Shared.Signal.new()
+	self.TouchSwipe = self.Shared.Signal.new()
+	self.TouchTap = self.Shared.Signal.new()
 	
 	userInput.TouchStarted:Connect(function(input, processed)
 		if (processed) then return end

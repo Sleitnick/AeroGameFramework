@@ -38,7 +38,7 @@ end
 
 
 function AeroServer:RegisterEvent(eventName)
-	local event = self.Shared.Event.new()
+	local event = self.Shared.Signal.new()
 	self._events[eventName] = event
 	return event
 end

@@ -129,7 +129,7 @@ end
 
 function MyController:Init()
 	-- Create 'Hello' event:
-	self.Hello = self.Shared.Event.new()
+	self.Hello = self.Shared.Signal.new()
 end
 ```
 
