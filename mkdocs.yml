@@ -12,8 +12,6 @@ nav:
   - Execution Model: execution_model.md
   - Module Docs:
       - Server:
-        - Services:
-          - StoreService: module_docs/server_services/store_service.md
         - Modules:
           - Data: module_docs/server_modules/data.md
       - Client:
