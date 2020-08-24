@@ -101,7 +101,7 @@ local function LoadService(serviceFolder, servicesTbl)
 					elseif (cache == NO_CACHE or (cacheTTL > 0 and (now - lastCacheTime) > cacheTTL)) then
 						lastCacheTime = now
 						local args = table.pack(...)
-						fetchingPromise = Promise.Async(function(resolve, _reject)
+						fetchingPromise = Promise.new(function(resolve, _reject)
 							resolve(table.pack(v:InvokeServer(table.unpack(args))))
 						end)
 						local success, _cache = fetchingPromise:Await()

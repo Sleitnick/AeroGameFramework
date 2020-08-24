@@ -226,7 +226,7 @@ function DataStorePages.new(dsp)
 end
 
 function DataStorePages:AdvanceToNextPage()
-	return Promise.Async(function(resolve, reject)
+	return Promise.new(function(resolve, reject)
 		local success, err = pcall(self.DSP.AdvanceToNextPageAsync, self.DSP)
 		self.IsFinished = self.DSP.IsFinished
 		if (success) then resolve() else reject(err) end
@@ -234,7 +234,7 @@ function DataStorePages:AdvanceToNextPage()
 end
 
 function DataStorePages:GetCurrentPage()
-	return Promise.Async(function(resolve, reject)
+	return Promise.new(function(resolve, reject)
 		local success, page = pcall(self.DSP.GetCurrentPage, self.DSP)
 		if (success) then resolve(page) else reject(page) end
 	end)
@@ -315,7 +315,7 @@ end
 -- Load a given key from the DataStore:
 function Data:_load(key)
 	Log("Loading " .. key .. "...")
-	return Promise.Async(function(resolve, reject)
+	return Promise.new(function(resolve, reject)
 		-- Call GetAsync and cache the results:
 		local success, value = pcall(self._ds.GetAsync, self._ds, key)
 		if (success) then
@@ -350,7 +350,7 @@ function Data:_save(key, value)
 		Log("No save necessary; " .. key .. " not marked as dirty")
 		return Promise.Resolve()
 	end
-	return Promise.Async(function(resolve, reject)
+	return Promise.new(function(resolve, reject)
 		-- Call SetAsync and mark key as no longer dirty:
 		local valBeforeSave = self:_getCache(key)
 		local success, err = pcall(self._ds.SetAsync, self._ds, key, value)
@@ -372,7 +372,7 @@ end
 
 function Data:_delete(key)
 	Log("Deleting " .. key .. "...")
-	return Promise.Async(function(resolve, reject)
+	return Promise.new(function(resolve, reject)
 		-- Call RemoveAsync and remove value from cache:
 		local success, err = pcall(self._ds.RemoveAsync, self._ds, key)
 		if (success) then
@@ -391,7 +391,7 @@ end
 
 function Data:_update(key, transformFunc)
 	Log("Updating " .. key .. "...")
-	return Promise.Async(function(resolve, reject)
+	return Promise.new(function(resolve, reject)
 		-- Call UpdateAsync and update cache with returned value:
 		local success, value = pcall(self._ds.UpdateAsync, self._ds, key, transformFunc)
 		if (success) then
@@ -409,7 +409,7 @@ end
 
 
 function Data:_getSorted(isAscending, pageSize, minValue, maxValue)
-	return Promise.Async(function(resolve, reject)
+	return Promise.new(function(resolve, reject)
 		-- Call GetSortedAsync and return the custom DataStorePages object:
 		local success, dsp = pcall(self._ds.GetSortedAsync, self._ds, isAscending, pageSize, minValue, maxValue)
 		if (success) then
@@ -564,7 +564,7 @@ function Data:OnUpdate(key, callback)
 	if (type(callback) ~= "function") then
 		return Promise.Reject("Callback must be a function")
 	end
-	return Promise.Async(function(resolve, reject)
+	return Promise.new(function(resolve, reject)
 		local success, err = pcall(self._ds.OnUpdate, self._ds, key, callback)
 		if (success) then
 			self.Success:Fire("OnUpdate", key)
