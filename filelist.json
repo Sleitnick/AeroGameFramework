@@ -135,12 +135,7 @@
               {
                 "type": "directory",
                 "name": "Services",
-                "children": [
-                  {
-                    "type": "file",
-                    "name": "StoreService.lua"
-                  }
-                ]
+                "children": []
               }
             ]
           }
