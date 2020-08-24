@@ -28,7 +28,8 @@
 
 local Mobile = {}
 
-local RAY = Ray.new
+local RAY_DISTANCE = 1000
+
 local workspace = workspace
 
 local userInput = game:GetService("UserInputService")
@@ -37,7 +38,7 @@ local cam = workspace.CurrentCamera
 
 function Mobile:GetRay(position)
 	local viewportMouseRay = cam:ViewportPointToRay(position.X, position.Y)
-	return RAY(viewportMouseRay.Origin, viewportMouseRay.Direction * 999)
+	return Ray.new(viewportMouseRay.Origin, viewportMouseRay.Direction * RAY_DISTANCE)
 end
 
 

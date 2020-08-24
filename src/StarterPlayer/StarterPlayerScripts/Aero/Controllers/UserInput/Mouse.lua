@@ -32,13 +32,13 @@
 
 local Mouse = {}
 
+local RAY_DISTANCE = 1000
+
 local playerMouse = game:GetService("Players").LocalPlayer:GetMouse()
 local userInput = game:GetService("UserInputService")
 local cam = workspace.CurrentCamera
 
 local workspace = workspace
-
-local RAY_DISTANCE = 1000
 
 
 function Mouse:GetPosition()
