@@ -13,7 +13,7 @@ nav:
   - Module Docs:
       - Server:
         - Modules:
-          - Data: module_docs/server_modules/data.md
+          - ProfileService: module_docs/server_modules/profile_service.md
       - Client:
         - Controllers:
           - UserInput: module_docs/client_controllers/user_input.md
