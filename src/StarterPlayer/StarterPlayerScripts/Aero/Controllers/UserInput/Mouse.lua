@@ -4,20 +4,18 @@
 
 --[[
 	
-	Vector2   Mouse:GetPosition()
-	Vector2   Mouse:GetDelta()
-	Void      Mouse:Lock()
-	Void      Mouse:LockCenter()
-	Void      Mouse:Unlock()
-	Ray       Mouse:GetRay(distance)
-	Ray       Mouse:GetRayFromXY(x, y)
-	Void      Mouse:SetMouseIcon(iconId)
-	Void      Mouse:SetMouseIconEnabled(isEnabled)
-	Boolean   Mouse:IsMouseIconEnabled()
-	Boolean   Mouse:IsButtonPressed(mouseButton)
-	Many      Mouse:Cast(ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
-	Many      Mouse:CastWithIgnoreList(ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
-	Many      Mouse:CastWithWhitelist(whitelistDescendantsTable, ignoreWater)
+	Vector2        Mouse:GetPosition()
+	Vector2        Mouse:GetDelta()
+	Void           Mouse:Lock()
+	Void           Mouse:LockCenter()
+	Void           Mouse:Unlock()
+	Ray            Mouse:GetRay(distance)
+	Ray            Mouse:GetRayFromXY(x, y)
+	Void           Mouse:SetMouseIcon(iconId)
+	Void           Mouse:SetMouseIconEnabled(isEnabled)
+	Boolean        Mouse:IsMouseIconEnabled()
+	Boolean        Mouse:IsButtonPressed(mouseButton)
+	RaycastResult  Mouse:Raycast(raycastParams [, distance = 1000])
 	
 	Mouse.LeftDown()
 	Mouse.LeftUp()
@@ -39,9 +37,8 @@ local userInput = game:GetService("UserInputService")
 local cam = workspace.CurrentCamera
 
 local workspace = workspace
-local RAY = Ray.new
 
-local RAY_DISTANCE = 999
+local RAY_DISTANCE = 1000
 
 
 function Mouse:GetPosition()
@@ -92,33 +89,38 @@ end
 function Mouse:GetRay(distance)
 	local mousePos = userInput:GetMouseLocation()
 	local viewportMouseRay = cam:ViewportPointToRay(mousePos.X, mousePos.Y)
-	return RAY(viewportMouseRay.Origin, viewportMouseRay.Direction * distance)
+	return Ray.new(viewportMouseRay.Origin, viewportMouseRay.Direction * distance)
 end
 
 
 function Mouse:GetRayFromXY(x, y)
 	local viewportMouseRay = cam:ViewportPointToRay(x, y)
-	return RAY(viewportMouseRay.Origin, viewportMouseRay.Direction)
+	return Ray.new(viewportMouseRay.Origin, viewportMouseRay.Direction)
 end
 
 
 function Mouse:Cast(ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
+	warn("Mouse:Cast() is deprecated; please use Mouse:Raycast(raycastParams) instead")
 	return workspace:FindPartOnRay(self:GetRay(RAY_DISTANCE), ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
 end
 
 
 function Mouse:CastWithIgnoreList(ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
+	warn("Mouse:CastWithIgnoreList() is deprecated; please use Mouse:Raycast(raycastParams) instead")
 	return workspace:FindPartOnRayWithIgnoreList(self:GetRay(RAY_DISTANCE), ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
 end
 
 
 function Mouse:CastWithWhitelist(whitelistDescendantsTable, ignoreWater)
+	warn("Mouse:CastWithWhitelist() is deprecated; please use Mouse:Raycast(raycastParams) instead")
 	return workspace:FindPartOnRayWithWhitelist(self:GetRay(RAY_DISTANCE), whitelistDescendantsTable, ignoreWater)
 end
 
 
-function Mouse:Start()
-	
+function Mouse:Raycast(raycastParams, distance)
+	local mousePos = userInput:GetMouseLocation()
+	local viewportMouseRay = cam:ViewportPointToRay(mousePos.X, mousePos.Y)
+	return workspace:Raycast(viewportMouseRay.Origin, viewportMouseRay.Direction * (distance or RAY_DISTANCE), raycastParams)
 end
 
 

@@ -42,22 +42,27 @@ end
 
 
 function Mobile:Cast(position, ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
+	warn("Mobile:Cast() is deprecated; please use Mouse:Raycast(raycastParams) instead")
 	return workspace:FindPartOnRay(self:GetRay(position), ignoreDescendantsInstance, terrainCellsAreCubes, ignoreWater)
 end
 
 
 function Mobile:CastWithIgnoreList(position, ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
+	warn("Mobile:CastWithIgnoreList() is deprecated; please use Mouse:Raycast(raycastParams) instead")
 	return workspace:FindPartOnRayWithIgnoreList(self:GetRay(position), ignoreDescendantsTable, terrainCellsAreCubes, ignoreWater)
 end
 
 
 function Mobile:CastWithWhitelist(position, whitelistDescendantsTable, ignoreWater)
+	warn("Mobile:CastWithWhitelist() is deprecated; please use Mouse:Raycast(raycastParams) instead")
 	return workspace:FindPartOnRayWithWhitelist(self:GetRay(position), whitelistDescendantsTable, ignoreWater)
 end
 
 
-function Mobile:Start()
-	
+function Mobile:Raycast(raycastParams, distance)
+	local mousePos = userInput:GetMouseLocation()
+	local viewportMouseRay = cam:ViewportPointToRay(mousePos.X, mousePos.Y)
+	return workspace:Raycast(viewportMouseRay.Origin, viewportMouseRay.Direction * (distance or RAY_DISTANCE), raycastParams)
 end
 
 
