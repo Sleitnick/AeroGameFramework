@@ -18,20 +18,19 @@
 
 local Settings = {}
 
+Settings.InternalSettings = {
+	DefaultOrder = 1000;
+}
+
 local SUFFIX = ".settings"
 local DEFAULT_SETTINGS = {
-	Order = nil;
+	Order = Settings.InternalSettings.DefaultOrder;
 	PreventInit = false;
 	PreventStart = false;
 	Standalone = false;
 }
 
 local cache = {}
-
-
-Settings.InternalSettings = {
-	DefaultOrder = 1000;
-}
 
 
 function Settings:GetDefault()

@@ -9,6 +9,7 @@ nav:
   - Services: services.md
   - Controllers: controllers.md
   - Modules: modules.md
+  - Settings: settings.md
   - Execution Model: execution_model.md
   - Module Docs:
       - Server:

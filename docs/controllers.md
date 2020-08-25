@@ -172,27 +172,23 @@ end
 
 ## Forcing `Init` Order
 
-By setting the `__aeroOrder` field, the `Init` execution order can be defined. By default, the order of execution is unknown.
+By using the `Order` setting, the `Init` execution order can be defined. By default, the order of execution is undetermined. For instance, you have services called `MyController` and `AnotherController`, you could have `MyController.settings` and `AnotherController.settings` modules with the following configuration:
 
 ```lua
-local MyController = {}
-MyController.__aeroOrder = 1
-
-function MyController:Init()
-	print("MyController will be initialized before AnotherController")
-end
-
-...
-
-local AnotherController = {}
-AnotherController.__aeroOrder = 2
-
-function AnotherController:Init()
-	print("AnotherController will be initialized after MyController")
-end
+-- MyController.settings
+return {
+	Order = 1;
+}
 ```
 
-By practice, it is discouraged to utilize another controller before entering into the `Start` phase of the controller (i.e. after all controllers have been initialized). However, using `__aeroOrder` can be used to guarantee initialization order. In the above example, `AnotherController` would be able to safely utilize `MyController`, knowing that `MyController` is guaranteed to have been initialized due to the execution order.
+```lua
+-- AnotherController.settings
+return {
+	Order = 2;
+}
+```
+
+With this configuration, it is guaranteed that `MyController` will have `Init` invoked before `AnotherController`.
 
 --------------------------
 
