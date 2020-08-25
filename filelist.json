@@ -30,6 +30,16 @@
             "children": [
               {
                 "type": "directory",
+                "name": "Internal",
+                "children": [
+                  {
+                    "type": "file",
+                    "name": "Settings.lua"
+                  }
+                ]
+              },
+              {
+                "type": "directory",
                 "name": "Shared",
                 "children": [
                   {

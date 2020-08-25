@@ -19,11 +19,14 @@ local mt = {__index = Aero}
 local controllersFolder = script.Parent.Parent:WaitForChild("Controllers")
 local modulesFolder = script.Parent.Parent:WaitForChild("Modules")
 local sharedFolder = game:GetService("ReplicatedStorage"):WaitForChild("Aero"):WaitForChild("Shared")
-
+local internalFolder = game:GetService("ReplicatedStorage").Aero:WaitForChild("Internal")
 local modulesAwaitingStart = {}
 
 local SpawnNow = require(sharedFolder:WaitForChild("Thread"):Clone()).SpawnNow
 local Promise = require(sharedFolder:WaitForChild("Promise"):Clone())
+local Settings = require(internalFolder:WaitForChild("Settings"))
+
+local settingsPerTbl = {}
 
 
 local function PreventEventRegister()
@@ -57,10 +60,11 @@ function Aero:WrapModule(tbl)
 	assert(type(tbl) == "table", "Expected table for argument")
 	tbl._events = {}
 	setmetatable(tbl, mt)
-	if (type(tbl.Init) == "function" and not tbl.__aeroPreventInit) then
+	local objSettings = (settingsPerTbl[tbl] or Settings:GetDefault())
+	if (type(tbl.Init) == "function" and not (objSettings.PreventInit or tbl.__aeroPreventInit)) then
 		tbl:Init()
 	end
-	if (type(tbl.Start) == "function" and not tbl.__aeroPreventStart) then
+	if (type(tbl.Start) == "function" and not (objSettings.PreventStart or tbl.__aeroPreventStart)) then
 		if (modulesAwaitingStart) then
 			modulesAwaitingStart[#modulesAwaitingStart + 1] = tbl
 		else
@@ -146,13 +150,17 @@ local function LazyLoadSetup(tbl, folder)
 		__index = function(t, i)
 			local child = folder[i]
 			if (child:IsA("ModuleScript")) then
+				local objSettings = Settings:Get(child)
 				local obj = require(child)
+				settingsPerTbl[obj] = objSettings
 				rawset(t, i, obj)
-				if (type(obj) == "table") then
-					-- only wrap module if it's actually a table, and not a table disguised as a function
-					local objMetatable = getmetatable(obj)
-					if (not (objMetatable and objMetatable.__call)) then
-						Aero:WrapModule(obj)
+				if (not objSettings.Standalone) then
+					if (type(obj) == "table") then
+						-- only wrap module if it's actually a table, and not a table disguised as a function
+						local objMetatable = getmetatable(obj)
+						if (not (objMetatable and objMetatable.__call)) then
+							Aero:WrapModule(obj)
+						end
 					end
 				end
 				return obj
@@ -168,10 +176,12 @@ end
 
 
 local function LoadController(module, controllersTbl)
+	local controllerSettings = Settings:Get(module)
 	local controller = require(module)
 	controllersTbl[module.Name] = controller
 	controller._events = {}
 	setmetatable(controller, mt)
+	settingsPerTbl[controller] = controllerSettings
 end
 
 
@@ -197,7 +207,9 @@ local function Init()
 	local function LoadAllControllers(parent, controllersTbl)
 		for _,child in ipairs(parent:GetChildren()) do
 			if (child:IsA("ModuleScript")) then
-				LoadController(child, controllersTbl)
+				if (not Settings:IsSettingsModule(child)) then
+					LoadController(child, controllersTbl)
+				end
 			elseif (child:IsA("Folder")) then
 				local tbl = {}
 				controllersTbl[child.Name] = tbl
@@ -210,8 +222,8 @@ local function Init()
 	local function InitAllControllers(controllers)
 		-- Collect all controllers:
 		local controllerTables = {}
-		local function CollectControllers(_controllers)
-			for _,controller in pairs(_controllers) do
+		local function CollectControllers(ctrls)
+			for _,controller in pairs(ctrls) do
 				if (getmetatable(controller) == mt) then
 					controllerTables[#controllerTables + 1] = controller
 				else
@@ -220,11 +232,21 @@ local function Init()
 			end
 		end
 		CollectControllers(controllers)
-		-- Sort controllers by optional __aeroOrder field:
+		-- Sort controllers by optional Order setting or __aeroOrder field:
+		local function GetOrder(controller)
+			local ctrlSettings = settingsPerTbl[controller]
+			local order
+			if (type(ctrlSettings.Order) == "number") then
+				order = ctrlSettings.Order
+			elseif (type(controller.__aeroOrder) == "number") then
+				order = controller.__aeroOrder
+			else
+				order = Settings.InternalSettings.DefaultOrder
+			end
+			return order
+		end
 		table.sort(controllerTables, function(a, b)
-			local aOrder = (type(a.__aeroOrder) == "number" and a.__aeroOrder or math.huge)
-			local bOrder = (type(b.__aeroOrder) == "number" and b.__aeroOrder or math.huge)
-			return (aOrder < bOrder)
+			return (GetOrder(a) < GetOrder(b))
 		end)
 		-- Initialize controllers:
 		for _,controller in ipairs(controllerTables) do
