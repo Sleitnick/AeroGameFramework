@@ -1,6 +1,6 @@
 # Install & Setup
 
-The preferred editor for the AeroGameFramework is [Visual Studio Code](https://code.visualstudio.com/). AeroGameFramework includes a VS Code extension, and ties in with other useful extensions & plugins (such as Rojo and Luacheck).
+The preferred editor for the AeroGameFramework is [Visual Studio Code](https://code.visualstudio.com/). AeroGameFramework includes a VS Code extension, and ties in with other useful extensions & plugins (such as Rojo and Selene).
 
 --------------------------
 

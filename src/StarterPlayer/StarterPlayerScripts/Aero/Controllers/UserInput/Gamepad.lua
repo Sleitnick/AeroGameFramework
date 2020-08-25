@@ -51,11 +51,11 @@ function Gamepad.new(gamepad)
 		_isConnected = false;
 	}, Gamepad)
 	
-	self.ButtonDown   = self.Shared.Event.new()
-	self.ButtonUp     = self.Shared.Event.new()
-	self.Changed      = self.Shared.Event.new()
-	self.Connected    = self.Shared.Event.new()
-	self.Disconnected = self.Shared.Event.new()
+	self.ButtonDown   = self.Shared.Signal.new()
+	self.ButtonUp     = self.Shared.Signal.new()
+	self.Changed      = self.Shared.Signal.new()
+	self.Connected    = self.Shared.Signal.new()
+	self.Disconnected = self.Shared.Signal.new()
 	
 	self._listeners = self.Shared.ListenerList.new()
 	

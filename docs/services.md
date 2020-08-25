@@ -40,13 +40,13 @@ return MyService
 
 | Returns | Method |
 | -------- | ----------- |
-| `void` | `service:WrapModule(Table tbl)` |
 | `void` | `service:RegisterEvent(String eventName)` |
 | `void` | `service:RegisterClientEvent(String clientEventName)` |
 | `void` | `service:Fire(String eventName, ...)` |
 | `void` | `service:FireClient(String clientEventName, Player player, ...)` |
 | `void` | `service:FireAllClients(String clientEventName, ...)` |
 | `void` | `service:FireOtherClients(String clientEventName, Player player, ...)` |
+| `Table` | `service:WrapModule(Table tbl)` |
 | `Connection` | `service:ConnectEvent(String eventName, Function handler)` |
 | `Connection` | `service:ConnectClientEvent(String clientEventName, Function handler)` |
 
@@ -139,10 +139,18 @@ function MyService:Start()
 	-- Transform 'thisThing' into a framework object:
 	self:WrapModule(thisThing)
 
+	-- Another example where an external module is loaded:
+	local anotherThing = require(someModule)
+	self:WrapModule(anotherThing)
+
+	-- Wrapping and requiring an external module in one line:
+	local otherModuleWrapped = self:WrapModule(require(otherModule))
+
 end
 ```
 
-This can be useful if you are requiring other non-framework modules in which you want to expose the framework.
+!!! tip
+	This can be useful if you are requiring other non-framework modules in which you want to expose the framework.
 
 --------------------------
 
@@ -234,27 +242,23 @@ end
 
 ## Forcing `Init` Order
 
-By setting the `__aeroOrder` field, the `Init` execution order can be defined. By default, the order of execution is unknown.
+By using the `Order` setting, the `Init` execution order can be defined. By default, the order of execution is undetermined. For instance, you have services called `MyService` and `AnotherService`, you could have `MyService.settings` and `AnotherService.settings` modules with the following configuration:
 
 ```lua
-local MyService = {}
-MyService.__aeroOrder = 1
-
-function MyService:Init()
-	print("MyService will be initialized before AnotherService")
-end
-
-...
-
-local AnotherService = {}
-AnotherService.__aeroOrder = 2
-
-function AnotherService:Init()
-	print("AnotherService will be initialized after MyService")
-end
+-- MyService.settings
+return {
+	Order = 1;
+}
 ```
 
-By practice, it is discouraged to utilize another service before entering into the `Start` phase of the service (i.e. after all services have been initialized). However, using `__aeroOrder` can be used to guarantee initialization order. In the above example, `AnotherService` would be able to safely utilize `MyService`, knowing that `MyService` is guaranteed to have been initialized due to the execution order.
+```lua
+-- AnotherService.settings
+return {
+	Order = 2;
+}
+```
+
+With this configuration, it is guaranteed that `MyService` will have `Init` invoked before `AnotherService`.
 
 --------------------------
 

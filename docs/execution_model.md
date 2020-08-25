@@ -23,26 +23,13 @@ Services and Controllers act as singletons. In other words, only one instance ex
 
 ## Forcing `Init` Order
 
-The order of which `Init` is invoked for services and controllers can be explicitly set. This is done through the `__aeroOrder` field.
-
-Simply set the service or controller `__aeroOrder` field to a number. The `Init` process will execute based on ascending order. Services and controllers without an `__aeroOrder` field set will be executed last (technically, the default order is set to `math.huge`).
-
-!!! note
-	The `__aeroOrder` field can be any valid number, including negatives and non-whole numbers. See the examples under the [Services](services.md#forcing-init-order) and [Controllers](controllers.md#forcing-init-order) page.
+The order of which `Init` is invoked for services and controllers can be explicitly set. This is done through the `Order` setting. For more info, see the [Settings](settings.md) section.
 
 --------------------------
 
 ## Preventing `Init` or `Start`
 
-There might be times where it is not desired for the framework to invoke either the `Start` or the `Init` method on a module, service, or controller. In such an instance, a flag can be added to indicate that the method should not be invoked by the framework.
-
-The two flags are:
-
-- `__aeroPreventInit`
-- `__aeroPreventStart`
-
-!!! note
-	Set the flag to a truthy value (preferrably just `true`). See the example under the [Modules](modules.md#prevent-init-or-start) page.
+There might be times where it is not desired for the framework to invoke either the `Start` or the `Init` method on a module, service, or controller. In such an instance, a flag can be added to indicate that the method should not be invoked by the framework. Use the `PreventInit` and `PreventStart` settings to skip over `Start` or `Init`. For more info, see the [Settings](settings.md) section.
 
 --------------------------
 

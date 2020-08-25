@@ -9,10 +9,12 @@ The below documentation favors the PascalCase methods. However, the original cam
 ## Static Methods
 
 ### [`Promise.new(Function callback)`](https://eryn.io/roblox-lua-promise/lib/#new)
-Create a new promise object. The callback receives a 'resolve' and 'reject' function that can then be called within the function.
+Create a new promise object. The callback receives a 'resolve', 'reject', and `onCancel` function that can then be called within the function. Call `resolve` when the task has completed succesfully. Call `reject` if something went wrong.
+
+Optionally, pass an cancellation handler to the `onCancel` function, which will be called if the promise gets cancelled. This can be used to stop whatever task is occuring within the promise. Read the [official documentation](https://eryn.io/roblox-lua-promise/lib/#new) for more information.
 
 ```lua
-local promise = Promise.new(function(resolve, reject)
+local promise = Promise.new(function(resolve, reject, onCancel)
 	if thisThingWorked() then
 		resolve()
 	else
@@ -23,8 +25,8 @@ end)
 
 --------------------
 
-### [`Promise.Async(Function callback)`](https://eryn.io/roblox-lua-promise/lib/#async)
-This is the same as `Promise.new`, except that it allows yielding, and thus should be used if the promise body needs to yield at all.
+### [`Promise.Defer(Function callback)`](https://eryn.io/roblox-lua-promise/lib/#promisify)
+Same as `Promise.new`, but will begin execution after a `Heartbeat` event.
 
 --------------------
 
@@ -53,27 +55,47 @@ Creates a new promise with a list of other promises. It is resolved once all pro
 
 --------------------
 
-### [`Promise.Some(Table promises, Number amount)`](https://eryn.io/roblox-lua-promise/lib/#some)
-
---------------------
-
-### [`Promise.Any(Table promises)`](https://eryn.io/roblox-lua-promise/lib/#any)
-
---------------------
-
 ### [`Promise.AllSettled(Table promises)`](https://eryn.io/roblox-lua-promise/lib/#allsettled)
+Creates a new promise with a list of other promises. It is resolved once all promises in the table are settled (i.e. after all `Finally` calls on each promise have been made).
 
 --------------------
 
 ### [`Promise.Race(Table promises)`](https://eryn.io/roblox-lua-promise/lib/#race)
+Resovles or rejects on the first promise to resolve or reject. All other promises will be cancelled.
 
 --------------------
 
-### [`Promise.Is(Table object)`](https://eryn.io/roblox-lua-promise/lib/#is)
+### [`Promise.Some(Table promises, Number amount)`](https://eryn.io/roblox-lua-promise/lib/#some)
+Resolves once the `amount` number of promises have resolved. All other promises will be cancelled.
+
+--------------------
+
+### [`Promise.Any(Table promises)`](https://eryn.io/roblox-lua-promise/lib/#any)
+Resolves if any of the promises resolve, and will reject if all promises are rejected. All other promises will be cancelled.
 
 --------------------
 
 ### [`Promise.Delay(Number seconds)`](https://eryn.io/roblox-lua-promise/lib/#delay)
+Creates a promise that resolves after the number of seconds has elapsed.
+
+--------------------
+
+### [`Promise.Each(Table promises, Function predicate)`](https://eryn.io/roblox-lua-promise/lib/#each)
+
+--------------------
+
+### [`Promise.Retry(callback, numRetries)`](https://eryn.io/roblox-lua-promise/lib/#retry)
+The callback is a function that returns a Promise. It will continue to call the callback `numRetries` times until the promise resolves. If the amount of times exceeds `numRetries`, then the last rejected promise will be returned.
+
+--------------------
+
+### [`Promise.FromEvent(event [, predicate])`](https://eryn.io/roblox-lua-promise/lib/#fromevent)
+Wraps an event with a Promise which is resolved the next time the event is fired.
+
+--------------------
+
+### [`Promise.Is(Any object)`](https://eryn.io/roblox-lua-promise/lib/#is)
+Checks to see if the passed object is a Promise.
 
 --------------------
 

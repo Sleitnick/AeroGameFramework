@@ -79,8 +79,8 @@ function MyClass.new()
 	local self = setmetatable({}, MyClass)
 
 	-- Create events:
-	self.Start = self.Shared.Event.new()
-	self.Stop = self.Shared.Event.new()
+	self.Start = self.Shared.Signal.new()
+	self.Stop = self.Shared.Signal.new()
 
 	-- Create maid:
 	self.Maid = self.Shared.Maid.new()
@@ -117,21 +117,14 @@ end
 
 ## Prevent `Init` or `Start`
 
-If you are trying to use a module that already has a `Start` or `Init` method that doesn't relate to the AeroGameFramework (e.g. a 3rd-party module not designed for the framework), then you can prevent the framework from invoking these methods. This is done by setting the `__aeroPreventInit` and `__aeroPreventStart` flags on the module. Note that those two flags are prefixed by two underscores, similar to Lua metamethods.
+If you are trying to use a module that already has a `Start` or `Init` method that doesn't relate to AeroGameFramework (e.g. a 3rd-party module not designed for the framework), then you can prevent the framework from invoking these methods. This is done by setting the `PreventInit` and `PreventStart` flags on the settings module for the given module.
 
-```lua
-local MyModule = {}
+For more info, see the [Settings](settings.md) section.
 
--- Prevent the framework from invoking the 'Start' method:
-MyModule.__aeroPreventStart = true
+--------------------------
 
-function MyModule:Start()
-	-- Won't be invoked by the framework
-end
+## Third-Party Modules
 
-function MyModule:Init()
-	-- Still will be invoked by the framework
-end
+When using third-party modules within AGF, it is recommended to use `Standalone` mode.
 
-return MyModule
-```
+For more info, see the [Third-Party](settings.md#third-party-modules) section for settings.
