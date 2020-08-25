@@ -154,13 +154,11 @@ local function LazyLoadSetup(tbl, folder)
 				local obj = require(child)
 				settingsPerTbl[obj] = objSettings
 				rawset(t, i, obj)
-				if (not objSettings.Standalone) then
-					if (type(obj) == "table") then
-						-- only wrap module if it's actually a table, and not a table disguised as a function
-						local objMetatable = getmetatable(obj)
-						if (not (objMetatable and objMetatable.__call)) then
-							Aero:WrapModule(obj)
-						end
+				if (type(obj) == "table" and not objSettings.Standalone) then
+					-- only wrap module if it's actually a table, and not a table disguised as a function
+					local objMetatable = getmetatable(obj)
+					if (not (objMetatable and objMetatable.__call)) then
+						Aero:WrapModule(obj)
 					end
 				end
 				return obj

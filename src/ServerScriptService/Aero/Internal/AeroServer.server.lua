@@ -15,6 +15,7 @@ local mt = {__index = AeroServer}
 local servicesFolder = game:GetService("ServerStorage").Aero.Services
 local modulesFolder = game:GetService("ServerStorage").Aero.Modules
 local sharedFolder = game:GetService("ReplicatedStorage").Aero.Shared
+local internalFolder = game:GetService("ReplicatedStorage").Aero.Internal
 
 local remoteServices = Instance.new("Folder")
 remoteServices.Name = "AeroRemoteServices"
@@ -23,6 +24,10 @@ local players = {}
 local modulesAwaitingStart = {}
 
 local SpawnNow = require(sharedFolder.Thread:Clone()).SpawnNow
+local Settings = require(internalFolder:WaitForChild("Settings"))
+
+local settingsPerTbl = {}
+
 
 local function PreventEventRegister()
 	error("Cannot register event after Init method")
@@ -143,10 +148,11 @@ function AeroServer:WrapModule(tbl)
 	assert(type(tbl) == "table", "Expected table for argument")
 	tbl._events = {}
 	setmetatable(tbl, mt)
-	if (type(tbl.Init) == "function" and not tbl.__aeroPreventInit) then
+	local objSettings = (settingsPerTbl[tbl] or Settings:GetDefault())
+	if (type(tbl.Init) == "function" and not (objSettings.PreventInit or tbl.__aeroPreventInit)) then
 		tbl:Init()
 	end
-	if (type(tbl.Start) == "function" and not tbl.__aeroPreventStart) then
+	if (type(tbl.Start) == "function" and not (objSettings.PreventStart or tbl.__aeroPreventStart)) then
 		if (modulesAwaitingStart) then
 			modulesAwaitingStart[#modulesAwaitingStart + 1] = tbl
 		else
@@ -173,9 +179,11 @@ local function LazyLoadSetup(tbl, folder)
 		__index = function(t, i)
 			local child = folder[i]
 			if (child:IsA("ModuleScript")) then
+				local objSettings = Settings:Get(child)
 				local obj = require(child)
+				settingsPerTbl[obj] = objSettings
 				rawset(t, i, obj)
-				if (type(obj) == "table") then
+				if (type(obj) == "table" and not objSettings.Standalone) then
 					-- Only wrap module if it's actually a table, and not a table disguised as a function:
 					local objMetatable = getmetatable(obj)
 					if (not (objMetatable and objMetatable.__call)) then
@@ -288,8 +296,8 @@ local function Init()
 	local function InitAllServices(services)
 		-- Collect all services:
 		local serviceTables = {}
-		local function CollectServices(_services)
-			for _,service in pairs(_services) do
+		local function CollectServices(svcs)
+			for _,service in pairs(svcs) do
 				if (getmetatable(service) == mt) then
 					serviceTables[#serviceTables + 1] = service
 				else
@@ -298,11 +306,21 @@ local function Init()
 			end
 		end
 		CollectServices(services)
-		-- Sort services by optional __aeroOrder field:
+		-- Sort services by optional Order setting or __aeroOrder field:
+		local function GetOrder(service)
+			local svcSettings = settingsPerTbl[service]
+			local order
+			if (type(svcSettings.Order) == "number") then
+				order = svcSettings.Order
+			elseif (type(service.__aeroOrder) == "number") then
+				order = service.__aeroOrder
+			else
+				order = Settings.InternalSettings.DefaultOrder
+			end
+			return order
+		end
 		table.sort(serviceTables, function(a, b)
-			local aOrder = (type(a.__aeroOrder) == "number" and a.__aeroOrder or math.huge)
-			local bOrder = (type(b.__aeroOrder) == "number" and b.__aeroOrder or math.huge)
-			return (aOrder < bOrder)
+			return (GetOrder(a) < GetOrder(b))
 		end)
 		-- Initialize services:
 		for _,service in ipairs(serviceTables) do
