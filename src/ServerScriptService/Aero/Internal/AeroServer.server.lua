@@ -284,7 +284,9 @@ local function Init()
 	local function LoadAllServices(parent, servicesTbl, parentFolder)
 		for _,child in ipairs(parent:GetChildren()) do
 			if (child:IsA("ModuleScript")) then
-				LoadService(child, servicesTbl, parentFolder)
+				if (not Settings:IsSettingsModule(child)) then
+					LoadService(child, servicesTbl, parentFolder)
+				end
 			elseif (child:IsA("Folder")) then
 				local tbl = {}
 				local folder = Instance.new("Folder")
