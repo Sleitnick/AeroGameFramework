@@ -204,6 +204,8 @@ end
 
 -- Load service from module:
 local function LoadService(module, servicesTbl, parentFolder)
+
+	local serviceSettings = Settings:Get(module)
 	
 	local remoteFolder = Instance.new("Folder")
 	remoteFolder.Name = module.Name
@@ -223,6 +225,8 @@ local function LoadService(module, servicesTbl, parentFolder)
 	service._clientEvents = {}
 	service._clientCaches = {}
 	service._remoteFolder = remoteFolder
+
+	settingsPerTbl[service] = serviceSettings
 	
 end
 
