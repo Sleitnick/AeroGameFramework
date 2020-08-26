@@ -52,10 +52,6 @@
                   },
                   {
                     "type": "file",
-                    "name": "Signal.lua"
-                  },
-                  {
-                    "type": "file",
                     "name": "ListenerList.lua"
                   },
                   {
@@ -69,6 +65,10 @@
                   {
                     "type": "file",
                     "name": "Promise.lua"
+                  },
+                  {
+                    "type": "file",
+                    "name": "Signal.lua"
                   },
                   {
                     "type": "file",
@@ -139,13 +139,12 @@
                         "name": "init.lua"
                       }
                     ]
+                  },
+                  {
+                    "type": "file",
+                    "name": "ProfileService.lua"
                   }
                 ]
-              },
-              {
-                "type": "directory",
-                "name": "Services",
-                "children": []
               }
             ]
           }
