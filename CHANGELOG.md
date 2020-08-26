@@ -32,9 +32,9 @@ As always, you can also check the commit history for a given version as well, an
 ### Version History Notes
 
 #### <a name="1.7.0"></a> Version 1.7.0
-Removed StoreService, as it was not very good and pigeonholed developers into a specific pattern for product purchases.
+<b>==[BC Break]==</b>  Removed StoreService, as it was not very good and pigeonholed developers into a specific pattern for product purchases.
 
-Added new Signal module to replace the older Event module. The API is the same, but the implementation is more robust.
+<b>==[BC Break]==</b>  Added new Signal module to replace the older Event module. The API is the same, but the implementation is more robust.
 
 Replaced older raycasting methods with the newer ones within the Mouse and Mobile input modules.
 
