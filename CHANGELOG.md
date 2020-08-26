@@ -14,6 +14,7 @@ As always, you can also check the commit history for a given version as well, an
 
 | Version | Date | Description |
 | ---|---|--- |
+| [1.7.0](#1.7.0) | 2020-08-25 | <ul><li>Remove StoreService</li><li>Remove old Event module</li><li>Add new Signal module (replaces Event module)</li><li>Add new raycasting methods</li><li>Add ProfileService module</li><li>Upgrade Promise to 3.0.0</li><li>Implement new `.settings` file for configuring module behavior within the framework</li><li>Updated VS Code extension to allow for creating settings files (v0.0.22)</li></ul> |
 | [1.6.1](#1.6.1) | 2020-05-21 | <ul><li>Switch to Selene for linting</li><li>Include GitHub Action to run Selene for new pull requests</li><li>Less verbose method names for firing events</li><li>Various bug fixes and performance improvements</li></ul> |
 | [1.6.0](#1.6.0) | 2020-04-23 | <ul><li>Add NumberUtil and VectorUtil libraries under Shared</li></ul> |
 | [1.5.2](#1.5.2) | 2020-04-14 | <ul><li>Fix a breaking issue with back-to-back calls to a RemoteFunction incorrectly caching</li></ul> |
@@ -29,6 +30,17 @@ As always, you can also check the commit history for a given version as well, an
 | [1.2.2](#1.2.2) | 2018-08-15 | <ul><li>Added Failed events for DataService.</li><li>Added Failed event for DataStoreCache.</li><li>Added Failed event for SafeDataStore.</li></ul> |
 
 ### Version History Notes
+
+#### <a name="1.7.0"></a> Version 1.7.0
+Removed StoreService, as it was not very good and pigeonholed developers into a specific pattern for product purchases.
+
+Added new Signal module to replace the older Event module. The API is the same, but the implementation is more robust.
+
+Replaced older raycasting methods with the newer ones within the Mouse and Mobile input modules.
+
+Added MadStudio's ProfileService module for datastore use. This module is much more robust than the existing Data module.
+
+Added a new `.settings` module feature to configure the behavior of modules within the framework. For instance, a controller named `MyController` can now have a `MyController.settings` module that contains specific configuration details for the module. See [Settings](https://sleitnick.github.io/AeroGameFramework/settings/) documentation. The VS Code extension for AGF has also been updated to support this feature (v0.0.22).
 
 #### <a name="1.6.1"></a> Version 1.6.1
 Added support for Selene. All pull requests are now required to pass through the Selene check before being merged into master.
