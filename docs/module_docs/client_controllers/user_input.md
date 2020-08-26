@@ -31,7 +31,7 @@ This is off by default because it will conflict with setting the mouse visibilit
 
 ### `Get(inputModuleName)`
 
-Gets the input module with the given name. Module names available are [`Keyboard`](../user_inputs/keyboard/) `Keyboard`, `Mouse`, `Gamepad`, and `Mobile`.
+Gets the input module with the given name. Module names available are [`Mouse`](../user_inputs/mouse), [`Keyboard`](../user_inputs/keyboard), [`Gamepad`](../user_inputs/gamepad), and [`Mobile`](../user_inputs/mobile).
 
 ```lua
 local mouse    = userInput:Get("Mouse")
