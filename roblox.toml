@@ -8031,8 +8031,6 @@ type = "number"
 
 [module]
 removed = true
-[os.clock]
-removed = true
 
 [os.execute]
 removed = true
