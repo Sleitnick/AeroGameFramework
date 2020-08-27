@@ -14,7 +14,7 @@ As always, you can also check the commit history for a given version as well, an
 
 | Version | Date | Description |
 | ---|---|--- |
-| [1.7.0](#1.7.0) | 2020-08-25 | <ul><li>Remove StoreService</li><li>Remove old Event module</li><li>Add new Signal module (replaces Event module)</li><li>Add new raycasting methods</li><li>Add ProfileService module</li><li>Upgrade Promise to 3.0.0</li><li>Implement new `.settings` file for configuring module behavior within the framework</li><li>Updated VS Code extension to allow for creating settings files (v0.0.22)</li></ul> |
+| [1.7.1](#1.7.1) | 2020-08-25 | <ul><li>Remove StoreService</li><li>Remove old Event module</li><li>Add new Signal module (replaces Event module)</li><li>Add new raycasting methods</li><li>Add ProfileService module</li><li>Upgrade Promise to 3.0.1</li><li>Implement new `.settings` file for configuring module behavior within the framework</li><li>Updated VS Code extension to allow for creating settings files (v0.0.23)</li><li>New PID implementation</li></ul> |
 | [1.6.1](#1.6.1) | 2020-05-21 | <ul><li>Switch to Selene for linting</li><li>Include GitHub Action to run Selene for new pull requests</li><li>Less verbose method names for firing events</li><li>Various bug fixes and performance improvements</li></ul> |
 | [1.6.0](#1.6.0) | 2020-04-23 | <ul><li>Add NumberUtil and VectorUtil libraries under Shared</li></ul> |
 | [1.5.2](#1.5.2) | 2020-04-14 | <ul><li>Fix a breaking issue with back-to-back calls to a RemoteFunction incorrectly caching</li></ul> |
@@ -31,10 +31,12 @@ As always, you can also check the commit history for a given version as well, an
 
 ### Version History Notes
 
-#### <a name="1.7.0"></a> Version 1.7.0
-<b>==[BC Break]==</b>  Removed StoreService, as it was not very good and pigeonholed developers into a specific pattern for product purchases.
+#### <a name="1.7.1"></a> Version 1.7.1
+<b>==[BC Break]==</b> Removed StoreService, as it was not very good and pigeonholed developers into a specific pattern for product purchases.
 
-<b>==[BC Break]==</b>  Added new Signal module to replace the older Event module. The API is the same, but the implementation is more robust.
+<b>==[BC Break]==</b> Added new Signal module to replace the older Event module. The API is the same, but the implementation is more robust.
+
+<b>==[BC Break]==</b> New PID implementation.
 
 Replaced older raycasting methods with the newer ones within the Mouse and Mobile input modules.
 
