@@ -22,7 +22,7 @@
 		! Do not store NaN values
 	 	! Do not create array tables with non-sequential indexes - attempting to replicate such tables will result in an error;
 		! Do not create mixed tables (some values indexed by number and others by string key), as only
-		     the data indexed by number will be replicated.
+			 the data indexed by number will be replicated.
 		! Do not index tables by anything other than numbers and strings.
 		! Do not reference Roblox Instances
 		! Do not reference userdata (Vector3, Color3, CFrame...) - Serialize userdata before referencing
@@ -34,10 +34,10 @@
 		
 	Members:
 	
-		ProfileService.ServiceLocked         [bool]
+		ProfileService.ServiceLocked		 [bool]
 		
-		ProfileService.IssueSignal           [ScriptSignal](error_message)
-		ProfileService.CorruptionSignal      [ScriptSignal](profile_store_name, profile_key)
+		ProfileService.IssueSignal		   [ScriptSignal](error_message)
+		ProfileService.CorruptionSignal	  [ScriptSignal](profile_store_name, profile_key)
 		ProfileService.CriticalStateSignal   [ScriptSignal](is_critical_state)
 	
 	Functions:
@@ -47,9 +47,9 @@
 		* Parameter description for "ProfileService.GetProfileStore()":
 		
 			profile_store_name   [string] -- DataStore name
-			profile_template     []:
-				{}                        [table] -- Profiles will default to given table (hard-copy) when no data was saved previously
-				nil                       [nil] -- ProfileStore:LoadProfileAsync() method will be locked
+			profile_template	 []:
+				{}						[table] -- Profiles will default to given table (hard-copy) when no data was saved previously
+				nil					   [nil] -- ProfileStore:LoadProfileAsync() method will be locked
 				
 	Members [ProfileStore]:
 	
@@ -71,7 +71,7 @@
 		
 		* Parameter description for "ProfileStore:LoadProfileAsync()":
 		
-			profile_key            [string] -- DataStore key
+			profile_key			[string] -- DataStore key
 			not_released_handler = "ForceLoad" -- Force loads profile on first call
 			OR
 			not_released_handler = "Steal" -- Steals the profile ignoring it's session lock
@@ -88,21 +88,21 @@
 						
 		* Parameter description for "ProfileStore:GlobalUpdateProfileAsync()":
 		
-			profile_key      [string] -- DataStore key
+			profile_key	  [string] -- DataStore key
 			update_handler   [function] (GlobalUpdates) -- This function gains access to GlobalUpdates object methods
 				(update_handler can't yield)
 		
 	Members [Profile]:
 	
-		Profile.Data            [table] -- Writable table that gets saved automatically and once the profile is released
-		Profile.MetaData        [table] (Read-only) -- Information about this profile
+		Profile.Data			[table] -- Writable table that gets saved automatically and once the profile is released
+		Profile.MetaData		[table] (Read-only) -- Information about this profile
 		
 			Profile.MetaData.ProfileCreateTime   [number] (Read-only) -- os.time() timestamp of profile creation
-			Profile.MetaData.SessionLoadCount    [number] (Read-only) -- Amount of times the profile was loaded
-			Profile.MetaData.ActiveSession       [table] (Read-only) {place_id, game_job_id} / nil -- Set to a session link if a
+			Profile.MetaData.SessionLoadCount	[number] (Read-only) -- Amount of times the profile was loaded
+			Profile.MetaData.ActiveSession	   [table] (Read-only) {place_id, game_job_id} / nil -- Set to a session link if a
 				game session is currently having this profile loaded; nil if released
-			Profile.MetaData.MetaTags            [table] {["tag_name"] = tag_value, ...} -- Saved and auto-saved just like Profile.Data
-			Profile.MetaData.MetaTagsLatest      [table] (Read-only) -- Latest version of MetaData.MetaTags that was definetly saved to DataStore
+			Profile.MetaData.MetaTags			[table] {["tag_name"] = tag_value, ...} -- Saved and auto-saved just like Profile.Data
+			Profile.MetaData.MetaTagsLatest	  [table] (Read-only) -- Latest version of MetaData.MetaTags that was definetly saved to DataStore
 				(You can use Profile.MetaData.MetaTagsLatest for product purchase save confirmation, but create a system to clear old tags after
 				they pile up)
 		
@@ -1572,19 +1572,21 @@ end
 
 ----- Initialize -----
 
-if IsStudio == true then
-	local status, message = pcall(function()
-		-- This will error if current instance has no Studio API access:
-		DataStoreService:GetDataStore("____PS"):SetAsync("____PS", os.time())
-	end)
-	if status == false and (string.find(message, "403", 1, true) ~= nil or string.find(message, "must publish", 1, true) ~= nil) then
-		UseMockDataStore = true
-		ProfileService._use_mock_data_store = true
-		print("[ProfileService]: Roblox API services unavailable - data will not be saved")
-	else
-		print("[ProfileService]: Roblox API services available - data will be saved")
+coroutine.wrap(function()
+	if IsStudio == true then
+		local status, message = pcall(function()
+			-- This will error if current instance has no Studio API access:
+			DataStoreService:GetDataStore("____PS"):SetAsync("____PS", os.time())
+		end)
+		if status == false and (string.find(message, "403", 1, true) ~= nil or string.find(message, "must publish", 1, true) ~= nil) then
+			UseMockDataStore = true
+			ProfileService._use_mock_data_store = true
+			print("[ProfileService]: Roblox API services unavailable - data will not be saved")
+		else
+			print("[ProfileService]: Roblox API services available - data will be saved")
+		end
 	end
-end
+end)()
 
 ----- Connections -----
 
@@ -1687,5 +1689,9 @@ Madwork.ConnectToOnClose(
 	end,
 	UseMockDataStore == false -- Always run this OnClose task if using Roblox API services
 )
+
+--function ProfileService:Init()
+--	DataStoreService = self.Modules.DataStoreService
+--end
 
 return ProfileService
