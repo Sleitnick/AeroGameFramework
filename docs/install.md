@@ -53,7 +53,7 @@ The VS Code extension for AeroGameFramework provides a simplified directory hier
 
 ## Creating new source files (Services, Controllers, and Modules)
 
-1. Right-click wihtin the AGF Treeview and click on `AeroGameFramework: Create` from the context menu, _or_ click the Script Add button at the top
+1. Right-click within the AGF Treeview and click on `AeroGameFramework: Create` from the context menu, _or_ click the Script Add button at the top
 1. Select whether the source file should exist within the Server, Client, or Shared environment
 1. Select the source type (e.g. Service, Controller, or Module)
 1. Type in the name and press Enter
