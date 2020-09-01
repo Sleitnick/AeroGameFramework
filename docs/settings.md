@@ -34,7 +34,7 @@ The fields above are defined as such:
 --------------------------
 
 ## Third-Party Modules
-When using third-party modules within AGF, it is recommended to use `Standalone` mode. To do this, make an accompanying `.settings` file (e.g. `DataStore2.settings` or `Rojo.settings`) with the following configuration:
+When using third-party modules within AGF, it is recommended to use `Standalone` mode. To do this, make an accompanying `.settings` file (e.g. `DataStore2.settings` or `Roact.settings`) with the following configuration:
 
 ```lua
 return {Standalone = true}
@@ -54,4 +54,4 @@ This flag will allow the `Init` method to be skipped within modules. This will _
 This flag will allow the `Start` method to be skipped within modules. This will _not_ work for services or controllers. The purpose of this flag is to allow third-party modules to tie into AGF that might already have an `Start` method for other purposes. This value should be either `true` or `false`. The default value is `false`.
 
 ### Standalone
-This flag will prevent AGF from wrapping the module with the AGF metatable. This should be used when using third-party modules such as DataStore2 and Rojo.
+This flag will prevent AGF from wrapping the module with the AGF metatable. This should be used when using third-party modules such as DataStore2 and Roact.

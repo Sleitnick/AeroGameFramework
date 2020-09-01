@@ -186,7 +186,7 @@ end
 
 function MyService:Init()
 	-- Register client event:
-	self:RegisterClient("MyClientMethod")
+	self:RegisterClientEvent("MyClientMethod")
 end
 ```
 
