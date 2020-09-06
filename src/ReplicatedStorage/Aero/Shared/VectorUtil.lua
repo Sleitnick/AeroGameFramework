@@ -44,7 +44,7 @@ local VectorUtil = {}
 
 
 function VectorUtil.ClampMagnitude(vector, maxMagnitude)
-	return (vector.Magnitude > maxMagnitude and (vector.Unit * maxMagnitude) or vector)
+	return vector.Unit * maxMagnitude
 end
 
 
