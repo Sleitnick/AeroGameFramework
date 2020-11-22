@@ -1,0 +1,3 @@
+[tools]
+# Install latest selene
+selene = { source = "Kampfkarren/selene", version = "x" }
