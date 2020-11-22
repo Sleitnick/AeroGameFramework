@@ -15,6 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: Roblox/setup-foreman@v1
+      with:
         version: "^1.0.0"
         token: ${{ SECRETS.GITHUB_TOKEN }}
     - name: Lint
