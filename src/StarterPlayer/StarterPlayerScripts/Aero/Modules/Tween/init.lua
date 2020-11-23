@@ -136,11 +136,9 @@ function Tween:Play()
 		end
 	end
 	
-	local tick = tick
-	
 	local elapsed = self._elapsedTime
 	local duration = self.TweenInfo.Time
-	local last = tick()
+	local last = time()
 	local callback = self.Callback
 	local reverses = self.TweenInfo.Reverses
 	
@@ -171,7 +169,7 @@ function Tween:Play()
 	
 	-- Tween:
 	game:GetService("RunService"):BindToRenderStep(self._id, Enum.RenderPriority.Camera.Value - 1, function()
-		local now = tick()
+		local now = time()
 		local dt = (now - last)
 		last = now
 		if (IsDelayed(dt)) then return end

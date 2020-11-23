@@ -98,7 +98,7 @@ local function LoadService(serviceFolder, servicesTbl)
 				local lastCacheTime = 0
 				local fetchingPromise
 				service[methodName] = function(self, ...)
-					local now = tick()
+					local now = time()
 					if (fetchingPromise) then
 						local _,c = fetchingPromise:Await()
 						return table.unpack(c)

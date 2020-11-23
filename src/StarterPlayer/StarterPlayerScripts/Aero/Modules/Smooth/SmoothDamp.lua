@@ -48,14 +48,14 @@ SmoothDamp.__index = SmoothDamp
 function SmoothDamp.new()
 	return setmetatable({
 		MaxSpeed = math.huge;
-		_update = tick();
+		_update = time();
 		_velocity = Vector3.new();
 	}, SmoothDamp)
 end
 
 function SmoothDamp:Update(current, target, smoothTime)
 	local currentVelocity = self._velocity
-	local now = tick()
+	local now = time()
 	local deltaTime = (now - self._update)
 	smoothTime = math.max(0.0001, smoothTime)
 
