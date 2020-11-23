@@ -81,11 +81,11 @@ function TaskScheduler:CreateScheduler(targetFps)
 	
 	local updateFrameTableEvent = nil
 	
-	local start = tick()
+	local start = time()
 	runService.RenderStepped:Wait()
 	
 	local function UpdateFrameTable()
-		lastIteration = tick()
+		lastIteration = time()
 		for i = #frameUpdateTable,1,-1 do
 			frameUpdateTable[i + 1] = ((frameUpdateTable[i] >= (lastIteration - 1)) and frameUpdateTable[i] or nil)
 		end
@@ -96,8 +96,8 @@ function TaskScheduler:CreateScheduler(targetFps)
 		updateFrameTableEvent = runService.RenderStepped:Connect(UpdateFrameTable)
 		while (true) do
 			if (sleeping) then break end
-			local fps = (((tick() - start) >= 1 and #frameUpdateTable) or (#frameUpdateTable / (tick() - start)))
-			if (fps >= targetFps and (tick() - frameUpdateTable[1]) < (1 / targetFps)) then
+			local fps = (((time() - start) >= 1 and #frameUpdateTable) or (#frameUpdateTable / (time() - start)))
+			if (fps >= targetFps and (time() - frameUpdateTable[1]) < (1 / targetFps)) then
 				if (#queue > 0) then
 					queue[1]()
 					table.remove(queue, 1)
