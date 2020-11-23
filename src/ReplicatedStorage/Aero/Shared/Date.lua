@@ -103,7 +103,7 @@ function Date.new(seconds, useUtcOverride)
 	if (seconds ~= nil) then
 		assert(type(seconds) == "number", "'seconds' argument #1 must be a number")
 	else
-		seconds = tick()
+		seconds = os.time()
 	end
 
 	local utc = useUTC

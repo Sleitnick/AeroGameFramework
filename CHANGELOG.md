@@ -14,6 +14,7 @@ As always, you can also check the commit history for a given version as well, an
 
 | Version | Date | Description |
 | ---|---|--- |
+| [1.7.2]($1.7.2) | 2020-11-23 | <ul><li>Fix ProfileService so that it will work properly within the AGF environment</li><li>Replace `tick()` with appropriate replacements (e.g. `time()` and `os.time()`)</li><li>Fix linter</li></ul>
 | [1.7.1](#1.7.1) | 2020-08-25 | <ul><li>Remove StoreService</li><li>Remove old Event module</li><li>Add new Signal module (replaces Event module)</li><li>Add new raycasting methods</li><li>Add ProfileService module</li><li>Upgrade Promise to 3.0.1</li><li>Implement new `.settings` file for configuring module behavior within the framework</li><li>Updated VS Code extension to allow for creating settings files (v0.0.23)</li><li>New PID implementation</li></ul> |
 | [1.6.1](#1.6.1) | 2020-05-21 | <ul><li>Switch to Selene for linting</li><li>Include GitHub Action to run Selene for new pull requests</li><li>Less verbose method names for firing events</li><li>Various bug fixes and performance improvements</li></ul> |
 | [1.6.0](#1.6.0) | 2020-04-23 | <ul><li>Add NumberUtil and VectorUtil libraries under Shared</li></ul> |
@@ -30,6 +31,13 @@ As always, you can also check the commit history for a given version as well, an
 | [1.2.2](#1.2.2) | 2018-08-15 | <ul><li>Added Failed events for DataService.</li><li>Added Failed event for DataStoreCache.</li><li>Added Failed event for SafeDataStore.</li></ul> |
 
 ### Version History Notes
+
+#### <a name="1.7.2"></a> Version 1.7.2
+Fixes ProfileService so that it properly works within the AGF environment.
+
+Use proper time functions within the code. `tick()` is no longer considered acceptable, and most cases can be swapped with `time()`. See [DevForum thread](https://devforum.roblox.com/t/luau-recap-june-2020/632346) on this topic.
+
+[AGF Development] Fixed automated Selene linter by switching to Foreman for tool installations.
 
 #### <a name="1.7.1"></a> Version 1.7.1
 <b>==[BC Break]==</b> Removed StoreService, as it was not very good and pigeonholed developers into a specific pattern for product purchases.
