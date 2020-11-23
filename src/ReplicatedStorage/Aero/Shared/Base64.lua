@@ -72,9 +72,9 @@ end
 	@param [string] Input The input string to encode.
 	@returns [string] The string encoded in Base64.
 **--]]
-function Base64.Encode(_, Input)
+function Base64:Encode(Input)
 	local InputLength = #Input
-	local Output = table.create(4 * math.floor((InputLength - 1) / 3) + 4, nil) -- Credit to AstroCode for finding the formula.
+	local Output = table.create(4 * math.floor((InputLength - 1) / 3) + 4) -- Credit to AstroCode for finding the formula.
 	local Length = 0
 
 	for Index = 1, InputLength, 3 do
@@ -108,7 +108,7 @@ end
 	@param [string] Input The input string to decode.
 	@returns [string] The newly decoded string.
 **--]]
-function Base64.Decode(_, Input)
+function Base64:Decode(Input)
 	local Output = {}
 	local Length = 0
 
