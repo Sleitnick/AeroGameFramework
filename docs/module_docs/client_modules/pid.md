@@ -52,7 +52,7 @@ pid:SetTunings(0.1, 0.01, 0)
 --------------------
 
 ### `SetSampleTime(Number sampleTimeMilliseconds)`
-Set how frequently (in milliseconds) the `Compute` method is allowed to actually calculate a new value. If `Compute` is called within this range, it will simpy use the last value calculated. Lower sample times will be more accurate, but may hurt performance under heavy load.
+Set how frequently (in milliseconds) the `Compute` method is allowed to actually calculate a new value. If `Compute` is called within this range, it will simply use the last value calculated. Lower sample times will be more accurate, but may hurt performance under heavy load.
 
 --------------------
 

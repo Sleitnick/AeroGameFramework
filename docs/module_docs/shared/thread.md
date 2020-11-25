@@ -5,7 +5,7 @@ Please note that the Lua runtime is single-threaded, and any multi-threading app
 ---------------------------
 
 ### `Thread.SpawnNow(Function func [, Variant args...])`
-Spawns the given function on a new thread immediately. Internally, this is done by creating, firing, and destroying a BindableEvent. Due to this process, `SpawnNow` is not necessarily a well-performant operation, and thus should not be used when performance needs to be optimal.
+Spawns the given function on a new thread immediately. Internally, this is done by creating, firing, and destroying a BindableEvent. Due to this process, `SpawnNow` is not necessarily a well-performing operation, and thus should not be used when performance needs to be optimal.
 
 ```lua
 Thread.SpawnNow(function()
@@ -16,7 +16,7 @@ end)
 ---------------------------
 
 ### `Thread.Spawn(Function func, [, Variant args...])`
-Spawns the given function on a new thread. Internally, this is done using RunService's Heartbeat event, which means that the function will be spawned on the next hearbeat step (i.e. next frame).
+Spawns the given function on a new thread. Internally, this is done using RunService's Heartbeat event, which means that the function will be spawned on the next heartbeat step (i.e. next frame).
 
 ```lua
 Thread.Spawn(function()
