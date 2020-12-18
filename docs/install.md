@@ -45,7 +45,7 @@ The preferred editor for the AeroGameFramework is [Visual Studio Code](https://c
 
 --------------------------
 
-## AGF Treeview
+## AGF Tree View
 
 The VS Code extension for AeroGameFramework provides a simplified directory hierarchy that will only show the source files that should be edited. In other words, it hides all of the files that you do not need to worry about. This view can be selected from the "AGF" icon on the left-hand panel in VS Code.
 
@@ -53,7 +53,7 @@ The VS Code extension for AeroGameFramework provides a simplified directory hier
 
 ## Creating new source files (Services, Controllers, and Modules)
 
-1. Right-click within the AGF Treeview and click on `AeroGameFramework: Create` from the context menu, _or_ click the Script Add button at the top
+1. Right-click within the AGF Tree View and click on `AeroGameFramework: Create` from the context menu, _or_ click the Script Add button at the top
 1. Select whether the source file should exist within the Server, Client, or Shared environment
 1. Select the source type (e.g. Service, Controller, or Module)
 1. Type in the name and press Enter

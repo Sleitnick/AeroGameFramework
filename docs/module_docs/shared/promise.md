@@ -9,9 +9,9 @@ The below documentation favors the PascalCase methods. However, the original cam
 ## Static Methods
 
 ### [`Promise.new(Function callback)`](https://eryn.io/roblox-lua-promise/lib/#new)
-Create a new promise object. The callback receives a 'resolve', 'reject', and `onCancel` function that can then be called within the function. Call `resolve` when the task has completed succesfully. Call `reject` if something went wrong.
+Create a new promise object. The callback receives a 'resolve', 'reject', and `onCancel` function that can then be called within the function. Call `resolve` when the task has completed successfully. Call `reject` if something went wrong.
 
-Optionally, pass an cancellation handler to the `onCancel` function, which will be called if the promise gets cancelled. This can be used to stop whatever task is occuring within the promise. Read the [official documentation](https://eryn.io/roblox-lua-promise/lib/#new) for more information.
+Optionally, pass an cancellation handler to the `onCancel` function, which will be called if the promise gets cancelled. This can be used to stop whatever task is occurring within the promise. Read the [official documentation](https://eryn.io/roblox-lua-promise/lib/#new) for more information.
 
 ```lua
 local promise = Promise.new(function(resolve, reject, onCancel)
@@ -61,7 +61,7 @@ Creates a new promise with a list of other promises. It is resolved once all pro
 --------------------
 
 ### [`Promise.Race(Table promises)`](https://eryn.io/roblox-lua-promise/lib/#race)
-Resovles or rejects on the first promise to resolve or reject. All other promises will be cancelled.
+Resolves or rejects on the first promise to resolve or reject. All other promises will be cancelled.
 
 --------------------
 
@@ -121,7 +121,7 @@ Checks to see if the passed object is a Promise.
 
 --------------------
 
-### [`ThenCall(Funciton callback, ...)`](https://eryn.io/roblox-lua-promise/lib/#andthen)
+### [`ThenCall(Function callback, ...)`](https://eryn.io/roblox-lua-promise/lib/#andthen)
 
 --------------------
 

@@ -2,7 +2,7 @@
 
 The following are updates that have been implemented into the framework, so you can understand the impact of upgrading the plugin or framework as changes are made.
 
-Understand that the framework may change frequently, so upcoming changes may break compatiblility with previous versions. Before upgrading, it is recommended that you read this `CHANGELOG.md` to see if there are BC Breaks, otherwise known as backwards-compatibility breaks, which may have an impact on your implementation against the framework working.
+Understand that the framework may change frequently, so upcoming changes may break compatibility with previous versions. Before upgrading, it is recommended that you read this `CHANGELOG.md` to see if there are BC Breaks, otherwise known as backwards-compatibility breaks, which may have an impact on your implementation against the framework working.
 
 Anything noted with a ==[BC Break]== you should be cautious about upgrading until you understand what refactoring you may have to do in order to support the framework version.
 
