@@ -31,7 +31,17 @@ do
 	frame.AnchorPoint = Vector2.new(0.5, 0.5)
 	frame.Size = UDim2.new(2, 0, 2, 0)
 	frame.BackgroundColor3 = Color3.new(0, 0, 0)
+	local overlayText = Instance.new("TextLabel")
+	overlayText.Name = "LoadingText"
+	overlayText.AnchorPoint = Vector2.new(0.5, 0.5)
+	overlayText.Position = UDim2.new(0.5,0,0.5,0)
+	overlayText.Size = UDim2.new(0.3,0,0.1,0)
+	overlayText.TextScaled = true
+	overlayText.BackgroundTransparency = 1
+	overlayText.TextColor3 = Color3.new(255,255,255)
+	overlayText.Text = "Loading Game."
 	frame.Parent = tempBlackout
+	overlayText.Parent = tempBlackout
 end
 
 -- Remove default loading screen & replace with a temporary black overlay:
