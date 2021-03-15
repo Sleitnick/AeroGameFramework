@@ -12,6 +12,7 @@
 		> task is an event connection, function, or instance/table with a 'Destroy' method
 
 	maid:GivePromise(promise)
+		> Give the maid a promise as a task, which will call 'promise:Cancel()' on cleanup
 	
 	maid:DoCleaning()
 		> Alias for Destroy
@@ -78,6 +79,8 @@ function Maid:__newindex(index, newTask)
 			oldTask:Disconnect()
 		elseif (oldTask.Destroy) then
 			oldTask:Destroy()
+		elseif (Promise.Is(oldTask)) then
+			oldTask:Cancel()
 		end
 	end
 end
@@ -92,7 +95,7 @@ function Maid:GiveTask(task)
 	local taskId = (#self._tasks + 1)
 	self[taskId] = task
 
-	if (type(task) == "table" and (not task.Destroy)) then
+	if (type(task) == "table" and (not task.Destroy) and (not Promise.Is(task))) then
 		warn("[Maid.GiveTask] - Gave table task without .Destroy\n\n" .. debug.traceback())
 	end
 
@@ -101,18 +104,15 @@ end
 
 
 function Maid:GivePromise(promise)
+	assert(Promise.Is(promise), "Expected promise")
 	if (promise:GetStatus() ~= Promise.Status.Started) then
 		return promise
 	end
-
 	local newPromise = Promise.Resolve(promise)
 	local id = self:GiveTask(newPromise)
-
-	-- Ensure GC
 	newPromise:Finally(function()
 		self[id] = nil
 	end)
-
 	return newPromise
 end
 
@@ -140,6 +140,8 @@ function Maid:DoCleaning()
 			task:Disconnect()
 		elseif (task.Destroy) then
 			task:Destroy()
+		elseif (Promise.Is(task)) then
+			task:Cancel()
 		end
 		index, task = next(tasks)
 	end
