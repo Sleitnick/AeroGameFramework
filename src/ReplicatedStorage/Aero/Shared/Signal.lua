@@ -4,7 +4,8 @@
 
 --[[
 
-	signal = Signal.new()
+	signal = Signal.new([maid: Maid])
+	signal = Signal.Proxy(rbxSignal: RBXScriptSignal [, maid: Maid])
 
 	signal:Fire(...)
 	signal:Wait()
@@ -12,7 +13,7 @@
 	signal:Destroy()
 	signal:DisconnectAll()
 	
-	connection = signal:Connect(functionHandler)
+	connection = signal:Connect((...) -> void)
 
 	connection.Connected
 	connection:Disconnect()
@@ -66,7 +67,7 @@ local Signal = {}
 Signal.__index = Signal
 
 
-function Signal.new()
+function Signal.new(maid)
 	local self = setmetatable({
 		_bindable = Instance.new("BindableEvent");
 		_connections = {};
@@ -74,12 +75,40 @@ function Signal.new()
 		_threads = 0;
 		_id = 0;
 	}, Signal)
+	if (maid) then
+		maid:GiveTask(self)
+	end
 	return self
+end
+
+
+function Signal.Proxy(rbxScriptSignal, maid)
+	assert(typeof(rbxScriptSignal) == "RBXScriptSignal", "Argument #1 must be of type RBXScriptSignal")
+	local signal = Signal.new(maid)
+	signal:_setProxy(rbxScriptSignal)
+	return signal
 end
 
 
 function Signal.Is(obj)
 	return (type(obj) == "table" and getmetatable(obj) == Signal)
+end
+
+
+function Signal:_setProxy(rbxScriptSignal)
+	assert(typeof(rbxScriptSignal) == "RBXScriptSignal", "Argument #1 must be of type RBXScriptSignal")
+	self:_clearProxy()
+	self._proxyHandle = rbxScriptSignal:Connect(function(...)
+		self:Fire(...)
+	end)
+end
+
+
+function Signal:_clearProxy()
+	if (self._proxyHandle) then
+		self._proxyHandle:Disconnect()
+		self._proxyHandle = nil
+	end
 end
 
 
@@ -93,10 +122,10 @@ end
 
 
 function Signal:Wait()
-	self._threads = self._threads + 1
+	self._threads += 1
 	local id = self._bindable.Event:Wait()
 	local args = self._args[id]
-	args[1] = args[1] - 1
+	args[1] -= 1
 	if (args[1] <= 0) then
 		self._args[id] = nil
 	end
@@ -114,7 +143,7 @@ end
 function Signal:Connect(handler)
 	local connection = Connection.new(self, self._bindable.Event:Connect(function(id)
 		local args = self._args[id]
-		args[1] = args[1] - 1
+		args[1] -= 1
 		if (args[1] <= 0) then
 			self._args[id] = nil
 		end
@@ -138,6 +167,7 @@ end
 
 function Signal:Destroy()
 	self:DisconnectAll()
+	self:_clearProxy()
 	self._bindable:Destroy()
 end
 
