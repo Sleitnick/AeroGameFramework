@@ -632,7 +632,7 @@ function Data:Destroy(save)
 	self._destroying = true
 	local savePromise
 	if (save) then
-		savePromise = self:SaveAll(false, nil)
+		savePromise = self:SaveAll()
 	else
 		savePromise = Promise.Resolve()
 	end
