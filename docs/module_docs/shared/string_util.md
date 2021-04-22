@@ -132,8 +132,8 @@ StringUtil.ToPascalCase("Hello_world-abc") == "HelloWorldAbc"
 Returns a string in snake_case or SNAKE_CASE.
 
 ```lua
-StringUtil.ToPascalCase("Hello_world-abc") == "hello_world_abc"
-StringUtil.ToPascalCase("Hello_world-abc", true) == "HELLO_WORLD_ABC"
+StringUtil.ToSnakeCase("Hello_world-abc") == "hello_world_abc"
+StringUtil.ToSnakeCase("Hello_world-abc", true) == "HELLO_WORLD_ABC"
 ```
 
 --------------------
