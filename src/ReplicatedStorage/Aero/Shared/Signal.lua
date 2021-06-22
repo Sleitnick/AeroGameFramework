@@ -1,27 +1,22 @@
 -- Signal
--- Stephen Leitnick
+-- Stephen Leitnick, modified by SilentsReplacement to support deferred events
 -- Based off of Anaminus' Signal class: https://gist.github.com/Anaminus/afd813efc819bad8e560caea28942010
 
 --[[
-
 	signal = Signal.new([maid: Maid])
 	signal = Signal.Proxy(rbxSignal: RBXScriptSignal [, maid: Maid])
-
+	Signal.Is(object: any): boolean
 	signal:Fire(...)
 	signal:Wait()
 	signal:WaitPromise()
 	signal:Destroy()
 	signal:DisconnectAll()
-	
 	connection = signal:Connect((...) -> void)
-
-	connection.Connected
 	connection:Disconnect()
 	connection:IsConnected()
-
 --]]
 
-local Promise
+local Promise = require(script.Parent.Promise)
 
 local Connection = {}
 Connection.__index = Connection
@@ -32,6 +27,7 @@ function Connection.new(signal, connection)
 		_conn = connection;
 		Connected = true;
 	}, Connection)
+	
 	return self
 end
 
@@ -56,6 +52,7 @@ function Connection:IsConnected()
 	if (self._conn) then
 		return self._conn.Connected
 	end
+
 	return false
 end
 
@@ -72,7 +69,12 @@ function Signal.new(maid)
 		_bindable = Instance.new("BindableEvent");
 		_connections = {};
 		_args = {};
+		_handlers = 0;
 		_threads = 0;
+		_threadsLeft = 0;
+		_handlersLeft = 0;
+		_handlersCompleted = Instance.new("BindableEvent");
+		_threadsCompleted = Instance.new("BindableEvent");
 		_id = 0;
 	}, Signal)
 	if (maid) then
@@ -117,6 +119,7 @@ function Signal:Fire(...)
 	if (totalListeners == 0) then return end
 	local id = self._id
 	self._id += 1
+
 	self._args[id] = {totalListeners, {n = select("#", ...), ...}}
 	self._threads = 0
 	self._bindable:Fire(id)
@@ -125,12 +128,22 @@ end
 
 function Signal:Wait()
 	self._threads += 1
+	self._threadsLeft += 1
+
 	local id = self._bindable.Event:Wait()
 	local args = self._args[id]
 	args[1] -= 1
+
 	if (args[1] <= 0) then
 		self._args[id] = nil
 	end
+	
+	self._threadsLeft -= 1
+
+	if self._threadsLeft == 0 then
+		self._threadsCompleted:Fire()
+	end
+
 	return table.unpack(args[2], 1, args[2].n)
 end
 
@@ -143,14 +156,33 @@ end
 
 
 function Signal:Connect(handler)
-	local connection = Connection.new(self, self._bindable.Event:Connect(function(id)
+	self._handlers += 1
+	self._handlersLeft += 1
+
+	local connection
+	connection = Connection.new(self, self._bindable.Event:Connect(function(id)
+		if not connection:IsConnected() then
+			-- Deferred  events are queued, therefore Roblox has suggested us to do this:
+			self._handlersLeft -= 1
+			return
+		end
+
 		local args = self._args[id]
 		args[1] -= 1
+
 		if (args[1] <= 0) then
 			self._args[id] = nil
 		end
+
 		handler(table.unpack(args[2], 1, args[2].n))
+
+		self._handlersLeft -= 1
+
+		if self._handlersLeft == 0 then
+			self._threadsCompleted:Fire()
+		end
 	end))
+
 	table.insert(self._connections, connection)
 	return connection
 end
@@ -162,20 +194,28 @@ function Signal:DisconnectAll()
 			c._conn:Disconnect()
 		end
 	end
-	self._connections = {}
-	self._args = {}
-end
 
+	-- Calling in a coroutine to prevent edge cases:
+	coroutine.wrap(function()
+		if self._threadsLeft > 0 then
+			self._threadsCompleted.Event:Wait()
+		end
+
+		if self._handlersLeft > 0 then
+			self._handlersCompleted.Event:Wait()
+		end
+
+		self._connections = {}
+		self._args = {}
+	end)()
+end
 
 function Signal:Destroy()
 	self:DisconnectAll()
-	self:_clearProxy()
+	self._threadsCompleted:Destroy()
+	self._handlersCompleted:Destroy()
 	self._bindable:Destroy()
-end
-
-
-function Signal:Init()
-	Promise = self.Shared.Promise
+	self:_clearProxy()
 end
 
 
