@@ -123,7 +123,7 @@ end
 
 
 function AeroServer:WaitForClientEvent(eventName)
-	return self._clientEvents[eventName]:Wait()
+	return self._clientEvents[eventName].OnServerEvent:Wait()
 end
 
 
