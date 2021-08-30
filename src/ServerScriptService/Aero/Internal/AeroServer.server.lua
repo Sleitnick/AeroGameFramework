@@ -23,7 +23,6 @@ remoteServices.Name = "AeroRemoteServices"
 local players = {}
 local modulesAwaitingStart = {}
 
-local SpawnNow = require(sharedFolder.Thread:Clone()).SpawnNow
 local Settings = require(internalFolder:WaitForChild("Settings"))
 
 local settingsPerTbl = {}
@@ -123,7 +122,7 @@ end
 
 
 function AeroServer:WaitForClientEvent(eventName)
-	return self._clientEvents[eventName]:Wait()
+	return self._clientEvents[eventName].OnServerEvent:Wait()
 end
 
 
@@ -133,12 +132,7 @@ function AeroServer:RegisterClientFunction(funcName, func, cacheTTL)
 	remoteFunc.OnServerInvoke = function(...)
 		return func(self.Client, ...)
 	end
-	if (cacheTTL ~= nil) then
-		local cache = Instance.new("NumberValue")
-		cache.Name = "Cache"
-		cache.Value = cacheTTL
-		cache.Parent = remoteFunc
-	end
+	remoteFunc:SetAttribute("CacheTTL", cacheTTL)
 	remoteFunc.Parent = self._remoteFolder
 	return remoteFunc
 end
@@ -156,7 +150,7 @@ function AeroServer:WrapModule(tbl)
 		if (modulesAwaitingStart) then
 			modulesAwaitingStart[#modulesAwaitingStart + 1] = tbl
 		else
-			SpawnNow(tbl.Start, tbl)
+			task.spawn(tbl.Start, tbl)
 		end
 	end
 	return tbl
@@ -258,7 +252,7 @@ local function StartService(service)
 
 	-- Start services on separate threads:
 	if (type(service.Start) == "function") then
-		SpawnNow(service.Start, service)
+		task.spawn(service.Start, service)
 	end
 
 end
@@ -363,7 +357,7 @@ local function Init()
 	-- Start modules that were already loaded:
 	local function StartLoadedModules()
 		for _,tbl in pairs(modulesAwaitingStart) do
-			SpawnNow(tbl.Start, tbl)
+			task.spawn(tbl.Start, tbl)
 		end
 		modulesAwaitingStart = nil
 	end
