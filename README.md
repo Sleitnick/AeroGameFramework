@@ -1,4 +1,4 @@
-:warning: Project is archived :warning:
+## :warning: Project is archived :warning:
 
 AeroGameFramework is no longer maintained and should not be used in future projects. [Knit](https://github.com/Sleitnick/Knit) is the successor to AGF. Over time, it has become clear that AGF forces bad design decisions on developers and leads to a messy and fragmented code-base.
 
