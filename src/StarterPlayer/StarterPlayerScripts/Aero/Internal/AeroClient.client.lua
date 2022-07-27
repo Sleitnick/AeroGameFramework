@@ -90,9 +90,8 @@ local function LoadService(serviceFolder, servicesTbl)
 			end)
 			service[v.Name] = event
 		elseif (v:IsA("RemoteFunction")) then
-			local cacheTTL = v:FindFirstChild("Cache")
+			local cacheTTL = v:GetAttribute("CacheTTL")
 			if (cacheTTL) then
-				cacheTTL = cacheTTL.Value
 				local methodName = v.Name
 				local cache = NO_CACHE
 				local lastCacheTime = 0
