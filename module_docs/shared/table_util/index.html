@@ -1,0 +1,1521 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the AeroGameFramework">
+      
+      
+        <meta name="author" content="Stephen Leitnick">
+      
+      
+        <link rel="canonical" href="https://sleitnick.github.io/AeroGameFramework/module_docs/shared/table_util/">
+      
+      <link rel="icon" href="../../../img/logo_32.png">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
+    
+    
+      
+        <title>TableUtil - AeroGameFramework</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.1d29e8d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.cbb835fc.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#2094f3">
+        
+      
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#copytable-tbl" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AeroGameFramework" class="md-header__button md-logo" aria-label="AeroGameFramework" data-md-component="logo">
+      
+  <img src="../../../img/logo_64.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AeroGameFramework
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              TableUtil
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AeroGameFramework" class="md-nav__button md-logo" aria-label="AeroGameFramework" data-md-component="logo">
+      
+  <img src="../../../img/logo_64.png" alt="logo">
+
+    </a>
+    AeroGameFramework
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../install/" class="md-nav__link">
+        Install & Setup
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../services/" class="md-nav__link">
+        Services
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../controllers/" class="md-nav__link">
+        Controllers
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../modules/" class="md-nav__link">
+        Modules
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../settings/" class="md-nav__link">
+        Settings
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../execution_model/" class="md-nav__link">
+        Execution Model
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" type="checkbox" id="__nav_8" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8">
+          Module Docs
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Module Docs" data-md-level="1">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Module Docs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8_1" type="checkbox" id="__nav_8_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8_1">
+          Server
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Server" data-md-level="2">
+        <label class="md-nav__title" for="__nav_8_1">
+          <span class="md-nav__icon md-icon"></span>
+          Server
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8_1_1" type="checkbox" id="__nav_8_1_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8_1_1">
+          Modules
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Modules" data-md-level="3">
+        <label class="md-nav__title" for="__nav_8_1_1">
+          <span class="md-nav__icon md-icon"></span>
+          Modules
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server_modules/profile_service/" class="md-nav__link">
+        ProfileService
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8_2" type="checkbox" id="__nav_8_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8_2">
+          Client
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Client" data-md-level="2">
+        <label class="md-nav__title" for="__nav_8_2">
+          <span class="md-nav__icon md-icon"></span>
+          Client
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8_2_1" type="checkbox" id="__nav_8_2_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8_2_1">
+          Controllers
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Controllers" data-md-level="3">
+        <label class="md-nav__title" for="__nav_8_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          Controllers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../client_controllers/user_input/" class="md-nav__link">
+        UserInput
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8_2_1_2" type="checkbox" id="__nav_8_2_1_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8_2_1_2">
+          UserInput (modules)
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="UserInput (modules)" data-md-level="4">
+        <label class="md-nav__title" for="__nav_8_2_1_2">
+          <span class="md-nav__icon md-icon"></span>
+          UserInput (modules)
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../client_controllers/user_inputs/mouse/" class="md-nav__link">
+        Mouse
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../client_controllers/user_inputs/keyboard/" class="md-nav__link">
+        Keyboard
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../client_controllers/user_inputs/gamepad/" class="md-nav__link">
+        Gamepad
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../client_controllers/user_inputs/mobile/" class="md-nav__link">
+        Mobile
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../client_controllers/fade/" class="md-nav__link">
+        Fade
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../client_controllers/task_scheduler/" class="md-nav__link">
+        TaskScheduler
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8_2_2" type="checkbox" id="__nav_8_2_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8_2_2">
+          Modules
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Modules" data-md-level="3">
+        <label class="md-nav__title" for="__nav_8_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          Modules
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../client_modules/camera_shaker/" class="md-nav__link">
+        CameraShaker
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../client_modules/smooth/" class="md-nav__link">
+        Smooth
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../client_modules/tween/" class="md-nav__link">
+        Tween
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../client_modules/pid/" class="md-nav__link">
+        PID
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8_3" type="checkbox" id="__nav_8_3" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8_3">
+          Shared Modules
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Shared Modules" data-md-level="2">
+        <label class="md-nav__title" for="__nav_8_3">
+          <span class="md-nav__icon md-icon"></span>
+          Shared Modules
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../base64/" class="md-nav__link">
+        Base64
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../date/" class="md-nav__link">
+        Date
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../listener_list/" class="md-nav__link">
+        ListenerList
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../maid/" class="md-nav__link">
+        Maid
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../number_util/" class="md-nav__link">
+        NumberUtil
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../promise/" class="md-nav__link">
+        Promise
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../signal/" class="md-nav__link">
+        Signal
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../string_util/" class="md-nav__link">
+        StringUtil
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          TableUtil
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        TableUtil
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#copytable-tbl" class="md-nav__link">
+    Copy(Table tbl)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#copyshallowtable-tbl" class="md-nav__link">
+    CopyShallow(Table tbl)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#synctable-tbl-table-templatetbl" class="md-nav__link">
+    Sync(Table tbl, Table templateTbl)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#printtable-tbl-string-label-boolean-deepprint" class="md-nav__link">
+    Print(Table tbl, String label, Boolean deepPrint)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fastremovetable-tbl-number-index" class="md-nav__link">
+    FastRemove(Table tbl, Number index)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fastremovefirstvaluetable-tbl-variant-value" class="md-nav__link">
+    FastRemoveFirstValue(Table tbl, Variant value)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#maptable-tbl-function-callback" class="md-nav__link">
+    Map(Table tbl, Function callback)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filtertable-tbl-function-callback" class="md-nav__link">
+    Filter(Table tbl, Function callback)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reducetable-tbl-function-callback" class="md-nav__link">
+    Reduce(Table tbl, Function callback)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#assigntable-target-table-sources" class="md-nav__link">
+    Assign(Table target, Table sources...)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#indexoftable-tbl-variant-item-number-start" class="md-nav__link">
+    IndexOf(Table tbl, Variant item [, Number start])
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reversetable-tbl" class="md-nav__link">
+    Reverse(Table tbl)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shuffletable-tbl" class="md-nav__link">
+    Shuffle(Table tbl)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isemptytable-tbl" class="md-nav__link">
+    IsEmpty(Table tbl)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#encodejsontable-tbl" class="md-nav__link">
+    EncodeJSON(Table tbl)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decodejsonstring-json" class="md-nav__link">
+    DecodeJSON(String json)
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../thread/" class="md-nav__link">
+        Thread
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vector_util/" class="md-nav__link">
+        VectorUtil
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#copytable-tbl" class="md-nav__link">
+    Copy(Table tbl)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#copyshallowtable-tbl" class="md-nav__link">
+    CopyShallow(Table tbl)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#synctable-tbl-table-templatetbl" class="md-nav__link">
+    Sync(Table tbl, Table templateTbl)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#printtable-tbl-string-label-boolean-deepprint" class="md-nav__link">
+    Print(Table tbl, String label, Boolean deepPrint)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fastremovetable-tbl-number-index" class="md-nav__link">
+    FastRemove(Table tbl, Number index)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fastremovefirstvaluetable-tbl-variant-value" class="md-nav__link">
+    FastRemoveFirstValue(Table tbl, Variant value)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#maptable-tbl-function-callback" class="md-nav__link">
+    Map(Table tbl, Function callback)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filtertable-tbl-function-callback" class="md-nav__link">
+    Filter(Table tbl, Function callback)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reducetable-tbl-function-callback" class="md-nav__link">
+    Reduce(Table tbl, Function callback)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#assigntable-target-table-sources" class="md-nav__link">
+    Assign(Table target, Table sources...)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#indexoftable-tbl-variant-item-number-start" class="md-nav__link">
+    IndexOf(Table tbl, Variant item [, Number start])
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reversetable-tbl" class="md-nav__link">
+    Reverse(Table tbl)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shuffletable-tbl" class="md-nav__link">
+    Shuffle(Table tbl)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#isemptytable-tbl" class="md-nav__link">
+    IsEmpty(Table tbl)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#encodejsontable-tbl" class="md-nav__link">
+    EncodeJSON(Table tbl)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decodejsonstring-json" class="md-nav__link">
+    DecodeJSON(String json)
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+
+
+  <h1>TableUtil</h1>
+
+<p>The TableUtil module provides utility functions for Lua tables.</p>
+<hr />
+<h3 id="copytable-tbl"><code>Copy(Table tbl)</code><a class="headerlink" href="#copytable-tbl" title="Permanent link">&para;</a></h3>
+<p>Creates and returns a deep copy of the given table.</p>
+<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">local</span> <span class="n">tbl</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">}}</span>
+<span class="kd">local</span> <span class="n">tblCopy</span> <span class="o">=</span> <span class="n">TableUtil</span><span class="p">.</span><span class="n">Copy</span><span class="p">(</span><span class="n">tbl</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+
+<hr />
+<h3 id="copyshallowtable-tbl"><code>CopyShallow(Table tbl)</code><a class="headerlink" href="#copyshallowtable-tbl" title="Permanent link">&para;</a></h3>
+<p>Creates and returns a shallow copy of the given table.</p>
+<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">local</span> <span class="n">tbl</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">}</span>
+<span class="kd">local</span> <span class="n">tblCopy</span> <span class="o">=</span> <span class="n">TableUtil</span><span class="p">.</span><span class="n">Copy</span><span class="p">(</span><span class="n">tbl</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+
+<hr />
+<h3 id="synctable-tbl-table-templatetbl"><code>Sync(Table tbl, Table templateTbl)</code><a class="headerlink" href="#synctable-tbl-table-templatetbl" title="Permanent link">&para;</a></h3>
+<p>Synchronizes a table to the template table. If the table does not have an item that exists within the template, it gets added. If the table has something that the template doesn't have, it gets removed.</p>
+<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">local</span> <span class="n">tbl1</span> <span class="o">=</span> <span class="p">{</span><span class="n">kills</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">deaths</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">points</span> <span class="o">=</span> <span class="mi">0</span><span class="p">}</span>
+<span class="kd">local</span> <span class="n">tbl2</span> <span class="o">=</span> <span class="p">{</span><span class="n">points</span> <span class="o">=</span> <span class="mi">0</span><span class="p">}</span>
+<span class="n">TableUtil</span><span class="p">.</span><span class="n">Sync</span><span class="p">(</span><span class="n">tbl2</span><span class="p">,</span> <span class="n">tbl1</span><span class="p">)</span>  <span class="c1">-- Synchronize table2 to table1</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tbl2</span><span class="p">.</span><span class="n">deaths</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+
+<hr />
+<h3 id="printtable-tbl-string-label-boolean-deepprint"><code>Print(Table tbl, String label, Boolean deepPrint)</code><a class="headerlink" href="#printtable-tbl-string-label-boolean-deepprint" title="Permanent link">&para;</a></h3>
+<p>Prints the table to the output. This is useful for debugging tables.</p>
+<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">local</span> <span class="n">tbl</span> <span class="o">=</span> <span class="p">{</span><span class="n">a</span> <span class="o">=</span> <span class="mi">32</span><span class="p">;</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">64</span><span class="p">;</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">128</span><span class="p">;</span> <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">2</span><span class="p">}}</span>
+<span class="n">TableUtil</span><span class="p">.</span><span class="n">Print</span><span class="p">(</span><span class="n">tbl</span><span class="p">,</span> <span class="s2">&quot;My Table&quot;</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This method does not detect cyclical tables. Passing a cyclical table will result in a stackoverflow.</p>
+</div>
+<hr />
+<h3 id="fastremovetable-tbl-number-index"><code>FastRemove(Table tbl, Number index)</code><a class="headerlink" href="#fastremovetable-tbl-number-index" title="Permanent link">&para;</a></h3>
+<p>Removes an item at <code>index</code> in the table <code>tbl</code>. Instead of using <code>table.remove</code>, this simply grabs the last item in the table and places it at the given index and trims off the last item. This is significantly faster than <code>table.remove</code> because it runs in <code>O(1)</code>, whereas <code>table.remove</code> is <code>O(N)</code>.</p>
+<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">local</span> <span class="n">tbl</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;hello&quot;</span><span class="p">,</span> <span class="s2">&quot;there&quot;</span><span class="p">,</span> <span class="s2">&quot;this&quot;</span><span class="p">,</span> <span class="s2">&quot;is&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">}</span>
+<span class="n">TableUtil</span><span class="p">.</span><span class="n">FastRemove</span><span class="p">(</span><span class="n">tbl</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>   <span class="c1">-- Remove &quot;there&quot; in the array</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">table.concat</span><span class="p">(</span><span class="n">tbl</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">))</span>  <span class="c1">-- &gt; hello test this is a</span>
+</code></pre></div></td></tr></table></div>
+
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The order of the table is <em>not</em> preserved using this function. <strong>Do not</strong> use this if the ordering of your table needs to be maintained.</p>
+</div>
+<hr />
+<h3 id="fastremovefirstvaluetable-tbl-variant-value"><code>FastRemoveFirstValue(Table tbl, Variant value)</code><a class="headerlink" href="#fastremovefirstvaluetable-tbl-variant-value" title="Permanent link">&para;</a></h3>
+<p>Performs the <code>FastRemove</code> operation on the first index that contains <code>value</code>.</p>
+<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">local</span> <span class="n">tbl</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;hello&quot;</span><span class="p">,</span> <span class="s2">&quot;there&quot;</span><span class="p">,</span> <span class="s2">&quot;this&quot;</span><span class="p">,</span> <span class="s2">&quot;is&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">}</span>
+<span class="n">TableUtil</span><span class="p">.</span><span class="n">FastRemoveFirstValue</span><span class="p">(</span><span class="n">tbl</span><span class="p">,</span> <span class="s2">&quot;there&quot;</span><span class="p">)</span>   <span class="c1">-- Remove &quot;there&quot; in the array</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">table.concat</span><span class="p">(</span><span class="n">tbl</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">))</span>  <span class="c1">-- &gt; hello test this is a</span>
+</code></pre></div></td></tr></table></div>
+
+<hr />
+<h3 id="maptable-tbl-function-callback"><code>Map(Table tbl, Function callback)</code><a class="headerlink" href="#maptable-tbl-function-callback" title="Permanent link">&para;</a></h3>
+<p>Constructs a new table by populating it with the results of calling a function on every item in the <code>tbl</code> table. Useful for restructuring an existing table.</p>
+<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">local</span> <span class="n">peopleData</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">{</span><span class="n">firstName</span> <span class="o">=</span> <span class="s2">&quot;Bob&quot;</span><span class="p">;</span> <span class="n">lastName</span> <span class="o">=</span> <span class="s2">&quot;Smith&quot;</span><span class="p">};</span>
+    <span class="p">{</span><span class="n">firstName</span> <span class="o">=</span> <span class="s2">&quot;John&quot;</span><span class="p">;</span> <span class="n">lastName</span> <span class="o">=</span> <span class="s2">&quot;Doe&quot;</span><span class="p">};</span>
+    <span class="p">{</span><span class="n">firstName</span> <span class="o">=</span> <span class="s2">&quot;Jane&quot;</span><span class="p">;</span> <span class="n">lastName</span> <span class="o">=</span> <span class="s2">&quot;Doe&quot;</span><span class="p">};</span>
+<span class="p">}</span>
+
+<span class="kd">local</span> <span class="n">people</span> <span class="o">=</span> <span class="n">TableUtil</span><span class="p">.</span><span class="n">Map</span><span class="p">(</span><span class="n">peopleData</span><span class="p">,</span> <span class="kr">function</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="kr">return</span> <span class="p">{</span><span class="n">Name</span> <span class="o">=</span> <span class="n">item</span><span class="p">.</span><span class="n">firstName</span> <span class="o">..</span> <span class="s2">&quot; &quot;</span> <span class="o">..</span> <span class="n">item</span><span class="p">.</span><span class="n">lastName</span><span class="p">}</span>
+<span class="kr">end</span><span class="p">)</span>
+
+<span class="c1">-- &#39;people&#39; is now an array that looks like: { {Name = &quot;Bob Smith&quot;}; ... }</span>
+</code></pre></div></td></tr></table></div>
+
+<hr />
+<h3 id="filtertable-tbl-function-callback"><code>Filter(Table tbl, Function callback)</code><a class="headerlink" href="#filtertable-tbl-function-callback" title="Permanent link">&para;</a></h3>
+<p>Constructs a new table based on <code>tbl</code> where it will only include items allowed by the <code>callback</code> function. Each item in the <code>tbl</code> table are passed to the callback.</p>
+<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">local</span> <span class="n">people</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">{</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;Bob Smith&quot;</span><span class="p">;</span> <span class="n">Age</span> <span class="o">=</span> <span class="mi">42</span><span class="p">};</span>
+    <span class="p">{</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;John Doe&quot;</span><span class="p">;</span> <span class="n">Age</span> <span class="o">=</span> <span class="mi">34</span><span class="p">};</span>
+    <span class="p">{</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;Jane Doe&quot;</span><span class="p">;</span> <span class="n">Age</span> <span class="o">=</span> <span class="mi">37</span><span class="p">};</span>
+<span class="p">}</span>
+
+<span class="kd">local</span> <span class="n">peopleUnderForty</span> <span class="o">=</span> <span class="n">TableUtil</span><span class="p">.</span><span class="n">Filter</span><span class="p">(</span><span class="n">people</span><span class="p">,</span> <span class="kr">function</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="kr">return</span> <span class="n">item</span><span class="p">.</span><span class="n">Age</span> <span class="o">&lt;</span> <span class="mi">40</span>
+<span class="kr">end</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+
+<hr />
+<h3 id="reducetable-tbl-function-callback"><code>Reduce(Table tbl, Function callback)</code><a class="headerlink" href="#reducetable-tbl-function-callback" title="Permanent link">&para;</a></h3>
+<p>Reduces the <code>tbl</code> table to a single number. This is useful for tasks such as summing up a table's values. Each item is passed to the callback, as well as an accumulator.</p>
+<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">local</span> <span class="n">tbl</span> <span class="o">=</span> <span class="p">{</span><span class="mi">40</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">44</span><span class="p">}</span>
+<span class="kd">local</span> <span class="n">tblSum</span> <span class="o">=</span> <span class="n">TableUtil</span><span class="p">.</span><span class="n">Reduce</span><span class="p">(</span><span class="n">tbl</span><span class="p">,</span> <span class="kr">function</span><span class="p">(</span><span class="n">accumulator</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="kr">return</span> <span class="n">accumulator</span> <span class="o">+</span> <span class="n">value</span>
+<span class="kr">end</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tblSum</span><span class="p">)</span>  <span class="c1">-- &gt; 130</span>
+</code></pre></div></td></tr></table></div>
+
+<hr />
+<h3 id="assigntable-target-table-sources"><code>Assign(Table target, Table sources...)</code><a class="headerlink" href="#assigntable-target-table-sources" title="Permanent link">&para;</a></h3>
+<p>Allows the assigning of values from multiple tables into one. The <code>Assign</code> function is similar to JavaScript's <code>Object.Assign()</code> function and is useful for things such as composition-designed systems.</p>
+<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">local</span> <span class="kr">function</span> <span class="nf">Driver</span><span class="p">()</span>
+    <span class="kr">return</span> <span class="p">{</span>
+        <span class="n">Drive</span> <span class="o">=</span> <span class="kr">function</span><span class="p">(</span><span class="n">self</span><span class="p">)</span> <span class="n">self</span><span class="p">.</span><span class="n">Speed</span> <span class="o">=</span> <span class="mi">10</span> <span class="kr">end</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="kr">end</span>
+
+<span class="kd">local</span> <span class="kr">function</span> <span class="nf">Teleporter</span><span class="p">()</span>
+    <span class="kr">return</span> <span class="p">{</span>
+        <span class="n">Teleport</span> <span class="o">=</span> <span class="kr">function</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span> <span class="n">self</span><span class="p">.</span><span class="n">Position</span> <span class="o">=</span> <span class="n">pos</span> <span class="kr">end</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="kr">end</span>
+
+<span class="kd">local</span> <span class="kr">function</span> <span class="nf">CreateCar</span><span class="p">()</span>
+    <span class="kd">local</span> <span class="n">state</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">Speed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">Position</span> <span class="o">=</span> <span class="n">Vector3</span><span class="p">.</span><span class="n">new</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="c1">-- Assign the Driver and Teleporter components to the car:</span>
+    <span class="kr">return</span> <span class="n">TableUtil</span><span class="p">.</span><span class="n">Assign</span><span class="p">({},</span> <span class="n">Driver</span><span class="p">(),</span> <span class="n">Teleporter</span><span class="p">())</span>
+<span class="kr">end</span>
+
+<span class="kd">local</span> <span class="n">car</span> <span class="o">=</span> <span class="n">CreateCar</span><span class="p">()</span>
+<span class="n">car</span><span class="p">:</span><span class="n">Drive</span><span class="p">()</span>
+<span class="n">car</span><span class="p">:</span><span class="n">Teleport</span><span class="p">(</span><span class="n">Vector3</span><span class="p">.</span><span class="n">new</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+</code></pre></div></td></tr></table></div>
+
+<hr />
+<h3 id="indexoftable-tbl-variant-item-number-start"><code>IndexOf(Table tbl, Variant item [, Number start])</code><a class="headerlink" href="#indexoftable-tbl-variant-item-number-start" title="Permanent link">&para;</a></h3>
+<p>Returns the index of the given <code>item</code> in the table. If no item is found, this will return <code>nil</code>. Optionally, a <code>start</code> index can be provided.</p>
+<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">local</span> <span class="n">tbl</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="s2">&quot;abc&quot;</span><span class="p">}</span>
+<span class="kd">local</span> <span class="n">abcIndex</span> <span class="o">=</span> <span class="n">TableUtil</span><span class="p">.</span><span class="n">IndexOf</span><span class="p">(</span><span class="n">tbl</span><span class="p">,</span> <span class="s2">&quot;abc&quot;</span><span class="p">)</span>        <span class="c1">-- &gt; 4</span>
+<span class="kd">local</span> <span class="n">helloIndex</span> <span class="o">=</span> <span class="n">TableUtil</span><span class="p">.</span><span class="n">IndexOf</span><span class="p">(</span><span class="n">tbl</span><span class="p">,</span> <span class="s2">&quot;Hello&quot;</span><span class="p">)</span>    <span class="c1">-- &gt; 1</span>
+<span class="kd">local</span> <span class="n">helloIndex</span> <span class="o">=</span> <span class="n">TableUtil</span><span class="p">.</span><span class="n">IndexOf</span><span class="p">(</span><span class="n">tbl</span><span class="p">,</span> <span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="c1">-- &gt; nil</span>
+<span class="kd">local</span> <span class="n">numberIndex</span> <span class="o">=</span> <span class="n">TableUtil</span><span class="p">.</span><span class="n">IndexOf</span><span class="p">(</span><span class="n">tbl</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>        <span class="c1">-- &gt; nil</span>
+</code></pre></div></td></tr></table></div>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>table.find</code> does the exact same operation, but was introduced after this method was written. For backwards compatibility, this method will continue to exist, but simply points to the <code>table.find</code> function instead.</p>
+</div>
+<hr />
+<h3 id="reversetable-tbl"><code>Reverse(Table tbl)</code><a class="headerlink" href="#reversetable-tbl" title="Permanent link">&para;</a></h3>
+<p>Creates a reversed version of the table.</p>
+<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">local</span> <span class="n">tbl</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">}</span>
+<span class="kd">local</span> <span class="n">rblReversed</span> <span class="o">=</span> <span class="n">TableUtil</span><span class="p">.</span><span class="n">Reverse</span><span class="p">(</span><span class="n">tbl</span><span class="p">)</span>  <span class="c1">-- &gt; {8, 6, 4, 2}</span>
+</code></pre></div></td></tr></table></div>
+
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This is a shallow copy.</p>
+</div>
+<hr />
+<h3 id="shuffletable-tbl"><code>Shuffle(Table tbl)</code><a class="headerlink" href="#shuffletable-tbl" title="Permanent link">&para;</a></h3>
+<p>Shuffles the array. Internally, this is using the <a href="https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle">Fisher-Yates algorithm</a> to shuffle around the items.</p>
+<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">local</span> <span class="n">tbl</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">}</span>
+<span class="n">TableUtil</span><span class="p">.</span><span class="n">Shuffle</span><span class="p">(</span><span class="n">tbl</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">table.concat</span><span class="p">(</span><span class="n">tbl</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="p">))</span>  <span class="c1">-- e.g. &gt; 3, 6, 9, 2, 8, 4, 1, 7, 5</span>
+</code></pre></div></td></tr></table></div>
+
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This mutates the table.</p>
+</div>
+<hr />
+<h3 id="isemptytable-tbl"><code>IsEmpty(Table tbl)</code><a class="headerlink" href="#isemptytable-tbl" title="Permanent link">&para;</a></h3>
+<p>Returns <code>true</code> if the table is empty.</p>
+<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">local</span> <span class="n">t1</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="kd">local</span> <span class="n">t2</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Hello&quot;</span><span class="p">}</span>
+<span class="kd">local</span> <span class="n">t3</span> <span class="o">=</span> <span class="p">{</span><span class="n">X</span> <span class="o">=</span> <span class="mi">32</span><span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">TableUtil</span><span class="p">.</span><span class="n">IsEmpty</span><span class="p">(</span><span class="n">t1</span><span class="p">))</span> <span class="c1">--&gt; true</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">TableUtil</span><span class="p">.</span><span class="n">IsEmpty</span><span class="p">(</span><span class="n">t2</span><span class="p">))</span> <span class="c1">--&gt; false</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">TableUtil</span><span class="p">.</span><span class="n">IsEmpty</span><span class="p">(</span><span class="n">t3</span><span class="p">))</span> <span class="c1">--&gt; false</span>
+</code></pre></div></td></tr></table></div>
+
+<hr />
+<h3 id="encodejsontable-tbl"><code>EncodeJSON(Table tbl)</code><a class="headerlink" href="#encodejsontable-tbl" title="Permanent link">&para;</a></h3>
+<p>Shortcut for <a href="https://developer.roblox.com/en-us/api-reference/function/HttpService/JSONEncode"><code>HttpService:JSONEncode()</code></a></p>
+<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">local</span> <span class="n">plrData</span> <span class="o">=</span> <span class="p">{</span><span class="n">Points</span> <span class="o">=</span> <span class="mi">32</span><span class="p">;</span> <span class="n">Cash</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span> <span class="n">Balloons</span> <span class="o">=</span> <span class="mi">540</span><span class="p">}</span>
+<span class="kd">local</span> <span class="n">plrDataJson</span> <span class="o">=</span> <span class="n">TableUtil</span><span class="p">.</span><span class="n">EncodeJSON</span><span class="p">(</span><span class="n">plrData</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">plrDataJson</span><span class="p">)</span> <span class="c1">--&gt; {&quot;Points&quot;: 32, &quot;Cash&quot;: 100, &quot;Balloons&quot;: 540}</span>
+</code></pre></div></td></tr></table></div>
+
+<hr />
+<h3 id="decodejsonstring-json"><code>DecodeJSON(String json)</code><a class="headerlink" href="#decodejsonstring-json" title="Permanent link">&para;</a></h3>
+<p>Shortcut for <a href="https://developer.roblox.com/en-us/api-reference/function/HttpService/JSONDecode"><code>HttpService:JSONDecode()</code></a></p>
+<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">local</span> <span class="n">plrDataJson</span> <span class="o">=</span> <span class="s2">&quot;{</span><span class="se">\&quot;</span><span class="s2">Points</span><span class="se">\&quot;</span><span class="s2">: 32, </span><span class="se">\&quot;</span><span class="s2">Cash</span><span class="se">\&quot;</span><span class="s2">: 100, </span><span class="se">\&quot;</span><span class="s2">Balloons</span><span class="se">\&quot;</span><span class="s2">: 540}&quot;</span>
+<span class="kd">local</span> <span class="n">plrData</span> <span class="o">=</span> <span class="n">TableUtil</span><span class="p">.</span><span class="n">DecodeJSON</span><span class="p">(</span><span class="n">plrDataJson</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Points&quot;</span><span class="p">,</span> <span class="n">plrData</span><span class="p">.</span><span class="n">Points</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cash&quot;</span><span class="p">,</span> <span class="n">plrData</span><span class="p">.</span><span class="n">Cash</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Balloons&quot;</span><span class="p">,</span> <span class="n">plrData</span><span class="p">.</span><span class="n">Balloons</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+
+              
+            </article>
+            
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="../string_util/" class="md-footer__link md-footer__link--prev" aria-label="Previous: StringUtil" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              StringUtil
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../thread/" class="md-footer__link md-footer__link--next" aria-label="Next: Thread" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Thread
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/Sleitnick/AeroGameFramework" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.b97dbffb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.0238f547.min.js"></script>
+      
+    
+  </body>
+</html>
